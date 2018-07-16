@@ -8,6 +8,7 @@ We are focusing on two different areas of research, aiming to contribute to the 
 - *Model inversion* attack is the process of either the model parameters or the data used to train the data.
 - *Model Fooling/Evasion* attacks are related to tricking a model into performing considerably worse on basic examples
 
+The below is created by our visualization software. The actual PDF has links to the arxiv papers.
 ![Model Inversion](Visualizations/Example.png)
 
 ## Environment and Software
