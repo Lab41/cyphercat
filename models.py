@@ -2,6 +2,38 @@ from torch import nn
 import torch.nn.functional as F
 
 
+
+class tiny_cnn(nn.Module): 
+    def __init__(self, n_in=3, n_out=10, n_hidden=128, size=64): 
+        super(tiny_cnn, self).__init__()
+        
+        self.size = size 
+        
+        self.conv_block_1 = nn.Sequential(
+            nn.Conv2d(n_in, 64, kernel_size=5, stride=1, padding=2), 
+            nn.BatchNorm2d(64), 
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+        self.conv_block_2 = nn.Sequential(
+            nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=2), 
+            nn.BatchNorm2d(128), 
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        ) 
+        self.fc = nn.Linear(128 * self.size/4 * self.size/4, 128)
+        self.output = nn.Linear(128, n_out)
+        
+    def forward(self, x): 
+        x = self.conv_block_1(x)
+        x = self.conv_block_2(x)
+        x = x.view(-1, 128 * self.size/4 * self.size/4)
+        x = self.fc(x)
+        out = self.output(x)
+        
+        return out
+    
+    
 class mlleaks_cnn(nn.Module): 
     def __init__(self, n_in=3, n_out=10, n_hidden=128): 
         super(mlleaks_cnn, self).__init__()
@@ -24,6 +56,7 @@ class mlleaks_cnn(nn.Module):
     def forward(self, x): 
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
+        print(x.shape)
         x = x.view(-1, 128 * 8 * 8)
         x = self.fc(x)
         out = self.output(x)
