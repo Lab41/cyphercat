@@ -56,7 +56,6 @@ class mlleaks_cnn(nn.Module):
     def forward(self, x): 
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
-        print(x.shape)
         x = x.view(-1, 128 * 8 * 8)
         x = self.fc(x)
         out = self.output(x)
