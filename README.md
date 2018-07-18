@@ -9,7 +9,8 @@ We are focusing on two different areas of research, aiming to contribute to the 
 - *Model Fooling/Evasion* attacks are related to tricking a model into performing considerably worse on basic examples
 
 The below is created by our visualization software. The actual PDF has links to the arxiv papers.
-![Model Inversion](Visualizations/Example.png)
+![Model Fooling](Visualizations/Example-Fooling.png)
+![Model Inversion](Visualizations/Example-Invert.png)
 
 ## Environment and Software
 
