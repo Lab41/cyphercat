@@ -1,0 +1,13 @@
+// Taxonomy of Secure Deep Learning
+digraph structs {
+	"Inversion Attacks" [label="{<f0> Inversion Attacks |<f1> https://arxiv.org/abs/1804.00097\n\n}" shape=record]
+	"Inversion Attacks" -> "Membership Inference"
+	"Membership Inference" -> "Shadow Networks"
+	"Inversion Attacks" -> "Data Extraction"
+	"Data Extraction" -> "GAN Networks"
+	"Data Extraction" -> "Gradient Ascent"
+	"Inversion Attacks" -> "Model Extraction"
+	"Inversion Defense" -> "Complex Nonlinearities 1"
+	"Inversion Defense" -> "Hidden Networks"
+	"Complex Nonlinearities 1" -> "Gradient Lookups"
+}
