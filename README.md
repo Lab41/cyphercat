@@ -31,7 +31,6 @@ $ pip install -r requirements.txt
 
 [ml_leaks/](ml_leaks/): Implementations of adversary 1 and 3 from ML-Leaks[1]. 
 
-
 ### Visualization
 
 We are using [GraphViz](https://www.graphviz.org/) for our research in order to get a handle on the papers in the space, as well as describe our research. You can view some of that here. To install visualization tools via Mac, use:

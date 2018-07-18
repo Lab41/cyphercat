@@ -1,0 +1,11 @@
+// Taxonomy of Secure Deep Learning
+digraph structs {
+	"Fooling Attacks" [label="{<f0> Fooling Attacks |<f1> https://arxiv.org/abs/1804.00097\n\n}" shape=record]
+	"Fooling Attacks" -> "Transferable Attacks"
+	"Fooling Defenses" [label="{<f0> Fooling Defenses |<f1> https://arxiv.org/abs/1804.00097\n\n}" shape=record]
+	"Fooling Defenses" -> "Complex Nonlinearities"
+	"Fooling Defenses" -> "Adversarial Training"
+	"Complex Nonlinearities" -> "RBF Neural Networks"
+	"Complex Nonlinearities" -> "SVM Layers"
+	"Adversarial Training" -> "Data Augmentation"
+}
