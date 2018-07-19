@@ -9,9 +9,9 @@ We are focusing on two different areas of research, aiming to contribute to the 
 - *Model Fooling/Evasion* attacks are related to tricking a model into performing considerably worse on basic examples
 
 The below is created by our visualization software. The actual PDF has links to the arxiv papers. For inverting neural networks, the following wording is of relevance:
-[![Model Inversion](Visualizations/Example-Invert.png)](Visualizations/inversion-table.gv.pdf)
+[![Model Inversion](Visualizations/Example-Invert.png)](Visualizations/inversion_defense.gv.pdf)
 For fooling neural networks, this is the following papers and relevant work:
-[![Model Fooling](Visualizations/Example-Fooling.png)](Visualizations/fooling-table.gv.pdf)
+[![Model Fooling](Visualizations/Example-Fooling.png)](Visualizations/inversion_attack.gv.pdf)
 
 ## Environment and Software
 
