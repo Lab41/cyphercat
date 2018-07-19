@@ -17,8 +17,14 @@ For fooling neural networks, this is the following papers and relevant work:
 
 ### Setup 
 ```console
+$ git clone https://github.com/Lab41/cyphercat.git
+$ cd cyphercat
+$ virtualenv cyphercat_virtualenv
+$ source cyphercat_virtualenv/bin/activate
 $ pip install -r requirements.txt
+$ ipython kernel install --user --name=cyphercat_virtualenv
 ```
+Select `cyphercat_virtualenv` kernel when running Jupyter.  
 
 ### Structure
 [src_code/models.py](src_code/models.py): Pytorch model classes.    
