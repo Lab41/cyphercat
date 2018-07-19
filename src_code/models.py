@@ -132,9 +132,9 @@ class cnn(nn.Module):
         x = self.conv_block_2(x)
 
         x = x.view(-1, self.n_filters*2 * 8 * 8)
-        out = self.dense_block_1(x)
-        ##x = self.dense_block_2(x)
-        ##out = self.dense_block_3(x)
+        x = self.dense_block_1(x)
+        x = self.dense_block_2(x)
+        out = self.dense_block_3(x)
 
         return out
         

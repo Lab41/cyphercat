@@ -77,7 +77,7 @@ def get_lfw():
     people_dir = os.listdir(lfw_dir)
 
 
-    num_per_class = 15
+    num_per_class = 20
 
     new_dir = '../datasets/lfw/lfw_'+str(num_per_class)
 
