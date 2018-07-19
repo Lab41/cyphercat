@@ -33,6 +33,8 @@ Select `cyphercat_virtualenv` kernel when running Jupyter.
 
 [src_code/metrics.py](src_code/metrics.py): Functions to calculate classifier accuracy and membership inference accuracy.   
 
+[src_code/data_downloaders.py](src_code/data_downloaders.py): Helper functions to download and preprocess datasets.   
+
 [baselines/](baselines/): Various Jupyter notebooks containing baselines for popular datasets.   
 
 [ml_leaks/](ml_leaks/): Implementations of adversary 1 and 3 from ML-Leaks[1]. 
