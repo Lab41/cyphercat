@@ -7,4 +7,4 @@ from visualize_util import *
 visualize(fooling_attack(), 'fooling_attack.gv')
 visualize(fooling_defense(), 'fooling_defense.gv')
 visualize(inversion_attack(), 'inversion_attack.gv')
-visualize(inversion_attack(), 'inversion_defense.gv')
+visualize(inversion_defense(), 'inversion_defense.gv')

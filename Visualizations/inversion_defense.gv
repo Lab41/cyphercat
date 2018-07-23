@@ -1,0 +1,8 @@
+// Taxonomy of Secure Deep Learning
+digraph "Inversion Defenses" {
+	"Adversarial Training" [label="{<f0> Adversarial Training |<f1> https://arxiv.org/abs/1807.05852\n\n}" shape=record]
+	"Inversion Defense" -> "Complex Nonlinearities"
+	"Inversion Defense" -> "Hidden Networks"
+	"Inversion Defense" -> "Adversarial Training"
+	"Complex Nonlinearities" -> "Gradient Lookups"
+}
