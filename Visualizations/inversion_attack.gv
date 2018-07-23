@@ -1,0 +1,12 @@
+// Taxonomy of Secure Deep Learning
+digraph "Inversion Attacks" {
+	"Inversion Attacks" [label="{<f0> Inversion Attacks |<f1> https://arxiv.org/abs/1804.00097\n\n}" shape=record]
+	"Shadow Networks" [label="{<f0> Shadow Networks |<f1> https://arxiv.org/abs/1610.05820\nhttps://arxiv.org/abs/1806.01246\n\n}" shape=record]
+	"Data Extraction" [label="{<f0> Data Extraction |<f1> https://arxiv.org/abs/1806.00400v1\n\n}" shape=record]
+	"Inversion Attacks" -> "Membership Inference"
+	"Membership Inference" -> "Shadow Networks"
+	"Inversion Attacks" -> "Data Extraction"
+	"Data Extraction" -> "GAN Networks"
+	"Data Extraction" -> "Gradient Ascent"
+	"Inversion Attacks" -> "Model Extraction"
+}

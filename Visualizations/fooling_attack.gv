@@ -1,0 +1,18 @@
+// Taxonomy of Secure Deep Learning
+digraph "Fooling Attacks" {
+	graph [size="8.5,11.5"]
+	"Fooling Attacks" [label="{<f0> Fooling Attacks |<f1> https://arxiv.org/abs/1804.00097\n\n}" shape=record]
+	"L-BFGS" [label="{<f0> L-BFGS |<f1> https://arxiv.org/abs/1312.6199\n\n}" shape=record]
+	FGSM [label="{<f0> Fast Gradient Sign \n Method (FGSM) |<f1> https://arxiv.org/abs/1412.6572\n\n}" shape=record]
+	"Black Box" [label="{<f0> Black Box/\n Transferable Attacks |<f1> https://arxiv.org/abs/1611.02770\n\n}" shape=record]
+	BIM [label="{<f0> Basic Iterative Method(BIM)\n/ Iterative FGSM(I-FGSM) |<f1> https://arxiv.org/abs/1607.02533\n\n}" shape=record]
+	PGD [label="{<f0> Projected Gradient \n Descent |<f1> https://arxiv.org/abs/1706.06083\n\n}" shape=record]
+	ATN [label="{<f0> Adversarial Transformation \n Networks/ GANs |<f1> https://arxiv.org/abs/1703.09387\n\n}" shape=record]
+	"Fooling Attacks" -> "Black Box"
+	"Fooling Attacks" -> "White Box"
+	"White Box" -> "L-BFGS"
+	"White Box" -> FGSM
+	"White Box" -> BIM
+	"White Box" -> PGD
+	"White Box" -> ATN
+}
