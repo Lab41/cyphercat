@@ -27,17 +27,13 @@ $ ipython kernel install --user --name=cyphercat_virtualenv
 Select `cyphercat_virtualenv` kernel when running Jupyter.  
 
 ### Structure
-[src_code/models.py](src_code/models.py): Pytorch model classes.    
+[Attack_baselines/](Attack_baselines/) - Baselines for various attack types.   
 
-[src_code/train.py](src_code/train.py): Generic training method for a classifier. Also contains training method for ML-Leaks attack[1].   
+[Classification_baselines/](Classification_baselines/) - Baselines for various model architectures on popular datasets.   
 
-[src_code/metrics.py](src_code/metrics.py): Functions to calculate classifier accuracy and membership inference accuracy.   
+[Utils/](Utils/) - Contains model definitions, training and evaluation scripts.   
 
-[src_code/data_downloaders.py](src_code/data_downloaders.py): Helper functions to download and preprocess datasets.   
-
-[baselines/](baselines/): Various Jupyter notebooks containing baselines for popular datasets.   
-
-[ml_leaks/](ml_leaks/): Implementations of adversary 1 and 3 from ML-Leaks[1]. 
+[Visualizations/](Visualizations/) - Scripts for generating taxonomy graphs.   
 
 ### Visualization
 
