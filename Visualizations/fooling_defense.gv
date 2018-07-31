@@ -1,0 +1,11 @@
+// Taxonomy of Secure Deep Learning
+digraph "Fooling Defense" {
+	"Fooling Defenses" -> "Gradient Masking"
+	"Gradient Masking" -> "Complex Nonlinearities"
+	"Fooling Defenses" -> "Adversarial Training"
+	"Fooling Defenses" -> Preprocessing
+	"Complex Nonlinearities" -> "RBF Neural Networks"
+	"Complex Nonlinearities" -> "SVM Layers"
+	"Adversarial Training" -> "Data Augmentation"
+	Preprocessing -> "Noise Removal"
+}
