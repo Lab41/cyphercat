@@ -1,10 +1,33 @@
 from torch import nn 
 import torch.nn.functional as F
+import numpy as np 
 
+
+def new_size_conv(size, kernel, stride=1, padding=0): 
+    return np.floor((size + 2*padding - (kernel -1)-1)/stride +1)
+    
+    
+def new_size_max_pool(size, kernel, stride=None, padding=0): 
+    if stride == None: 
+        stride = kernel
+    return np.floor((size + 2*padding - (kernel -1)-1)/stride +1)
+
+def calc_alexnet_size(size): 
+    x = new_size_conv(size, 6,3,2)
+    x = new_size_max_pool(x,3,2)
+    x = new_size_conv(x,5,1,2)
+    x = new_size_max_pool(x,3,2)
+    x = new_size_conv(x,3,1,1)
+    x = new_size_conv(x,3,1,1)
+    x = new_size_conv(x,3,1,1)
+    out = new_size_max_pool(x,2,2)
+    
+    return out
 
 class AlexNet(nn.Module):
-    def __init__(self, n_classes):
+    def __init__(self, n_classes, size=32):
         super(AlexNet, self).__init__()
+        
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=6, stride=3, padding=2),
             nn.ReLU(inplace=True),
@@ -20,9 +43,10 @@ class AlexNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
+        out_feat_size = calc_alexnet_size(size)
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            nn.Linear(256 * 1 * 1, 4096),
+            nn.Linear(256 * out_feat_size * out_feat_size, 4096),
             nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(4096, 4096),
@@ -33,18 +57,18 @@ class AlexNet(nn.Module):
     def forward(self, x):
 
         x = self.features(x)
-
-        x = x.view(x.size(0), 256 * 1 * 1)
+        x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
     
 class tiny_cnn(nn.Module): 
     def __init__(self, n_in=3, n_out=10, n_hidden=64, size=64): 
         super(tiny_cnn, self).__init__()
+       
         
         self.size = size 
         self.n_hidden = n_hidden
-        
+
         self.conv_block_1 = nn.Sequential(
             nn.Conv2d(n_in, n_hidden, kernel_size=5, stride=1, padding=2), 
             nn.BatchNorm2d(n_hidden), 
@@ -63,7 +87,8 @@ class tiny_cnn(nn.Module):
     def forward(self, x): 
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
-        x = x.view(-1, 2*self.n_hidden * (self.size//4) * (self.size//4))
+        x = x.view(x.size(0), -1)
+        #x = x.view(-1, 2*self.n_hidden * (self.size//4) * (self.size//4))
         x = self.fc(x)
         out = self.output(x)
         
@@ -105,18 +130,16 @@ class mlleaks_mlp(nn.Module):
         super(mlleaks_mlp, self).__init__()
         
         self.hidden = nn.Linear(n_in, n_hidden)
+        self.bn = nn.BatchNorm1d(n_hidden)
         self.output = nn.Linear(n_hidden, n_out)
         
     def forward(self, x): 
         x = F.sigmoid(self.hidden(x))
+        x = self.bn(x)
         out = F.sigmoid(self.output(x))
         
         return out
     
-    
-    
-        
-        
 
 class cnn(nn.Module): 
     def __init__(self, in_channels, out_channels, n_filters): 
