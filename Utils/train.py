@@ -22,7 +22,6 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
 
             outputs = net(imgs)
 
-
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -34,18 +33,20 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
 
         # evaluate performance on testset at the end of each epoch
         print("[%d/%d]" %(epoch, n_epochs))
+        print("Training:")
+        eval_target_net(net, data_loader, classes=classes)
+        print("Test:")
         eval_target_net(net, test_loader, classes=classes)
-
         #plt.plot(losses)
         #plt.show()
 
 def train_attacker(attack_net, shadow_net, shadow_train, shadow_out, optimizer, criterion, n_epochs, k):
     losses = []
 
-    shadow_net.train()
-    attack_net.eval()
+    shadow_net.eval()
+    attack_net.train()
     for epoch in range(n_epochs):
-        attack_net.train()
+       
         total = 0
         correct = 0
 
@@ -83,31 +84,31 @@ def train_attacker(attack_net, shadow_net, shadow_train, shadow_out, optimizer, 
 
 
             train_predictions = torch.squeeze(attack_net(train_top_k))
-            loss_train = criterion(train_predictions, train_lbl)
-            loss_train.backward()
-            optimizer.step()
+            #loss_train = criterion(train_predictions, train_lbl)
+            #loss_train.backward()
+            #optimizer.step()
 
 
 
-            optimizer.zero_grad()
+            #optimizer.zero_grad()
 
             out_predictions = torch.squeeze(attack_net(out_top_k))
-            loss_out = criterion(out_predictions, out_lbl)
-            loss_out.backward()
-            optimizer.step()
+            #loss_out = criterion(out_predictions, out_lbl)
+            #loss_out.backward()
+            #optimizer.step()
 
             #print("train_predictions = ",train_predictions)
             #print("out_predictions = ",out_predictions)
 
 
-            loss = (loss_train + loss_out) / 2
-            '''
+            #loss = (loss_train + loss_out) / 2
+            
             loss_train = criterion(train_predictions, train_lbl)
             loss_out = criterion(out_predictions, out_lbl)
             loss = (loss_train + loss_out) / 2
             loss.backward()
             optimizer.step()
-            '''
+            
 
 
             correct += (train_predictions>=0.5).sum().item()

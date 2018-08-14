@@ -6,6 +6,10 @@ import tarfile
 
 def get_tiny_imagenet(datasets_dir):
 
+    
+    if os.path.isdir(os.path.join(datasets_dir,'tiny-imagenet-200/val/images/')): 
+        os.rmdir(os.path.join(datasets_dir,'tiny-imagenet-200/val/images/'))
+        
     if os.path.isdir(os.path.join(datasets_dir,'tiny-imagenet-200')):
         print('Tiny ImageNet already downloaded.')
         return
@@ -49,6 +53,9 @@ def get_tiny_imagenet(datasets_dir):
         old_file_name = os.path.join(datasets_dir,'tiny-imagenet-200/val/images',line[0])
         os.rename(old_file_name, new_file_name)
 
+   
+    
+        
     print('Tiny ImageNet successfully downloaded and preprocessed.')
 
 

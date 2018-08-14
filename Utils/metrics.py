@@ -32,11 +32,14 @@ def eval_target_net(net, testloader, classes=None):
 
                     class_correct[lbl] += prediction == lbl
                     class_total[lbl] += 1
-
+                    
+    accuracy = 100*(correct/total)
     if classes is not None:
         for i in range(len(classes)):
             print('Accuracy of %s : %.2f %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-    print("\nTotal accuracy = %.2f %%\n\n" % (100*(correct/total)) )
+    print("\nAccuracy = %.2f %%\n\n" % (accuracy) )
+    
+    return accuracy
 
 def eval_attack_net(attack_net, target_net, target_train, target_out, k):
     losses = []
@@ -99,7 +102,9 @@ def eval_attack_net(attack_net, target_net, target_train, target_out, k):
     accuracy = 100 * correct / total
     precision = true_positives / (true_positives + false_positives) if true_positives + false_positives != 0 else 0
     recall = true_positives / (true_positives + false_negatives) if true_positives + false_negatives !=0 else 0
-    print("accuracy = %.2f, precision = %.2f, recall = %.2f" % (accuracy, precision, recall))
+    print("Attack performance: accuracy = %.2f, precision = %.2f, recall = %.2f" % (accuracy, precision, recall))
+    
+    
 
 
 
