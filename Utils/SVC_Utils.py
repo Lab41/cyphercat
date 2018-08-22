@@ -26,7 +26,7 @@ def train_grid(clfs, inputs, targets):
     for i in range(len(clfs)):
         x=clfs[i].fit(inputs, targets)
         fitted_clfs.append(x)
-        print('Fitted: ', i, '/', len(clfs))
+        print('Fitted: ', i+1, '/', len(clfs))
     return fitted_clfs
 
 def predict_eval(clfs, inputs, targets, training=False):
