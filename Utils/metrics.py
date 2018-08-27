@@ -70,8 +70,8 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
             traininputs=train_imgs.view(train_imgs.shape[0], -1)
             outinputs=out_imgs.view(out_imgs.shape[0], -1)
             
-            train_posteriors=torch.from_numpy(target.predict_proba(traininputs))
-            out_posteriors=torch.from_numpy(target.predict_proba(outinputs))
+            train_posteriors=torch.from_numpy(target.predict_proba(traininputs)).float()
+            out_posteriors=torch.from_numpy(target.predict_proba(outinputs)).float()
             
         else:
             train_posteriors = F.softmax(target_net(train_imgs.detach()), dim=1)
@@ -84,9 +84,10 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
 
         out_sort, _ = torch.sort(out_posteriors, descending=True)
         out_top_k = out_sort[:,:k].clone().to(device)
-
-        train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
-        out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
+        
+        if type(target) is not Pipeline:
+            train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
+            out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
 
         #print("train_top_k = ",train_top_k)
         #print("out_top_k = ",out_top_k)
@@ -121,7 +122,8 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
 
 def eval_membership_inference(target_net, target_train, target_out):
 
-    target_net.eval()
+    if type(target) is not Pipeline:
+        target_net.eval()
 
     precisions = []
     recalls = []
