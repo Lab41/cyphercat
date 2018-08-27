@@ -2,6 +2,8 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.pipeline import Pipeline
+from SVC_Utils import *
 
 # determine device to run network on (runs on gpu if available)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -41,10 +43,13 @@ def eval_target_net(net, testloader, classes=None):
     
     return accuracy
 
-def eval_attack_net(attack_net, target_net, target_train, target_out, k):
+def eval_attack_net(attack_net, target, target_train, target_out, k):
     losses = []
-
-    target_net.eval()
+    
+    if type(target) is not Pipeline:
+        target_net=target
+        target_net.eval()
+        
     attack_net.eval()
 
     total = 0
@@ -62,23 +67,35 @@ def eval_attack_net(attack_net, target_net, target_train, target_out, k):
 
         mini_batch_size = train_imgs.shape[0]
         train_imgs, out_imgs = train_imgs.to(device), out_imgs.to(device)
+        
+        #[mini_batch_size x num_classes] tensors, (0,1) probabilities for each class for each sample)
+        if type(target) is Pipeline:
+            traininputs=train_imgs.view(train_imgs.shape[0], -1)
+            outinputs=out_imgs.view(out_imgs.shape[0], -1)
+            
+            train_posteriors=torch.from_numpy(target.predict_proba(traininputs)).float()
+            out_posteriors=torch.from_numpy(target.predict_proba(outinputs)).float()
+            
+        else:
+            train_posteriors = F.softmax(target_net(train_imgs.detach()), dim=1)
+            out_posteriors = F.softmax(target_net(out_imgs.detach()), dim=1)
+        
 
-        train_posteriors = F.softmax(target_net(train_imgs.detach()), dim=1)
-        out_posteriors = F.softmax(target_net(out_imgs.detach()), dim=1)
-
+        #[k x mini_batch_size] tensors, (0,1) probabilities for top k probable classes
         train_sort, _ = torch.sort(train_posteriors, descending=True)
         train_top_k = train_sort[:,:k].clone().to(device)
 
         out_sort, _ = torch.sort(out_posteriors, descending=True)
         out_top_k = out_sort[:,:k].clone().to(device)
-
-        train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
-        out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
+        
+        if type(target) is not Pipeline:
+            train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
+            out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
 
         #print("train_top_k = ",train_top_k)
         #print("out_top_k = ",out_top_k)
 
-
+        #
         train_lbl = torch.ones(mini_batch_size).to(device)
         out_lbl = torch.zeros(mini_batch_size).to(device)
 
@@ -110,7 +127,8 @@ def eval_attack_net(attack_net, target_net, target_train, target_out, k):
 
 def eval_membership_inference(target_net, target_train, target_out):
 
-    target_net.eval()
+    if type(target) is not Pipeline:
+        target_net.eval()
 
     precisions = []
     recalls = []
