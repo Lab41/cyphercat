@@ -120,8 +120,6 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
                 loss_train.backward()
                 optimizer.step()
 
-
-
             optimizer.zero_grad()
 
             out_predictions = torch.squeeze(attack_net(out_top_k))
