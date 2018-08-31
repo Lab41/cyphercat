@@ -41,6 +41,11 @@ def eval_target_net(net, testloader, classes=None):
     print("\nTotal accuracy = %.2f %%\n\n" % (100*(correct/total)) )
 
 def eval_attack_net(attack_net, target, target_train, target_out, k):
+    """Assess accuracy, precision, and recall of attack model for in training set/out of training set classification.
+    Edited for use with SVCs."""
+    
+    in_predicts=[]
+    out_predicts=[]
     losses = []
     
     if type(target) is not Pipeline:
@@ -85,6 +90,12 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
         out_sort, _ = torch.sort(out_posteriors, descending=True)
         out_top_k = out_sort[:,:k].clone().to(device)
         
+        #Collects probabilities for predicted class.
+        for p in train_top_k:
+            in_predicts.append((p.max()).item())
+        for p in out_top_k:
+            out_predicts.append((p.max()).item())
+        
         if type(target) is not Pipeline:
             train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
             out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
@@ -92,11 +103,11 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
         #print("train_top_k = ",train_top_k)
         #print("out_top_k = ",out_top_k)
 
-        #
         train_lbl = torch.ones(mini_batch_size).to(device)
         out_lbl = torch.zeros(mini_batch_size).to(device)
+        #print(train_top_k)
 
-
+        #Takes in probabilities for top k most likely classes, outputs ~1 (in training set) or ~0 (out of training set)
         train_predictions = torch.squeeze(attack_net(train_top_k))
         out_predictions = torch.squeeze(attack_net(out_top_k))
 
@@ -108,22 +119,29 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
         false_positives += (out_predictions >= 0.5).sum().item()
         false_negatives += (train_predictions < 0.5).sum().item()
 
-
+        
         correct += (train_predictions>=0.5).sum().item()
         correct += (out_predictions<0.5).sum().item()
         total += train_predictions.size(0) + out_predictions.size(0)
-
+    
+    #Plot distributions for target predictions in training set and out of training set
+    fig, ax = plt.subplots(2,1)
+    plt.subplot(2,1,1)
+    plt.hist(in_predicts, bins='auto')
+    plt.title('In')
+    plt.subplot(2,1,2)
+    plt.hist(out_predicts, bins='auto')
+    plt.title('Out')
+    
     accuracy = 100 * correct / total
     precision = true_positives / (true_positives + false_positives) if true_positives + false_positives != 0 else 0
     recall = true_positives / (true_positives + false_negatives) if true_positives + false_negatives !=0 else 0
     print("accuracy = %.2f, precision = %.2f, recall = %.2f" % (accuracy, precision, recall))
-
-
+    
 
 def eval_membership_inference(target_net, target_train, target_out):
 
-    if type(target) is not Pipeline:
-        target_net.eval()
+    target_net.eval()
 
     precisions = []
     recalls = []
@@ -186,4 +204,3 @@ def eval_membership_inference(target_net, target_train, target_out):
     plt.xlabel("Recall")
     plt.ylabel("Precision")
     plt.show()
-

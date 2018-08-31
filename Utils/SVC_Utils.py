@@ -1,5 +1,6 @@
 import numpy as np 
 import matplotlib.pyplot as plt
+import os
 
 from sklearn import svm
 from sklearn.decomposition import PCA
@@ -11,12 +12,16 @@ import torch
 import torchvision 
 
 def load(dataloader):
+    """Loads/flattens inputs and targets for use in SVM. Returns inputs and targets."""
+    
     for data in dataloader:
         x,y=data
     x=x.view(x.shape[0],-1)
     return x,y
 
 def hp_grid(n_components, C_range, gamma_range):
+    """Creates and returns list of classifiers with grid of hyperparameters given by C_range and gamma_range."""
+    
     clfs=[]
     pca=PCA(n_components=n_components)
     scaling = MinMaxScaler(feature_range=(-1,1))
@@ -28,6 +33,8 @@ def hp_grid(n_components, C_range, gamma_range):
     return clfs
 
 def train_grid(clfs, inputs, targets):
+    """Trains classifiers in a list; returns list of trained classifiers."""
+    
     fitted_clfs=[]
     for i in range(len(clfs)):
         x=clfs[i].fit(inputs, targets)
@@ -36,6 +43,7 @@ def train_grid(clfs, inputs, targets):
     return fitted_clfs
 
 def predict_eval(clf, inputs, targets, training=False):
+    """Given a classifier and inputs, returns predictions and evaluated classifier accuracy."""
     preds=clf.predict(inputs)
     num_correct=torch.eq(torch.from_numpy(preds), targets).sum().item()
     acc=(num_correct/len(targets))*100
@@ -68,3 +76,39 @@ def save_proba(fn, pipe, inputs, targets):
                         
     pipe_prob.fit(inputs, targets)
     joblib.dump(pipe_prob, fn)
+    
+def load_svm(directory, gen=True):
+    """Returns loaded SVM saved with classification baselines. 
+        'gen' : Model with train/test accuracy ratio closest to 1.
+        'maxacc' : Model with highest test accuracy."""
+    
+    if gen:
+        clf='gen'
+    if not gen:
+        clf='maxacc'
+        
+    dataset=directory.split('/')[-1]
+    path='SVM' + dataset + '_' + clf + '_proba.pkl'
+    svm=joblib.load(os.path.join(directory, path))
+    
+    return svm
+
+def class_acc(preds, targets, classes):
+    "Returns classifier accuracy for each class." 
+
+    correct=0
+    class_correct=np.zeros(len(classes))
+    class_total=np.zeros(len(classes))
+    for j in range(len(targets)):
+        class_total[targets[j]]+=1
+        if np.argmax(preds[j])==targets[j]:
+            class_correct[targets[j]]+=1
+            correct+=1
+    
+    class_accuracies=(class_correct/class_total)*100
+    accuracy=(correct/len(targets))*100
+    
+    for i in range(len(class_accuracies)):
+        print('Accuracy of', classes[i], ': ', class_accuracies[i], '%')
+    print('Total Accuracy: ', accuracy, '%')
+
