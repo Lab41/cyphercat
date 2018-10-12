@@ -111,8 +111,8 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
         #print(train_top_k)
 
         #Takes in probabilities for top k most likely classes, outputs ~1 (in training set) or ~0 (out of training set)
-        train_predictions = torch.squeeze(attack_net(train_top_k))
-        out_predictions = torch.squeeze(attack_net(out_top_k))
+        train_predictions = F.sigmoid(torch.squeeze(attack_net(train_top_k)))
+        out_predictions = F.sigmoid(torch.squeeze(attack_net(out_top_k)))
 
         #print("train_predictions = ",train_predictions)
         #print("out_predictions = ",out_predictions)

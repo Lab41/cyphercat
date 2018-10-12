@@ -92,7 +92,6 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
                 #for p in out_preds:
                  #   out_predicts.append(p.max())
                             
-            optimizer.zero_grad()
 
             train_sort, _ = torch.sort(train_posteriors, descending=True)
             train_top_k = train_sort[:,:k].clone().to(device)
@@ -106,52 +105,27 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
             train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
             out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
 
-            #print("train_top_k = ",train_top_k)
-            #print("out_top_k = ",out_top_k)
-
 
             train_lbl = torch.ones(mini_batch_size).to(device)
             out_lbl = torch.zeros(mini_batch_size).to(device)
 
+            optimizer.zero_grad()
 
             train_predictions = torch.squeeze(attack_net(train_top_k))
-
-            loss_train = criterion(train_predictions, train_lbl)
-            
-            if type(shadow) is not Pipeline:
-                loss_train.backward()
-                optimizer.step()
-
-            #optimizer.zero_grad()
-
             out_predictions = torch.squeeze(attack_net(out_top_k))
 
-            loss_out = criterion(out_predictions, out_lbl)
-            
-            if type(shadow) is not Pipeline:
-                loss_out.backward()
-                optimizer.step()
-
-
-            #print("train_predictions = ",train_predictions)
-            #print("out_predictions = ",out_predictions)
-
-            loss = (loss_train + loss_out) / 2
-            
-            if type(shadow) is Pipeline:
-                loss.backward()
-                optimizer.step()
-            
             loss_train = criterion(train_predictions, train_lbl)
             loss_out = criterion(out_predictions, out_lbl)
+
             loss = (loss_train + loss_out) / 2
-            loss.backward()
-            optimizer.step()
             
+            if type(shadow) is not Pipeline:
+                loss.backward()
+                optimizer.step()
 
-
-            correct += (train_predictions>=0.5).sum().item()
-            correct += (out_predictions<0.5).sum().item()
+            
+            correct += (F.sigmoid(train_predictions)>=0.5).sum().item()
+            correct += (F.sigmoid(out_predictions)<0.5).sum().item()
             total += train_predictions.size(0) + out_predictions.size(0)
 
 
