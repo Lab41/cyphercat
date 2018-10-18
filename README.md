@@ -4,9 +4,9 @@ Here are tools and software you can use to replicate our work.
 
 ## Research
 
-We are focusing on two different areas of research, aiming to contribute to the CleverHans repository. These areas are:
+We are focusing on two different areas of research:
 - *Model inversion* attack is the process of either the model parameters or the data used to train the data.
-- *Model Fooling/Evasion* attacks are related to tricking a model into performing considerably worse on basic examples
+- *Adversarial Attacks and Defense*: an adversary makes small perturbations to an input image which can cause a classifier to produce the wrong label.
 
 The below is created by our visualization software. The actual PDF has links to the arxiv papers. For inverting neural networks, the following wording is of relevance:
 [![Model Inversion](Visualizations/Example-Invert.png)](Visualizations/inversion_defense.gv.pdf)
