@@ -1,4 +1,4 @@
-![Logo](Visualizations/cyphercat_logo_smll.png =300x)
+![Logo](Visualizations/cyphertcat_tiny.png)
 # CypherCat
 
 Here are tools and software you can use to replicate our work.
