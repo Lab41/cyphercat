@@ -1,4 +1,4 @@
-![](Visualizations/cyphercat_logo3.png)
+![](Visualizations/cyphercat_logo5.png)
 # CypherCat
 
 Here are tools and software you can use to replicate our work.
