@@ -1,5 +1,4 @@
 ![](Visualizations/cyphercat_logo3.png)
-<img align="center" src="Visualizations/cyphercat_logo3.png"><br>
 # CypherCat
 
 Here are tools and software you can use to replicate our work.
