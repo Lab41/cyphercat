@@ -1,4 +1,4 @@
-# CypherCat
+[![Logo](Visualizations/Cyphercat_full-color-logo.png)] # CypherCat
 
 Here are tools and software you can use to replicate our work.
 
@@ -15,7 +15,7 @@ For fooling neural networks, this is the following papers and relevant work:
 
 ## Environment and Software
 
-### Setup 
+### Setup
 ```console
 $ git clone https://github.com/Lab41/cyphercat.git
 $ cd cyphercat
@@ -44,6 +44,5 @@ brew install graphviz
 pip install graphviz
 ```
 
-## References 
+## References
 1. Salem, Ahmed, et al. "ML-Leaks: Model and Data Independent Membership Inference Attacks and Defenses on Machine Learning Models." arXiv preprint arXiv:1806.01246 (2018). [Link](https://arxiv.org/abs/1806.01246)  
-
