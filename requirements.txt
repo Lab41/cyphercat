@@ -11,6 +11,7 @@ pyparsing==2.2.0
 python-dateutil==2.7.3
 pytz==2018.5
 PyWavelets==0.5.2
+requests==2.20.0
 scikit-image==0.14.0
 scipy==1.1.0
 six==1.11.0

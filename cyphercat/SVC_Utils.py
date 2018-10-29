@@ -11,13 +11,6 @@ from sklearn.externals import joblib
 import torch
 import torchvision 
 
-
-# Dictionary printer
-def print_dict(dct):
-    for key, value in sorted(dct.items(), reverse=True):
-        print("{}: {}".format(key, value))
-
-
 def load(dataloader):
     """Loads/flattens inputs and targets for use in SVM. Returns inputs and targets."""
     
