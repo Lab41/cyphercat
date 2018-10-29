@@ -5,6 +5,8 @@
 *.pyc
 *.zip
 Datasets/*
+scripts/configs/*
+!/scripts/configs/config.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
