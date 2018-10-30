@@ -27,6 +27,11 @@ def keys_to_string(struct=None):
     kstr = ', '.join([k for k in struct.keys()])
     return kstr
 
+# Color mode dictionary for specifying
+# color_mode in data generators
+color_mode_dict = {1 : 'grayscale',
+                   3 : 'rgb'}
+
 
 def load(dataloader):
     """Loads/flattens inputs and targets for use in SVM. Returns inputs and targets."""

@@ -3,7 +3,7 @@ from __future__ import print_function
 import os
 import sys
 import yaml
-from .utils import set_to_string, keys_to_string
+from .utils import set_to_string, keys_to_string, color_mode_dict
 
 
 
@@ -59,7 +59,7 @@ class DataStruct(object):
    
     # Mandatory fields for 'data' yaml config file keyword
     reqs = set(["name", "datapath", "datatype"])
-    image_reqs = set(["classes", "height", "width", "channels"])
+    image_reqs = set(["nclasses", "height", "width", "channels"])
     audio_reqs = set(["length", "seconds"])
     data_reqs = [image_reqs, audio_reqs]
 
@@ -98,18 +98,19 @@ class DataStruct(object):
 
         # Image data specific 
         if dtype_ind == 0: 
-            self.height    = int(dataset.get('height'))
-            self.width     = int(dataset.get('width'))
-            self.channels  = int(dataset.get('channels'))
-            self.classes   = int(dataset.get('classes'))
-            self.labels    = dataset.get('labels', self.default_labels()).replace(" ", "").split(',')
+            self.height     = int(dataset.get('height'))
+            self.width      = int(dataset.get('width'))
+            self.channels   = int(dataset.get('channels'))
+            self.n_classes    = int(dataset.get('nclasses'))
+            self.color_mode = color_mode_dict[self.channels]
+            self.labels     = dataset.get('labels', self.default_labels()).replace(" ", "").split(',')
 
         # Audio data specific 
         elif dtype_ind == 1:
-            self.length    = float(dataset.get('length'))
-            self.seconds   = float(dataset.get('seconds'))
+            self.length  = float(dataset.get('length'))
+            self.seconds = float(dataset.get('seconds'))
         
     # Consecutive integers default data labels 
     def default_labels(self):
-        return str(list(range(0, self.classes))).strip('[]')
+        return str(list(range(0, self.n_classes))).strip('[]')
 

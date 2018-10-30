@@ -4,11 +4,11 @@ data:
     datapath: Datasets
     datatype: image
     url: http://cs231n.stanford.edu/tiny-imagenet-200.zip
-    classes: 200
+    nclasses: 200
     height: 28
     width: 28
     channels: 3
-    #labels: DEFAULT -> range(0,classes)
+    #labels: DEFAULT -> range(0,nclasses)
 
 models_to_run: model1, model2
 
