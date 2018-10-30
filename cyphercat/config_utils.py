@@ -3,7 +3,7 @@ from __future__ import print_function
 import os
 import sys
 import yaml
-from utils import set_to_string, keys_to_string
+from .utils import set_to_string, keys_to_string
 
 
 

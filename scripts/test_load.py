@@ -11,7 +11,6 @@ try:
 
     from cyphercat.config_utils import Configurator, DataStruct
     from cyphercat.load_data import prep_data
-    #, get_lfw, get_tiny_imagenet
 
 
 except ImportError as e:
