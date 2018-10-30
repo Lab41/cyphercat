@@ -29,18 +29,18 @@ def prep_data(data_struct=None):
 
     # If dataset already downloaded an unpacked, do nothing
     if os.path.isdir(out_dir):
-        print('{} already downloaded and unpacked.'.format(data_name))
+        print('{} already downloaded, unpacked and processed.'.format(data_name))
         return
 
     # If dataset directory doesn't exist continue
     # If dataset zipfile doesn't exist, download it
     if not os.path.isfile(file_name):
-        print('Downloading {} to {}'.format(data_name, datasets_dir))
+        print('Downloading {} file {}...'.format(data_name, file_bname))
         resp = requests.get(url, stream=True)
         with open(file_name, 'wb') as f:
             shutil.copyfileobj(resp.raw, f)
 
-    print('{} downloaded. Unpacking...'.format(data_name))
+    print('{} downloaded. Unpacking to {}...'.format(data_name, datasets_dir))
     if 'zip' in file_ext:
         # Unpack zipfile
         with zipfile.ZipFile(file_name) as zf:
@@ -81,7 +81,6 @@ def prep_data(data_struct=None):
             old_file_name = os.path.join(out_dir, 'val/images',line[0])
             os.rename(old_file_name, new_file_name)
 
-        print('Tiny ImageNet successfully downloaded and preprocessed.')
 
     # For LFW
     if 'lfw' in name.lower():
@@ -105,7 +104,8 @@ def prep_data(data_struct=None):
             if len(imgs) >= num_per_class:
                 shutil.copytree(os.path.join(lfw_dir, p), os.path.join(new_dir, p))
 
-        print('LFW successfully downloaded and preprocessed.')
+    print('{} successfully downloaded and preprocessed.'.format(data_name))
+
 
 # OBSOLETE - WILL DELETE UPON FULL TESTING
 
