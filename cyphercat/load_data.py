@@ -6,7 +6,7 @@ import zipfile
 import tarfile
 
 
-# Color mode dictionary for specifying 
+# Color mode dictionary for specifying
 # color_mode in data generators
 color_mode_dict = {1 : 'grayscale',
                    3 : 'rgb'}
