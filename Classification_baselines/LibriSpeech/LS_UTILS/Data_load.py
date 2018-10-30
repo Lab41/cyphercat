@@ -1,5 +1,14 @@
 import os 
 from os import path, makedirs
+
+# For LibriSpeech download
+import codecs
+import fnmatch
+import requests
+import subprocess
+import tarfile
+import unicodedata
+
 from tensorflow.python.platform import gfile
 
 # Processing

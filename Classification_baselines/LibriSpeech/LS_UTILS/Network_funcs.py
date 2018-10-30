@@ -56,7 +56,7 @@ def getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,n
 def getDataSpeakers(division,speakers,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy):
   dataSpeakers = []
   for speaker in speakers:
-    print("Getting data for speaker: "+speaker)
+    #print("Getting data for speaker: "+speaker)
     dataSpeakers.append(getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy))
 
   N = np.sum([np.shape(s)[0] for s in dataSpeakers])
