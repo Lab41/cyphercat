@@ -17,6 +17,16 @@ def print_dict(dct):
     for key, value in sorted(dct.items(), reverse=True):
         print("{}: {}".format(key, value))
 
+# Set string printer
+def set_to_string(iset=None):
+    sstr = ', '.join([str(i) for i in iset])
+    return sstr
+
+# Dictionary string key-printer
+def keys_to_string(struct=None):
+    kstr = ', '.join([k for k in struct.keys()])
+    return kstr
+
 
 def load(dataloader):
     """Loads/flattens inputs and targets for use in SVM. Returns inputs and targets."""

@@ -3,6 +3,9 @@ from __future__ import print_function
 import os
 import sys
 import yaml
+from utils import set_to_string, keys_to_string
+
+
 
 
 # Ensure basic, necessary fields are in the config file
@@ -45,50 +48,68 @@ class Configurator(object):
 
 
 
+
+
 class DataStruct(object):
     """
     Expected directory structure
-    for accessing image data sets
+    for accessing image data sets.
+    Generalization to data & audio forthcoming.
     """
-    
-    reqs = set(["name", "datapath", "classes", "height", "width", "channels"])
+   
+    # Mandatory fields for 'data' yaml config file keyword
+    reqs = set(["name", "datapath", "datatype"])
+    image_reqs = set(["classes", "height", "width", "channels"])
+    audio_reqs = set(["length", "seconds"])
+    data_reqs = [image_reqs, audio_reqs]
+
+    # Data types dictionary
+    data_type_dict = {"image" : 0,
+                      "audio" : 1}
+
     
     def __init__(self, dataset=None):
 
         self.dataset = dataset
         
         if not check_fields(cfg=dataset, tset=self.reqs):
-            raise AssertionError("Some subfields under 'data' field not found. "
-                                 "Required fields: {}".format(self.reqs))
+            raise AssertionError("Some subfields under 'data' field not found.\n"
+                                 "  Required fields: {}\nExiting...\n".format(set_to_string(self.reqs)))
 
         self.name      = dataset.get('name')
         self.data_path = dataset.get('datapath')
+        self.data_type = dataset.get('datatype').lower()
         self.url       = dataset.get('url')
-        self.height    = int(dataset.get('height'))
-        self.width     = int(dataset.get('width'))
-        self.channels  = int(dataset.get('channels'))
-        self.classes   = int(dataset.get('classes'))
-        self.labels    = dataset.get('labels', self.default_labels()).replace(" ", "").split(',')
+      
+        # Ensure data type is permitted
+        if (self.data_type not in self.data_type_dict):
+            print("\nUnknown data type '{}'!\n  Allowed data types: {}\nExiting...\n".format(self.data_type,
+                                                                                             keys_to_string(self.data_type_dict)))
+            sys.exit()
 
-        #self.train_dir = os.path.join(head_dir, 'training')
-        #self.test_dir  = os.path.join(head_dir, 'testing')
-        #self.check_dirs()
+        # Get index from dictionary to access specific data reqs
+        dtype_ind = self.data_type_dict[self.data_type]
 
+        # Check subfields
+        if not check_fields(cfg=dataset, tset=self.data_reqs[dtype_ind]):
+            raise AssertionError("\nSome subfields under 'data' field not found.\n "
+                                 "  Required fields for {} data: {}\nExiting...\n".format(self.data_type,
+                                                                                          set_to_string(self.data_reqs[dtype_ind])))
+
+        # Image data specific 
+        if dtype_ind == 0: 
+            self.height    = int(dataset.get('height'))
+            self.width     = int(dataset.get('width'))
+            self.channels  = int(dataset.get('channels'))
+            self.classes   = int(dataset.get('classes'))
+            self.labels    = dataset.get('labels', self.default_labels()).replace(" ", "").split(',')
+
+        # Audio data specific 
+        elif dtype_ind == 1:
+            self.length    = float(dataset.get('length'))
+            self.seconds   = float(dataset.get('seconds'))
+        
+    # Consecutive integers default data labels 
     def default_labels(self):
         return str(list(range(0, self.classes))).strip('[]')
 
-    def check_dirs(self):
-        if not os.path.exists(self.head_dir):
-            print('No such directory {} '
-            'does not exist!'.format(self.head_dir), file=sys.stderr)
-            sys.exit()
-
-        if not os.path.exists(self.train_dir):
-            print('No such directory {} '
-            'does not exist!'.format(self.train_dir), file=sys.stderr)
-            sys.exit()
-
-        if not os.path.exists(self.test_dir):
-            print('No such directory {} '
-            'does not exist!'.format(self.test_dir), file=sys.stderr)
-            sys.exit()

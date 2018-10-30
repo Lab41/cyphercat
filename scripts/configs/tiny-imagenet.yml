@@ -1,10 +1,10 @@
 
 data:
-    name: cifar-10 
+    name: tiny-imagenet-200
     datapath: Datasets
     datatype: image
-    url: https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
-    classes: 10
+    url: http://cs231n.stanford.edu/tiny-imagenet-200.zip
+    classes: 200
     height: 28
     width: 28
     channels: 3
