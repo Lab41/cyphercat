@@ -1,30 +1,27 @@
 import os
 import io
+import sys
 import shutil
 import requests
 import zipfile
 import tarfile
 
 
-## Color mode dictionary for specifying
-## color_mode in data generators
-#color_mode_dict = {1 : 'grayscale',
-#                   3 : 'rgb'}
+def downloader(url='', dest_file=''):
+    """
+    Function to download file from 
+    url to specified destination file.
+    """
+    resp = requests.get(url, stream=True)
+    with open(dest_file, 'wb') as f:
+        shutil.copyfileobj(resp.raw, f)
 
 
 def prep_data(data_struct=None):
 
-    datasets_dir = data_struct.data_path
     data_name = data_struct.name
-    url = data_struct.url
-
-    file_bname = os.path.basename(url)
-    file_ext = os.path.splitext(file_bname)[1]
-    file_name = os.path.join(datasets_dir, file_bname) #os.path.join(datasets_dir, 'tiny-imagenet-200.zip')
-
-    #if os.path.isdir(os.path.join(datasets_dir, data_name, 'val/images/')):
-    #    os.rmdir(os.path.join(datasets_dir, data_name, 'val/images/'))
-
+    datasets_dir = data_struct.data_path
+    
     out_dir = os.path.join(datasets_dir, data_name)
 
     # If dataset already downloaded an unpacked, do nothing
@@ -32,26 +29,40 @@ def prep_data(data_struct=None):
         print('{} already downloaded, unpacked and processed.'.format(data_name))
         return
 
-    # If dataset directory doesn't exist continue
-    # If dataset zipfile doesn't exist, download it
-    if not os.path.isfile(file_name):
+    # Need defined url for dataset
+    if data_struct.url == '':
+        print('The url to download the dataset or path to the compressed data file was not provided.')
+        print('Please provide a url, or download and unpack the dataset.\n Exiting...')
+        sys.exit()
+
+    url = data_struct.url
+    file_bname = os.path.basename(url)
+    file_ext = os.path.splitext(file_bname)[1]
+    compressed_file_name = os.path.join(datasets_dir, file_bname)
+
+    # Check if url is really path to local file
+    if os.path.isfile(url):
+        compressed_file_name = url
+    # Else if dataset zipfile doesn't exist, download it from url
+    elif not os.path.isfile(compressed_file_name):
         print('Downloading {} file {}...'.format(data_name, file_bname))
-        resp = requests.get(url, stream=True)
-        with open(file_name, 'wb') as f:
-            shutil.copyfileobj(resp.raw, f)
+        downloader(url, compressed_file_name)
 
     print('{} downloaded. Unpacking to {}...'.format(data_name, datasets_dir))
     if 'zip' in file_ext:
         # Unpack zipfile
-        with zipfile.ZipFile(file_name) as zf:
+        with zipfile.ZipFile(compressed_file_name) as zf:
             zf.extractall(datasets_dir)
     elif 'gz' in file_ext:
         # Unpack gzipfile
-        with tarfile.open(file_name) as tar:
+        with tarfile.open(compressed_file_name) as tar:
             tar.extractall(path=out_dir)
+    else:
+        print('File extension {} not recognized for unpacking.\nExiting...')
+        sys.exit()
 
     # For tiny-imagenet-200
-    if 'tiny' in name.lower():
+    if 'tiny' in data_name.lower():
 
         # Structure the training, validation, and test data directories
         train_dir = os.path.join(out_dir, 'train')
@@ -83,9 +94,7 @@ def prep_data(data_struct=None):
 
 
     # For LFW
-    if 'lfw' in name.lower():
-        tar = tarfile.open(os.path.join(datasets_dir,'lfw.tgz'))
-        tar.extractall(path=os.path.join(datasets_dir,'lfw/'))
+    if 'lfw' in data_name.lower():
 
         os.rename(os.path.join(out_dir, 'lfw/'), os.path.join(out_dir, 'lfw_original/'))
 

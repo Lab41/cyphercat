@@ -79,7 +79,7 @@ class DataStruct(object):
         self.name      = dataset.get('name')
         self.data_path = dataset.get('datapath')
         self.data_type = dataset.get('datatype').lower()
-        self.url       = dataset.get('url')
+        self.url       = dataset.get('url', '')
       
         # Ensure data type is permitted
         if (self.data_type not in self.data_type_dict):
