@@ -30,7 +30,7 @@ Everything that must be done to make it happen!
 - [x] pas fini (incomplete) 
 - [ ] fini! (complete)
 
-### Attaacks
+### Attacks
 - [ ] implement attacks
 - [ ] compare attack performance
 - [x] pas fini (incomplete) 

@@ -13,6 +13,10 @@ def downloader(data_struct=None):
     """
     Function to download file from 
     url to specified destination file.
+    If file already exists, or the url
+    is a path to a valid local file,
+    then fn simply returns path to 
+    compresseed dataset file.
     
     Parameters
     ----------
@@ -57,6 +61,10 @@ def unpacker(compressed_file_name='', out_directory=''):
     """
     Function to extract compressed
     dataset file to specified directory.
+    Currently supports extraction of
+        - zip
+        - gz
+    file types.
 
     Parameters
     ----------
