@@ -91,40 +91,19 @@ def unpacker(compressed_file_name='', out_directory=''):
         sys.exit()
 
 
-
-def prep_data(dataset_config=None):
+def custom_preprocessor(out_dir=''):
     """
-    Function to prepare data set
-    based on input configuration
+    Custom preprocessing functions for
+    specific data sets.
 
     Parameters
     ----------
-    dataset_config  : dictionary
-                      parameters from 'data' field
-                      of global yaml configuration file
+    out_dir   : string
+                directory of unpacked data set
     """
-    
 
-    data_struct  = DataStruct(dataset_config)
-
-    data_name    = data_struct.name
-    datasets_dir = data_struct.data_path
-
-    # Define output directory for data set
-    out_dir      = os.path.join(datasets_dir, data_name)
-
-    # If dataset already downloaded an unpacked, do nothing
-    if os.path.isdir(out_dir):
-        print('{} already downloaded, unpacked and processed.'.format(data_name))
-        return
-
-    # Check if download is required
-    compressed_file_name = downloader(data_struct)
-
-    # Unpack compressed dataset file
-    unpacker(compressed_file_name, out_dir)
-
-    # Custom preprocessing steps for data sets
+    # Get name of data set from output directory
+    data_name = os.path.split(out_dir)[1]
 
     # For tiny-imagenet-200
     if 'tiny' in data_name.lower():
@@ -179,4 +158,41 @@ def prep_data(dataset_config=None):
                 shutil.copytree(os.path.join(lfw_dir, p), os.path.join(new_dir, p))
 
     print('{} successfully downloaded and preprocessed.'.format(data_name))
+
+
+
+def prep_data(dataset_config=None):
+    """
+    Function to prepare data set
+    based on input configuration
+
+    Parameters
+    ----------
+    dataset_config  : dictionary
+                      parameters from 'data' field
+                      of global yaml configuration file
+    """
+    
+
+    data_struct  = DataStruct(dataset_config)
+
+    data_name    = data_struct.name
+    datasets_dir = data_struct.data_path
+
+    # Define output directory for data set
+    out_dir      = os.path.join(datasets_dir, data_name)
+
+    # If dataset already downloaded an unpacked, do nothing
+    if os.path.isdir(out_dir):
+        print('{} already downloaded, unpacked and processed.'.format(data_name))
+        return
+
+    # Check if download is required
+    compressed_file_name = downloader(data_struct)
+
+    # Unpack compressed dataset file
+    unpacker(compressed_file_name, out_dir)
+
+    # Custom preprocessing steps for data sets
+    custom_preprocessor(out_dir)
 
