@@ -9,7 +9,7 @@ import tarfile
 from .config_utils import DataStruct
 
 
-def downloader(data_struct=None):
+def downloader(datasets_dir='', url=''):
     """
     Function to download file from 
     url to specified destination file.
@@ -20,8 +20,11 @@ def downloader(data_struct=None):
     
     Parameters
     ----------
-    data_struct  : DataStruct
-                   data configuration structure
+    datasets_dir : string
+                   directory used for saving datasets
+    url          : string
+                   url or path to existing compressed
+                   dataset file
 
     Returns
     -------
@@ -30,15 +33,11 @@ def downloader(data_struct=None):
     """
     
     # Need defined url for dataset
-    if data_struct.url == '':
+    if url == '':
         print('The url to download the dataset or path to the compressed data file was not provided.')
         print('Please provide a url, or download and unpack the dataset.\n Exiting...')
         sys.exit()
 
-    data_name    = data_struct.name
-    datasets_dir = data_struct.data_path
-
-    url        = data_struct.url
     file_bname = os.path.basename(url)
     dest_file  = os.path.join(datasets_dir, file_bname)
     
@@ -48,7 +47,7 @@ def downloader(data_struct=None):
 
     # Else if dataset zipfile doesn't exist, download it from url
     if not os.path.isfile(dest_file):
-        print('Downloading {} file {}...'.format(data_name, file_bname))
+        print('Downloading file {}...'.format(file_bname))
         resp = requests.get(url, stream=True)
         with open(dest_file, 'wb') as f:
             shutil.copyfileobj(resp.raw, f)
@@ -56,6 +55,7 @@ def downloader(data_struct=None):
         print('Compressed dataset file found, no need to download.')
 
     return dest_file
+
 
 def unpacker(compressed_file_name='', out_directory=''):
     """
@@ -188,7 +188,8 @@ def prep_data(dataset_config=None):
         return
 
     # Check if download is required
-    compressed_file_name = downloader(data_struct)
+    data_url = data_struct.url
+    compressed_file_name = downloader(datasets_dir, data_url)
 
     # Unpack compressed dataset file
     unpacker(compressed_file_name, out_dir)
