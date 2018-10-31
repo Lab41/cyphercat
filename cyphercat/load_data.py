@@ -6,66 +6,123 @@ import requests
 import zipfile
 import tarfile
 
+from .config_utils import DataStruct
 
-def downloader(url='', dest_file=''):
+
+def downloader(data_struct=None):
     """
     Function to download file from 
     url to specified destination file.
-    """
-    resp = requests.get(url, stream=True)
-    with open(dest_file, 'wb') as f:
-        shutil.copyfileobj(resp.raw, f)
-
-
-def prep_data(data_struct=None):
-
-    data_name = data_struct.name
-    datasets_dir = data_struct.data_path
     
-    out_dir = os.path.join(datasets_dir, data_name)
+    Parameters
+    ----------
+    data_struct  : DataStruct
+                   data configuration structure
 
-    # If dataset already downloaded an unpacked, do nothing
-    if os.path.isdir(out_dir):
-        print('{} already downloaded, unpacked and processed.'.format(data_name))
-        return
-
+    Returns
+    -------
+    dest_file    : string
+                   path to compressed file
+    """
+    
     # Need defined url for dataset
     if data_struct.url == '':
         print('The url to download the dataset or path to the compressed data file was not provided.')
         print('Please provide a url, or download and unpack the dataset.\n Exiting...')
         sys.exit()
 
-    url = data_struct.url
-    file_bname = os.path.basename(url)
-    file_ext = os.path.splitext(file_bname)[1]
-    compressed_file_name = os.path.join(datasets_dir, file_bname)
+    data_name    = data_struct.name
+    datasets_dir = data_struct.data_path
 
+    url        = data_struct.url
+    file_bname = os.path.basename(url)
+    dest_file  = os.path.join(datasets_dir, file_bname)
+    
     # Check if url is really path to local file
     if os.path.isfile(url):
-        compressed_file_name = url
-    # Else if dataset zipfile doesn't exist, download it from url
-    elif not os.path.isfile(compressed_file_name):
-        print('Downloading {} file {}...'.format(data_name, file_bname))
-        downloader(url, compressed_file_name)
+        dest_file = url
 
-    print('{} downloaded. Unpacking to {}...'.format(data_name, datasets_dir))
+    # Else if dataset zipfile doesn't exist, download it from url
+    if not os.path.isfile(dest_file):
+        print('Downloading {} file {}...'.format(data_name, file_bname))
+        resp = requests.get(url, stream=True)
+        with open(dest_file, 'wb') as f:
+            shutil.copyfileobj(resp.raw, f)
+    else:
+        print('Compressed dataset file found, no need to download.')
+
+    return dest_file
+
+def unpacker(compressed_file_name='', out_directory=''):
+    """
+    Function to extract compressed
+    dataset file to specified directory.
+
+    Parameters
+    ----------
+    compressed_file_name  : string
+                            dataset file to unpack
+    out_directory         : string
+                            output directory
+    """
+
+    print('Unpacking {} to {}...'.format(compressed_file_name, out_directory))
+
+    file_ext = os.path.splitext(compressed_file_name)[1]
+
+    # Unpack zipfile
     if 'zip' in file_ext:
-        # Unpack zipfile
         with zipfile.ZipFile(compressed_file_name) as zf:
-            zf.extractall(datasets_dir)
+            zf.extractall(os.path.split(out_directory)[0])
+    # Unpack gzipfile
     elif 'gz' in file_ext:
-        # Unpack gzipfile
         with tarfile.open(compressed_file_name) as tar:
-            tar.extractall(path=out_dir)
+            tar.extractall(path=out_directory)
     else:
         print('File extension {} not recognized for unpacking.\nExiting...')
         sys.exit()
+
+
+
+def prep_data(dataset_config=None):
+    """
+    Function to prepare data set
+    based on input configuration
+
+    Parameters
+    ----------
+    dataset_config  : dictionary
+                      parameters from 'data' field
+                      of global yaml configuration file
+    """
+    
+
+    data_struct  = DataStruct(dataset_config)
+
+    data_name    = data_struct.name
+    datasets_dir = data_struct.data_path
+
+    # Define output directory for data set
+    out_dir      = os.path.join(datasets_dir, data_name)
+
+    # If dataset already downloaded an unpacked, do nothing
+    if os.path.isdir(out_dir):
+        print('{} already downloaded, unpacked and processed.'.format(data_name))
+        return
+
+    # Check if download is required
+    compressed_file_name = downloader(data_struct)
+
+    # Unpack compressed dataset file
+    unpacker(compressed_file_name, out_dir)
+
+    # Custom preprocessing steps for data sets
 
     # For tiny-imagenet-200
     if 'tiny' in data_name.lower():
 
         # Structure the training, validation, and test data directories
-        train_dir = os.path.join(out_dir, 'train')
+        train_dir  = os.path.join(out_dir, 'train')
         class_dirs = [os.path.join(train_dir, o) for o in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, o))]
 
         for c in class_dirs:
@@ -98,7 +155,7 @@ def prep_data(data_struct=None):
 
         os.rename(os.path.join(out_dir, 'lfw/'), os.path.join(out_dir, 'lfw_original/'))
 
-        lfw_dir = os.path.join(out_dir, 'lfw_original/')
+        lfw_dir    = os.path.join(out_dir, 'lfw_original/')
         people_dir = os.listdir(lfw_dir)
 
         num_per_class = 20

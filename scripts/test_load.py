@@ -42,12 +42,13 @@ def main():
     # Get configuration file
     configr = Configurator(args.configfile)
 
-    # Directory structures for data and model saving
-    data_struct = DataStruct(configr.dataset)
-    datapath = data_struct.data_path
-    print(datapath)
+    # Get dataset configuration 
+    dataset_config = configr.dataset
 
-    prep_data(data_struct)
+    # Directory structures for data and model saving
+    data_struct = DataStruct(dataset_config)
+
+    prep_data(dataset_config)
 
 if __name__ == "__main__":
     main()
