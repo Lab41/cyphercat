@@ -1,6 +1,7 @@
 import os
 import numpy as np
-import soundfile as sf            # To read .flac files.   
+import soundfile as sf            # To read .flac files. 
+import librosa
 
 # For the neural network.
 # Install PyBrain, e.g. pip install pybrain.
@@ -18,7 +19,10 @@ from pybrain.structure import SoftmaxLayer
 from pybrain.structure import TanhLayer
 
 # Read data from a folder into a list.
-def getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy):
+def getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy,transform):
+    #deltaT is the duration of the audio frame. Lim1 & Lim2 are the frequency ranges; each frequency is a feature. 
+    #Noisy sets the limit for pauses in speech 
+    #Division is the data, i.e. Train, CV, test
   fname = datapath+division+speaker  
   subPaths = [v+"/" for v in os.listdir(fname) if v[0] != "."]
   dataFiles = []
@@ -39,8 +43,13 @@ def getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,n
     numChunks = int(duration/deltaT)
     sizeChunk = int(len(data)/numChunks)
     for lp in range(0,numChunks):    
-      chunk = data[lp*sizeChunk:(lp+1)*sizeChunk]      # get a chunk of speech.     
-      chunksF.append(np.abs(np.fft.rfft(chunk))[lim1:lim2])  # take the FFT.
+      chunk = data[lp*sizeChunk:(lp+1)*sizeChunk]      # get a chunk of speech.  
+      # np.fft.rfft computes the one-dimensional discrete Fourier Transform of the data
+      if transform == 'Fourier':
+          chunksF.append(np.abs(np.fft.rfft(chunk))[lim1:lim2])  # take the FFT.
+      elif transform == 'Mel':
+          S = librosa.feature.melspectrogram(y=chunk, sr=samplerate, n_mels=128, fmax=lim2)
+          chunksF.append(np.abs(S))
 
     # Delete quiet parts of speech, i.e. pauses.
     # Most of the power is in the bottom 50% of frequencies.
@@ -53,11 +62,11 @@ def getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,n
   return dataF
 
 # Return data for all speakers.
-def getDataSpeakers(division,speakers,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy):
+def getDataSpeakers(division,speakers,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy,transform):
   dataSpeakers = []
   for speaker in speakers:
     #print("Getting data for speaker: "+speaker)
-    dataSpeakers.append(getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy))
+    dataSpeakers.append(getData(division,speaker,datapath,audioType,durationCheck,deltaT,lim1,lim2,numFeatures,noisy, transform))
 
   N = np.sum([np.shape(s)[0] for s in dataSpeakers])
   tX = np.mat(np.zeros((N,numFeatures)))
