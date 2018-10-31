@@ -1,36 +1,17 @@
+from __future__ import print_function
+
+import os
 import numpy as np 
 import matplotlib.pyplot as plt
-import os
+
+import torch
+import torchvision 
 
 from sklearn import svm
 from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.externals import joblib
-
-import torch
-import torchvision 
-
-
-# Dictionary printer
-def print_dict(dct):
-    for key, value in sorted(dct.items(), reverse=True):
-        print("{}: {}".format(key, value))
-
-# Set string printer
-def set_to_string(iset=None):
-    sstr = ', '.join([str(i) for i in iset])
-    return sstr
-
-# Dictionary string key-printer
-def keys_to_string(struct=None):
-    kstr = ', '.join([k for k in struct.keys()])
-    return kstr
-
-# Color mode dictionary for specifying
-# color_mode in data generators
-color_mode_dict = {1 : 'grayscale',
-                   3 : 'rgb'}
 
 
 def load(dataloader):
@@ -40,6 +21,7 @@ def load(dataloader):
         x,y=data
     x=x.view(x.shape[0],-1)
     return x,y
+
 
 def hp_grid(n_components, C_range, gamma_range):
     """Creates and returns list of classifiers with grid of hyperparameters given by C_range and gamma_range."""
@@ -54,6 +36,7 @@ def hp_grid(n_components, C_range, gamma_range):
             clfs.append(clf)
     return clfs
 
+
 def train_grid(clfs, inputs, targets):
     """Trains classifiers in a list; returns list of trained classifiers."""
     
@@ -63,6 +46,7 @@ def train_grid(clfs, inputs, targets):
         fitted_clfs.append(x)
         print('Fitted: ', i+1, '/', len(clfs))
     return fitted_clfs
+
 
 def predict_eval(clf, inputs, targets, training=False):
     """Given a classifier and inputs, returns predictions and evaluated classifier accuracy."""
@@ -76,6 +60,7 @@ def predict_eval(clf, inputs, targets, training=False):
         print('Testing Accuracy: ', acc)
     return preds, acc
 
+
 def maxacc_gen(test_accs, train_accs, clfs):
     """Finds and returns model with highest test accuracy and model with train/test accuracy ratio closest to 1."""
     
@@ -86,6 +71,7 @@ def maxacc_gen(test_accs, train_accs, clfs):
     gen=clfs[np.argmin(train-test)]
     
     return maxacc, gen
+
 
 def save_proba(fn, pipe, inputs, targets):
     """Fits svm with probabilities and saves to disk."""
@@ -98,7 +84,8 @@ def save_proba(fn, pipe, inputs, targets):
                         
     pipe_prob.fit(inputs, targets)
     joblib.dump(pipe_prob, fn)
-    
+
+
 def load_svm(directory, gen=True):
     """Returns loaded SVM saved with classification baselines. 
         'gen' : Model with train/test accuracy ratio closest to 1.
@@ -114,6 +101,7 @@ def load_svm(directory, gen=True):
     svm=joblib.load(os.path.join(directory, path))
     
     return svm
+
 
 def class_acc(preds, targets, classes):
     "Returns classifier accuracy for each class." 

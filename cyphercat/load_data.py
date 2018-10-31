@@ -1,94 +1,9 @@
-import os
 import io
+import os
 import sys
 import shutil
-import requests
-import zipfile
-import tarfile
 
-from .config_utils import DataStruct
-
-
-def downloader(datasets_dir='', url=''):
-    """
-    Function to download file from 
-    url to specified destination file.
-    If file already exists, or the url
-    is a path to a valid local file,
-    then fn simply returns path to 
-    compresseed dataset file.
-    
-    Parameters
-    ----------
-    datasets_dir : string
-                   directory used for saving datasets
-    url          : string
-                   url or path to existing compressed
-                   dataset file
-
-    Returns
-    -------
-    dest_file    : string
-                   path to compressed file
-    """
-    
-    # Need defined url for dataset
-    if url == '':
-        print('The url to download the dataset or path to the compressed data file was not provided.')
-        print('Please provide a url, or download and unpack the dataset.\n Exiting...')
-        sys.exit()
-
-    file_bname = os.path.basename(url)
-    dest_file  = os.path.join(datasets_dir, file_bname)
-    
-    # Check if url is really path to local file
-    if os.path.isfile(url):
-        dest_file = url
-
-    # Else if dataset zipfile doesn't exist, download it from url
-    if not os.path.isfile(dest_file):
-        print('Downloading file {}...'.format(file_bname))
-        resp = requests.get(url, stream=True)
-        with open(dest_file, 'wb') as f:
-            shutil.copyfileobj(resp.raw, f)
-    else:
-        print('Compressed dataset file found, no need to download.')
-
-    return dest_file
-
-
-def unpacker(compressed_file_name='', out_directory=''):
-    """
-    Function to extract compressed
-    dataset file to specified directory.
-    Currently supports extraction of
-        - zip
-        - gz
-    file types.
-
-    Parameters
-    ----------
-    compressed_file_name  : string
-                            dataset file to unpack
-    out_directory         : string
-                            output directory
-    """
-
-    print('Unpacking {} to {}...'.format(compressed_file_name, out_directory))
-
-    file_ext = os.path.splitext(compressed_file_name)[1]
-
-    # Unpack zipfile
-    if 'zip' in file_ext:
-        with zipfile.ZipFile(compressed_file_name) as zf:
-            zf.extractall(os.path.split(out_directory)[0])
-    # Unpack gzipfile
-    elif 'gz' in file_ext:
-        with tarfile.open(compressed_file_name) as tar:
-            tar.extractall(path=out_directory)
-    else:
-        print('File extension {} not recognized for unpacking.\nExiting...')
-        sys.exit()
+from .utils import DataStruct, downloader, unpacker
 
 
 def custom_preprocessor(out_dir=''):
@@ -178,9 +93,7 @@ def prep_data(dataset_config=None):
 
     data_name    = data_struct.name
     datasets_dir = data_struct.data_path
-
-    # Define output directory for data set
-    out_dir      = os.path.join(datasets_dir, data_name)
+    out_dir      = data_struct.save_path
 
     # If dataset already downloaded an unpacked, do nothing
     if os.path.isdir(out_dir):

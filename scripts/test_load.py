@@ -9,8 +9,8 @@ try:
 
     import torch
 
-    from cyphercat.config_utils import Configurator, DataStruct
     from cyphercat.load_data import prep_data
+    from cyphercat.utils import Configurator, DataStruct
 
 
 except ImportError as e:

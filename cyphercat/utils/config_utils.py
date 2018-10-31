@@ -7,7 +7,6 @@ from .utils import set_to_string, keys_to_string, color_mode_dict
 
 
 
-
 # Ensure basic, necessary fields are in the config file
 def check_fields(cfg=None, tset=None):
     seen = set()
@@ -80,6 +79,7 @@ class DataStruct(object):
         self.data_path = dataset.get('datapath')
         self.data_type = dataset.get('datatype').lower()
         self.url       = dataset.get('url', '')
+        self.save_path = os.path.join(self.data_path, self.name)
       
         # Ensure data type is permitted
         if (self.data_type not in self.data_type_dict):
