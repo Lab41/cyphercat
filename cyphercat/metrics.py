@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.pipeline import Pipeline
-from .SVC_Utils import *
+from .utils.svc_utils import *
 
 # determine device to run network on (runs on gpu if available)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

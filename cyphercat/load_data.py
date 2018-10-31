@@ -3,7 +3,8 @@ import os
 import sys
 import shutil
 
-from .utils import DataStruct, downloader, unpacker
+from .utils.config_utils import DataStruct
+from .utils.file_utils import downloader, unpacker
 
 
 def custom_preprocessor(out_dir=''):
