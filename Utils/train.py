@@ -148,7 +148,7 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
         plt.show()
         '''
 
-class softCrossEntropy(nn.Module):
+class softCrossEntropy(torch.nn.Module):
     def __init__(self, alpha = 0.95):
         """
         :param alpha: Strength (0-1) of influence from soft labels in training 
