@@ -6,6 +6,7 @@ Everything that must be done to make it happen!
 - [ ] Data ingestor
 - [ ] Model training/testing suite
 - [ ] Attacks
+- [ ] Documentation
 
 ### Global Configuration
 - [x] yaml configuration file func
@@ -34,4 +35,11 @@ Everything that must be done to make it happen!
 - [ ] implement attacks
 - [ ] compare attack performance
 - [x] pas fini (incomplete) 
+- [ ] fini! (complete)
+
+### Documentation
+- [ ] contributing guide
+- [ ] gh-pages
+- [ ] detailed descriptions of models/attacks
+- [x] pas fini (incomplete)
 - [ ] fini! (complete)
