@@ -1,9 +1,15 @@
 # Cyphercat Datasets
 
-# CiFAR 10
+# Image Datasets
+- CiFAR 10
+- CiFAR 100
+- Tiny ImageNet
+- LFW
+- AT&T Faces
 
-# CiFAR 100
+# Audio Datasets
+- LibriSpeech
 
-# Tiny ImageNet
+# Text
+- Stanford Sentiment Treebank
 
-# LFW
