@@ -9,6 +9,7 @@ scripts/configs/*
 !/scripts/configs/config.yml
 !/scripts/configs/tiny-imagenet.yml
 !/scripts/configs/lfw.yml
+!/scripts/configs/cifar*.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
