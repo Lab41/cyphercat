@@ -5,7 +5,7 @@ data:
     datatype: image
     url: https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
     nclasses: 100
-    height:32
+    height: 32
     width: 32
     channels: 3
     #labels: DEFAULT -> range(0,nclasses)
