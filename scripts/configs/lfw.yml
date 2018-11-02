@@ -10,19 +10,15 @@ data:
     channels: 3
     #labels: DEFAULT -> range(0,nclasses)
 
-models_to_run: model1, model2
+train:
+  model: AlexNet
+  modelpath:
+  hyperparameters: 1,2,3,4
 
-model1:
-    outpath: saved_models/model1
-    layers: conv2d, conv2d, conv2d, conv2d
-    batch_size: 128
-    epochs: -1
-    validation_split: 0.2
 
-model2:
-    #outpath: DEFAULT -> 'dataset'/saved_models/model2
-    #batch_size: DEFAULT -> 128
-    #epochs: DEFAULT -> -1
-    #validation_split: DEFAULT-> 0.2
-    layers: conv2d, conv2d, conv2d, conv2d_4rot
+attack:
+  model: ml_leaks
+  modelpath:
+  params:
+  metrics:
 
