@@ -1,0 +1,25 @@
+
+data:
+    name: cifar-10
+    datapath: Datasets
+    datatype: image
+    url: https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+    nclasses: 10
+    height:32
+    width: 32
+    channels: 3
+    #labels: DEFAULT -> range(0,nclasses)
+
+
+train:
+  model: AlexNet
+  modelpath:
+  hyperparameters: 1,2,3,4
+
+
+attack:
+  model: ml_leaks
+  modelpath:
+  params:
+  metrics:
+

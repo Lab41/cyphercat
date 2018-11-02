@@ -1,0 +1,25 @@
+
+data:
+    name: tiny-imagenet-200
+    datapath: Datasets
+    datatype: image
+    url: http://cs231n.stanford.edu/tiny-imagenet-200.zip
+    nclasses: 200
+    height: 28
+    width: 28
+    channels: 3
+    #labels: DEFAULT -> range(0,nclasses)
+
+
+train:
+  model: AlexNet
+  modelpath:
+  hyperparameters: 1,2,3,4
+
+
+attack:
+  model: ml_leaks
+  modelpath:
+  params:
+  metrics:
+
