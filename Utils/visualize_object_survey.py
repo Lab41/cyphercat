@@ -203,8 +203,9 @@ def smooth_guided_saliency_map(model, input, label, transform,x=10, percent_nois
         PIL image with cativation map
     """
     tensor_input = input
-
-    final_grad = torch.zeros((1,3,32,32)).cuda() 
+    
+    final_grad = torch.zeros(input.shape).cuda()
+    final_grad = final_grad.unsqueeze(0)
         
     h = [0]*len(list(model.modules()))
 
