@@ -16,6 +16,7 @@ def custom_preprocessor(out_dir=''):
     ----------
     out_dir   : string
                 directory of unpacked data set
+                    
     """
 
     # Get name of data set from output directory
@@ -56,23 +57,18 @@ def custom_preprocessor(out_dir=''):
     # For LFW
     if 'lfw' in data_name.lower():
 
-        os.rename(os.path.join(out_dir, 'lfw/'), os.path.join(out_dir, 'lfw_original/'))
-
-        lfw_dir    = os.path.join(out_dir, 'lfw_original/')
+        lfw_dir    = out_dir + '_original/'
+        os.rename(out_dir, lfw_dir)
+        
         people_dir = os.listdir(lfw_dir)
 
         num_per_class = 20
 
-        new_dir = os.path.join(out_dir, 'lfw_' + str(num_per_class))
-
-        if not os.path.isdir(new_dir):
-            os.makedirs(new_dir)
-
         for p in people_dir:
             imgs = os.listdir(os.path.join(lfw_dir, p))
             if len(imgs) >= num_per_class:
-                shutil.copytree(os.path.join(lfw_dir, p), os.path.join(new_dir, p))
-
+                shutil.copytree(os.path.join(lfw_dir, p), os.path.join(out_dir, p))
+    
     print('{} successfully downloaded and preprocessed.'.format(data_name))
 
 
