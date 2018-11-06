@@ -81,7 +81,7 @@ def main():
     data_dir = data_struct.save_path
     
     # Hyperparameters
-    n_epochs = 30
+    n_epochs = 1 #30
     batch_size = 8
     lr = 0.001
     loss = nn.CrossEntropyLoss()
@@ -113,8 +113,8 @@ def main():
     lfw_train_list = img_paths[:lfw_train_size]
     lfw_test_list = img_paths[lfw_train_size:]
     
-    print("Made it to here")
-    sys.exit(0)
+    #print("Made it to here")
+    #sys.exit(0)
     
     # Data augmentation 
     train_transform = torchvision.transforms.Compose([
@@ -152,13 +152,13 @@ def main():
     #imgs,labels = iter(trainloader).next()
     #imshow(torchvision.utils.make_grid(imgs))  
     
-    print("Made it to training and testing section")
-    sys.exit(0)
+    #print("Made it to training and testing section")
+    #sys.exit(0)
     
     # Train and test CNN
-    conv_net = models.tiny_cnn(n_in=3, n_out=n_classes, n_hidden=32, size=250).to(device)
+    conv_net = tiny_cnn(n_in=3, n_out=n_classes, n_hidden=32, size=250).to(device)
     
-    conv_net.apply(models.weights_init)
+    conv_net.apply(weights_init)
     
     conv_optim = optim.Adam(conv_net.parameters(), lr=lr)
     
@@ -178,7 +178,7 @@ def main():
     
     resnet18.fc = nn.Linear(2048, n_classes)
     
-    resnet18.apply(models.weights_init)
+    resnet18.apply(weights_init)
     
     resnet18_optim = optim.Adam(resnet18.parameters(), lr=lr)
     
@@ -195,7 +195,7 @@ def main():
     # Train and test VGG16
     vgg16 = torchvision.models.vgg16(num_classes=n_classes)
     
-    vgg16.apply(models.weights_init)
+    vgg16.apply(weights_init)
     
     
     vgg16_optim = optim.SGD(vgg16.parameters(), lr=lr)
@@ -213,9 +213,9 @@ def main():
     
     
     # Train and test AlexNet
-    alexnet = models.AlexNet(n_classes=n_classes, size=250).to(device)
+    alexnet = AlexNet(n_classes=n_classes, size=250).to(device)
     
-    alexnet.apply(models.weights_init)
+    alexnet.apply(weights_init)
     
     alexnet_optim = optim.Adam(alexnet.parameters(), lr=lr/10)
     
