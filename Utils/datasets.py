@@ -223,7 +223,7 @@ class LibriSpeechDataset(Dataset):
         
         # load df from splitting function
         self.df = df
-        self.num_speakers = len(self.df['id'].unique())
+        self.num_speakers = len(self.df['speaker_id'].unique())
         
         # Convert arbitrary integer labels of dataset to ordered 0-(num_speakers - 1) labels
         self.unique_speakers = sorted(self.df['speaker_id'].unique())
