@@ -26,40 +26,8 @@ def to_categorical(y, num_classes):
     return one_hot
 
 
-class LibriSpeechDataset(Dataset):
-    """This class subclasses the torch.utils.data.Dataset object. The __getitem__ function will return a raw audio
-    sample and it's label.
-
-    This class also contains functionality to build verification tasks and n-shot, k-way classification tasks.
-
-    # Arguments
-        subsets: What LibriSpeech datasets to include.
-        seconds: Minimum length of audio to include in the dataset. Any files smaller than this will be ignored.
-        downsampling:
-        label: One of {speaker, sex}. Whether to use sex or speaker ID as a label.
-        stochastic: bool. If True then we will take a random fragment from each file of sufficient length. If False we
-        will always take a fragment starting at the beginning of a file.
-        pad: bool. Whether or not to pad samples with 0s to get them to the desired length. If `stochastic` is True
-        then a random number of 0s will be appended/prepended to each side to pad the sequence to the desired length.
-        cache: bool. Whether or not to use the cached index file
-    """
-    def __init__(self, path, subsets, seconds, downsampling, label='speaker', stochastic=True, pad=False,
-                 transform = None, cache=True):
-        if label not in ('sex', 'speaker'):
-            raise(ValueError, 'Label type must be one of (\'sex\', \'speaker\')')
-
-        if int(seconds * LIBRISPEECH_SAMPLING_RATE) % downsampling != 0:
-            raise(ValueError, 'Down sampling must be an integer divisor of the fragment length.')
-
-        self.subset = subsets
-        self.fragment_seconds = seconds
-        self.downsampling = downsampling
-        self.fragment_length = int(seconds * LIBRISPEECH_SAMPLING_RATE)
-        self.stochastic = stochastic
-        self.pad = pad
-        self.label = label
-        self.transform = transform
-        
+def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [.8,.2], attacking = False):
+        fragment_seconds = seconds
         print('Initialising LibriSpeechDataset with minimum length = {}s and subsets = {}'.format(seconds, subsets))
 
         # Convert subset to list if it is a string
@@ -79,7 +47,7 @@ class LibriSpeechDataset(Dataset):
 
         # Index the remaining subsets if any
         if all(found_cache.values()) and cache:
-            self.df = pd.concat(cached_df)
+            df = pd.concat(cached_df)
         else:
             df = pd.read_csv(path+'/LibriSpeech/SPEAKERS.TXT', skiprows=11, delimiter='|', error_bad_lines=False)
             df.columns = [col.strip().replace(';', '').lower() for col in df.columns]
@@ -98,34 +66,135 @@ class LibriSpeechDataset(Dataset):
             df = pd.merge(df, pd.DataFrame(audio_files))
 
             # # Concatenate with already existing dataframe if any exist
-            self.df = pd.concat(cached_df+[df])
+            df = pd.concat(cached_df+[df])
 
         # Save index files to data folder
         for s in subsets:
-            self.df[self.df['subset'] == s].to_csv(path + '/{}.index.csv'.format(s), index=False)
+            df[df['subset'] == s].to_csv(path + '/{}.index.csv'.format(s), index=False)
 
         # Trim too-small files
-        if not self.pad:
-            self.df = self.df[self.df['seconds'] > self.fragment_seconds]
-        self.num_speakers = len(self.df['id'].unique())
+        if not pad:
+            df = df[df['seconds'] > fragment_seconds]
+        num_speakers = len(df['id'].unique())
 
         # Renaming for clarity
-        self.df = self.df.rename(columns={'id': 'speaker_id', 'minutes': 'speaker_minutes'})
+        df = df.rename(columns={'id': 'speaker_id', 'minutes': 'speaker_minutes'})
 
         # Index of dataframe has direct correspondence to item in dataset
-        self.df = self.df.reset_index(drop=True)
-        self.df = self.df.assign(id=self.df.index.values)
+        df = df.reset_index(drop=True)
+        df = df.assign(id=df.index.values)
 
+        # Convert arbitrary integer labels of dataset to ordered 0-(num_speakers - 1) labels
+        unique_speakers = sorted(df['speaker_id'].unique())
+    
+        print('Finished indexing data. {} usable files found.'.format(len(df)))
+        
+        #split df into data-subsets
+        if attacking:
+            #splits unique speakers in half
+            half = num_speakers//2
+            unique_speakers1 = unique_speakers[:half]
+            unique_speakers2 = unique_speakers[half:]
+
+            dfs = {} #dictionary of dataframes
+
+            dfs = splitter(df,unique_speakers1, splits)
+            dfs2 = splitter(df,unique_speakers2, splits)
+
+            dfs[2],dfs[3] = dfs2[0],dfs2[1]  
+        else: # just split into train & test
+            dfs = splitter(df,unique_speakers1, splits)
+            
+        print('Finished splitting data.')
+            
+        return dfs
+        
+        
+def splitter(df,unique_speakers, splits):
+    n_splits = len(splits)
+    dfs = {}
+    for speaker in unique_speakers: #for each speaker
+
+    # speaker = valid_sequence.unique_speakers[0]
+        tot_files = sum(df['speaker_id']==speaker)
+
+        mini_df = df[df['speaker_id']==speaker]    
+        mini_df = mini_df.reset_index()
+
+        used_files = 0
+        start_file = 0
+        for idx, s in enumerate(splits): #for each split
+            if idx != n_splits-1:
+                n_files = int(s*tot_files)
+                used_files += n_files
+            else:
+                n_files = tot_files - used_files
+
+            #get stop index for the desired # of files:
+            stop_file = start_file + n_files
+
+            #initialize if first speaker, or append if later speaker
+            if speaker == unique_speakers[0]:
+                dfs[idx] = (mini_df.iloc[start_file:stop_file])
+            else:
+                dfs[idx] = dfs[idx].append(mini_df.iloc[start_file:stop_file])
+
+            #update start_file
+            start_file += n_files
+
+    for idx in range(n_splits): #for each dataframe
+        dfs[idx] = dfs[idx].reset_index()
+
+    return dfs
+
+
+class LibriSpeechDataset(Dataset):
+    """This class subclasses the torch.utils.data.Dataset object. The __getitem__ function will return a raw audio
+    sample and it's label.
+
+    This class also contains functionality to build verification tasks and n-shot, k-way classification tasks.
+
+    # Arguments
+        subsets: What LibriSpeech datasets to include.
+        seconds: Minimum length of audio to include in the dataset. Any files smaller than this will be ignored.
+        downsampling:
+        label: One of {speaker, sex}. Whether to use sex or speaker ID as a label.
+        stochastic: bool. If True then we will take a random fragment from each file of sufficient length. If False we
+        will always take a fragment starting at the beginning of a file.
+        pad: bool. Whether or not to pad samples with 0s to get them to the desired length. If `stochastic` is True
+        then a random number of 0s will be appended/prepended to each side to pad the sequence to the desired length.
+        cache: bool. Whether or not to use the cached index file
+    """
+    def __init__(self, path, df, seconds, downsampling, label='speaker', stochastic=True, pad=False,
+                 transform = None, cache=True):
+        if label not in ('sex', 'speaker'):
+            raise(ValueError, 'Label type must be one of (\'sex\', \'speaker\')')
+
+        if int(seconds * LIBRISPEECH_SAMPLING_RATE) % downsampling != 0:
+            raise(ValueError, 'Down sampling must be an integer divisor of the fragment length.')
+
+        self.fragment_seconds = seconds
+        self.downsampling = downsampling
+        self.fragment_length = int(seconds * LIBRISPEECH_SAMPLING_RATE)
+        self.stochastic = stochastic
+        self.pad = pad
+        self.label = label
+        self.transform = transform
+        
+        # load df from splitting function
+        self.df = df
+        self.num_speakers = len(self.df['id'].unique())
+        
+        # Convert arbitrary integer labels of dataset to ordered 0-(num_speakers - 1) labels
+        self.unique_speakers = sorted(self.df['speaker_id'].unique())
+        self.speaker_id_mapping = {self.unique_speakers[i]: i for i in range(self.num_classes())}  
+        
         # Create dicts
         self.datasetid_to_filepath = self.df.to_dict()['filepath']
         self.datasetid_to_speaker_id = self.df.to_dict()['speaker_id']
         self.datasetid_to_sex = self.df.to_dict()['sex']
-
-        # Convert arbitrary integer labels of dataset to ordered 0-(num_speakers - 1) labels
-        self.unique_speakers = sorted(self.df['speaker_id'].unique())
-        self.speaker_id_mapping = {self.unique_speakers[i]: i for i in range(self.num_classes())}
-
-        print('Finished indexing data. {} usable files found.'.format(len(self)))
+        
+        
 
     def __getitem__(self, index):
         instance, samplerate = sf.read(self.datasetid_to_filepath[index])
