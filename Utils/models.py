@@ -248,3 +248,15 @@ def weights_init(m):
     elif isinstance(m, nn.Linear): 
         nn.init.xavier_normal_(m.weight.data)
         nn.init.constant_(m.bias, 0)
+
+def save_checkpoint(model, optimizer, epoch, data_descriptor, loss = None, path = './', filename='checkpoint.pth.tar'):
+    state = {
+        'epoch': epoch,
+        'arch': str(classifier.type),
+        'state_dict': model.state_dict(),
+        'optimizer' : optimizer.state_dict(),
+        'loss': loss,
+        'dataset':data_descriptor
+        }
+    torch.save(state, path+filename)
+
