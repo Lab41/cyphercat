@@ -1,21 +1,15 @@
 from torch.utils.data import Dataset
-import torch
-from PIL import Image
-from torchvision import transforms
-from skimage import io
 from tqdm import tqdm
 import soundfile as sf
 import pandas as pd
 import numpy as np
 import os
 
-#from config import PATH, LIBRISPEECH_SAMPLING_RATE
 LIBRISPEECH_SAMPLING_RATE = 16000
 PATH = '/home/mlomnitz/mlomnitz/Datasets'
 
 sex_to_label = {'M': False, 'F': True}
 label_to_sex = {False: 'M', True: 'F'}
-
 
 def to_categorical(y, num_classes):
     """Transforms an integer class label into a one-hot label (single integer to 1D vector)."""
