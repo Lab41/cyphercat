@@ -101,9 +101,9 @@ def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
         dfs = splitter(df,unique_speakers1, splits)
         dfs2 = splitter(df,unique_speakers2, splits)
 
-        dfs[2],dfs[3] = dfs2[0],dfs2[1]  
+        dfs[3],dfs[4],dfs[5] = dfs2[0],dfs2[1], dfs2[2]  
     else: # just split into train & test
-        dfs = splitter(df,unique_speakers1, splits)
+        dfs = splitter(df,unique_speakers, splits)
 
     print('Finished splitting data.')
 

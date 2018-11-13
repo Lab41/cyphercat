@@ -124,6 +124,40 @@ class mlleaks_cnn(nn.Module):
         out = self.output(x)
         
         return out
+
+class ConvBlock(nn.Module):
+    def __init__(self, n_input, n_out, kernel_size):
+        super(ConvBlock, self).__init__()
+        self.cnn_block = nn.Sequential(
+            nn.Conv1d(n_input, n_out, kernel_size, padding=1),
+            nn.BatchNorm1d(n_out),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=4, stride=4)
+        )
+    
+    def forward(self, x):
+        return self.cnn_block(x)
+
+
+class CNN_classifier(nn.Module):
+    def __init__(self, in_size, n_hidden, n_classes):
+        super(CNN_classifier, self).__init__()
+        self.down_path = nn.ModuleList()
+        self.down_path.append(ConvBlock(in_size, 2*in_size, 3))
+        self.down_path.append(ConvBlock(2*in_size, 4*in_size, 3))
+        self.down_path.append(ConvBlock(4*in_size, 8*in_size, 3))
+        self.fc = nn.Sequential(
+            nn.Linear(8*in_size, n_hidden),
+            nn.ReLU()
+        )
+        self.out = nn.Linear(n_hidden, n_classes)
+    def forward(self, x):
+        for down in self.down_path:
+            x = down(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return self.out(x)
+        
     
 class mlleaks_mlp(nn.Module): 
     def __init__(self, n_in=3, n_out=1, n_hidden=64): 
