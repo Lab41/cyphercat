@@ -69,13 +69,6 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
 
             #######out_imgs = torch.randn(out_imgs.shape)
             mini_batch_size = train_imgs.shape[0]
-#             print(i)
-#             print(mini_batch_size)
-#             print(len(train_imgs[0]))
-#             print(train_imgs)
-#             print(len(out_imgs))
-#             print(out_imgs)
-#             print(device)
             
             if type(shadow) is not Pipeline:
                 train_imgs, out_imgs = train_imgs.to(device), out_imgs.to(device)
@@ -120,15 +113,6 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
 
             train_predictions = torch.squeeze(attack_net(train_top_k))
             out_predictions = torch.squeeze(attack_net(out_top_k))
-            
-#             print(type(train_predictions))
-#             print(type(out_predictions))
-#             print(type(train_lbl))
-#             print(train_predictions)
-#             print(len(train_predictions))
-#             print(len(train_predictions[0]))
-#             print(train_lbl)
-                  
 
             loss_train = criterion(train_predictions, train_lbl)
             loss_out = criterion(out_predictions, out_lbl)
