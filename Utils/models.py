@@ -251,13 +251,14 @@ def weights_init(m):
         nn.init.constant_(m.bias, 0)
 
 def save_checkpoint(model = None, optimizer = None, epoch = None, data_descriptor = None, loss = None,
-                    path = './', filename='checkpoint', ext = '.pth.tar'):
+                    accuracy = None, path = './', filename='checkpoint', ext = '.pth.tar'):
     state = {
         'epoch': epoch,
         'arch': str(model.type),
         'state_dict': model.state_dict(),
         'optimizer' : optimizer.state_dict(),
         'loss': loss,
-        'dataset':data_descriptor
+        'accuracy': accuracy,
+        'dataset': data_descriptor
         }
     torch.save(state, path+filename+ext)
