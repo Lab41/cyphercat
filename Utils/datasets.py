@@ -83,21 +83,43 @@ def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
 
     print('Finished indexing data. {} usable files found.'.format(len(df)))
 
+    dfs = {} #dictionary of dataframes
+        
+        
     #split df into data-subsets
-    if attacking:
-        #splits unique speakers in half
-        half = num_speakers//2
-        unique_speakers1 = unique_speakers[:half]
-        unique_speakers2 = unique_speakers[half:]
+    if attacking == 1: #adversary 1, which requires an additional split for a shadow network
+        #splits unique speakers into three unequal parts. 
+        # num speakers for train & test is the same.
+        # the below was solved with a system of equations
+        n = int(num_speakers//(2+2*splits[0]))#amt data depends on amt train dat
+        #n is train data for shadow & target networks
+        
+        unique_speakers1 = unique_speakers[:n] #target 
+        unique_speakers2 = unique_speakers[n:2*n] # shadow
+        unique_speakers3 = unique_speakers[2*n:] # out (target + shadow)
 
-        dfs = {} #dictionary of dataframes
+        dfs = splitter(dfs,df,unique_speakers1, splits,0)
+        dfs = splitter(dfs,df,unique_speakers2, splits,2)
+        dfs = splitter(dfs,df,unique_speakers3, splits=[0.5,0.5],N = 4) #split out data for attack train  + test evenly
+        
+    elif attacking == 3: #adversary 3, which just requires in & out data
+        #splits unique speakers into two unequal parts. 
+        # the below was solved with a system of equations
+        n = int(num_speakers//(1+splits[0]))#amt data depends on amt train dat
+        #n is train data for target networks
+        
+        unique_speakers1 = unique_speakers[:n] #target 
+        unique_speakers2 = unique_speakers[n:] # out (target + shadow)
 
-        dfs = splitter(df,unique_speakers1, splits)
-        dfs2 = splitter(df,unique_speakers2, splits)
-
-        dfs[3],dfs[4],dfs[5] = dfs2[0],dfs2[1], dfs2[2]  
+        dfs = splitter(dfs,df,unique_speakers1, splits,0)
+        dfs = splitter(dfs,df,unique_speakers2, splits=[1,0],N=2) #split out data for just attack eval
     else: # just split into train & test
-        dfs = splitter(df,unique_speakers, splits)
+        dfs = splitter(dfs, df,unique_speakers, splits, 0)
+ 
+    #check that the splits were as desired:
+        
+    for d in dfs:
+        print(len(dfs[d]))
 
     print('Finished splitting data.')
 
@@ -145,9 +167,9 @@ def index_subset(path , subset):
 
     
         
-def splitter(df,unique_speakers, splits):
+def splitter(dfs,df,unique_speakers, splits,N):
+    #N is to keep track of the dataframe dict keys
     n_splits = len(splits)
-    dfs = {}
     for speaker in unique_speakers: #for each speaker
 
     # speaker = valid_sequence.unique_speakers[0]
@@ -170,15 +192,15 @@ def splitter(df,unique_speakers, splits):
 
             #initialize if first speaker, or append if later speaker
             if speaker == unique_speakers[0]:
-                dfs[idx] = (mini_df.iloc[start_file:stop_file])
+                dfs[idx + N] = (mini_df.iloc[start_file:stop_file])
             else:
-                dfs[idx] = dfs[idx].append(mini_df.iloc[start_file:stop_file])
+                dfs[idx + N] = dfs[idx + N].append(mini_df.iloc[start_file:stop_file])
 
             #update start_file
             start_file += n_files
 
     for idx in range(n_splits): #for each dataframe
-        dfs[idx] = dfs[idx].reset_index()
+        dfs[idx + N] = dfs[idx + N].reset_index()
 
     return dfs
 
