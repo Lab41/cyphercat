@@ -83,7 +83,8 @@ def unpacker(compressed_file_name='', out_directory=''):
     # Unpack gzipfile
     elif 'gz' in file_ext:
         with tarfile.open(compressed_file_name) as tar:
-            tar.extractall(path=out_directory)
+            tar.extractall(os.path.split(out_directory)[0])
+            #tar.extractall(path=out_directory)
     else:
         print('File extension {} not recognized for unpacking.\nExiting...')
         sys.exit()
