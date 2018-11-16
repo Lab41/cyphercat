@@ -126,6 +126,7 @@ class mlleaks_cnn(nn.Module):
         return out
 
 class ConvBlock(nn.Module):
+    #for audio_CNN_classifier
     def __init__(self, n_input, n_out, kernel_size):
         super(ConvBlock, self).__init__()
         self.cnn_block = nn.Sequential(
@@ -139,7 +140,7 @@ class ConvBlock(nn.Module):
         return self.cnn_block(x)
 
 
-class CNN_classifier(nn.Module):
+class audio_CNN_classifier(nn.Module):
     def __init__(self, in_size, n_hidden, n_classes):
         super(CNN_classifier, self).__init__()
         self.down_path = nn.ModuleList()
