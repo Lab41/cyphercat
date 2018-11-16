@@ -1,3 +1,4 @@
+import torch
 from torch import nn 
 import torch.nn.functional as F
 import numpy as np 
@@ -249,14 +250,14 @@ def weights_init(m):
         nn.init.xavier_normal_(m.weight.data)
         nn.init.constant_(m.bias, 0)
 
-def save_checkpoint(model, optimizer, epoch, data_descriptor, loss = None, path = './', filename='checkpoint.pth.tar'):
+def save_checkpoint(model = None, optimizer = None, epoch = None, data_descriptor = None, loss = None,
+                    path = './', filename='checkpoint', ext = '.pth.tar'):
     state = {
         'epoch': epoch,
-        'arch': str(classifier.type),
+        'arch': str(model.type),
         'state_dict': model.state_dict(),
         'optimizer' : optimizer.state_dict(),
         'loss': loss,
         'dataset':data_descriptor
         }
-    torch.save(state, path+filename)
-
+    torch.save(state, path+filename+ext)
