@@ -142,7 +142,7 @@ class ConvBlock(nn.Module):
 
 class audio_CNN_classifier(nn.Module):
     def __init__(self, in_size, n_hidden, n_classes):
-        super(CNN_classifier, self).__init__()
+        super(audio_CNN_classifier, self).__init__()
         self.down_path = nn.ModuleList()
         self.down_path.append(ConvBlock(in_size, 2*in_size, 3))
         self.down_path.append(ConvBlock(2*in_size, 4*in_size, 3))
