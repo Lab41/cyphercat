@@ -2,7 +2,7 @@ import torch
 from torch import nn 
 import torch.nn.functional as F
 import numpy as np 
-
+import os.path
 
 def new_size_conv(size, kernel, stride=1, padding=0): 
     return np.floor((size + 2*padding - (kernel -1)-1)/stride +1)
@@ -250,8 +250,10 @@ def weights_init(m):
         nn.init.xavier_normal_(m.weight.data)
         nn.init.constant_(m.bias, 0)
 
-def save_checkpoint(model = None, optimizer = None, epoch = None, data_descriptor = None, loss = None,
-                    accuracy = None, path = './', filename='checkpoint', ext = '.pth.tar'):
+
+def save_checkpoint(model=None, optimizer=None, epoch=None,
+                    data_descriptor=None, loss=None, accuracy=None, path='./',
+                    filename='checkpoint', ext='.pth.tar'):
     state = {
         'epoch': epoch,
         'arch': str(model.type),
@@ -262,3 +264,16 @@ def save_checkpoint(model = None, optimizer = None, epoch = None, data_descripto
         'dataset': data_descriptor
         }
     torch.save(state, path+filename+ext)
+
+
+def load_checkpoint(model=None, optimizer=None,  checkpoint=None):
+    assert os.path.isfile(checkpoint), 'Checkpoint not found, aborting load'
+    chpt = torch.load(checkpoint)
+    assert str(model.type) == chpt['arch'], 'Model arquitecture mismatch,\
+  aborting load'
+    model.load_state_dict(chpt['state_dict'])
+    if optimizer is not None:
+        optimizer.load_state_dict['optimizer']
+    print('Succesfully loaded checkpoint \nDataset: %s \nEpoch: %s \nLoss: %s\
+\nAccuracy: %s' % (chpt['dataset'], chpt['epoch'], chpt['loss'],
+                   chpt['accuracy']))
