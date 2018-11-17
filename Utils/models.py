@@ -1,3 +1,4 @@
+import torch
 from torch import nn 
 import torch.nn.functional as F
 import numpy as np 
@@ -124,6 +125,41 @@ class mlleaks_cnn(nn.Module):
         out = self.output(x)
         
         return out
+
+class ConvBlock(nn.Module):
+    #for audio_CNN_classifier
+    def __init__(self, n_input, n_out, kernel_size):
+        super(ConvBlock, self).__init__()
+        self.cnn_block = nn.Sequential(
+            nn.Conv1d(n_input, n_out, kernel_size, padding=1),
+            nn.BatchNorm1d(n_out),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=4, stride=4)
+        )
+    
+    def forward(self, x):
+        return self.cnn_block(x)
+
+
+class audio_CNN_classifier(nn.Module):
+    def __init__(self, in_size, n_hidden, n_classes):
+        super(audio_CNN_classifier, self).__init__()
+        self.down_path = nn.ModuleList()
+        self.down_path.append(ConvBlock(in_size, 2*in_size, 3))
+        self.down_path.append(ConvBlock(2*in_size, 4*in_size, 3))
+        self.down_path.append(ConvBlock(4*in_size, 8*in_size, 3))
+        self.fc = nn.Sequential(
+            nn.Linear(8*in_size, n_hidden),
+            nn.ReLU()
+        )
+        self.out = nn.Linear(n_hidden, n_classes)
+    def forward(self, x):
+        for down in self.down_path:
+            x = down(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return self.out(x)
+        
     
 class mlleaks_mlp(nn.Module): 
     def __init__(self, n_in=3, n_out=1, n_hidden=64): 
@@ -248,3 +284,16 @@ def weights_init(m):
     elif isinstance(m, nn.Linear): 
         nn.init.xavier_normal_(m.weight.data)
         nn.init.constant_(m.bias, 0)
+
+def save_checkpoint(model = None, optimizer = None, epoch = None, data_descriptor = None, loss = None,
+                    accuracy = None, path = './', filename='checkpoint', ext = '.pth.tar'):
+    state = {
+        'epoch': epoch,
+        'arch': str(model.type),
+        'state_dict': model.state_dict(),
+        'optimizer' : optimizer.state_dict(),
+        'loss': loss,
+        'accuracy': accuracy,
+        'dataset': data_descriptor
+        }
+    torch.save(state, path+filename+ext)
