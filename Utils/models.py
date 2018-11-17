@@ -158,6 +158,25 @@ class audio_CNN_classifier(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return self.out(x)
+    
+class STFT_CNN_classifier(nn.Module):
+    def __init__(self, in_size, n_hidden, n_classes):
+        super(STFT_CNN_classifier, self).__init__()
+        self.down_path = nn.ModuleList()
+        self.down_path.append(ConvBlock(in_size, in_size, 7))
+        self.down_path.append(ConvBlock(in_size, in_size*2, 7))
+        self.down_path.append(ConvBlock(in_size*2, in_size*4, 7))
+        self.fc = nn.Sequential(
+            nn.Linear(5264, n_hidden),
+            nn.ReLU()
+        )
+        self.out = nn.Linear(n_hidden, n_classes)
+    def forward(self, x):
+        for down in self.down_path:
+            x = down(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return self.out(x)
         
     
 class mlleaks_mlp(nn.Module): 
@@ -283,3 +302,4 @@ def weights_init(m):
     elif isinstance(m, nn.Linear): 
         nn.init.xavier_normal_(m.weight.data)
         nn.init.constant_(m.bias, 0)
+        
