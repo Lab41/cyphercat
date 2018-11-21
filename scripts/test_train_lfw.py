@@ -11,18 +11,13 @@ try:
     import torchvision 
     import torch.nn as nn
     import torch.optim as optim
-    import torch.nn.functional as F
-    from torch.utils.data.sampler import SubsetRandomSampler
-    from torch.utils.data.dataset import Dataset
-    
-    from skimage import io
     
     from cyphercat.models import *
     from cyphercat.train import *
     from cyphercat.metrics import *  
     
-    from cyphercat.load_data import prep_data
-    from cyphercat.utils import Configurator, DataStruct
+    from cyphercat.load_data import prep_data, LFWDataset
+    from cyphercat.utils import Configurator, DataStruct, ModelConfig
 
 except ImportError as e:
     print(e)
@@ -30,27 +25,6 @@ except ImportError as e:
 
     
     
-class LFWDataset(Dataset): 
-    def __init__(self, file_list, class_to_label, transform=None): 
-        self.file_list = file_list
-        self.transform = transform
-        
-        self.people_to_idx = class_to_label
-        
-                
-    def __len__(self): 
-        return len(self.file_list)
-    def __getitem__(self, idx): 
-        img_path = self.file_list[idx]
-        image = io.imread(img_path)
-        label = self.people_to_idx[img_path.split('/')[-2]]
-        
-        if self.transform is not None: 
-            image = self.transform(image)
-        
-        return image, label
-            
-
 def main():
     global args
     parser = argparse.ArgumentParser(description="Convolutional NN Testing Script")
@@ -69,7 +43,8 @@ def main():
     configr = Configurator(args.configfile)
 
     # Get dataset configuration 
-    dataset_config = configr.dataset
+    dataset_config       = configr.dataset
+    train_model_config   = configr.train_model
 
     # Directory structures for data and model saving
     data_struct = DataStruct(dataset_config)
@@ -79,11 +54,14 @@ def main():
 
     # Data set directory
     data_dir = data_struct.save_path
-    
+   
+    # Training model params
+    train_config = ModelConfig(train_model_config)
+
     # Hyperparameters
-    n_epochs = 1 #30
-    batch_size = 8
-    lr = 0.001
+    n_epochs = train_config.epochs
+    batch_size = train_config.batchsize
+    lr = train_config.learnrate
     loss = nn.CrossEntropyLoss()
     
     img_paths = []
@@ -112,9 +90,6 @@ def main():
     
     lfw_train_list = img_paths[:lfw_train_size]
     lfw_test_list = img_paths[lfw_train_size:]
-    
-    #print("Made it to here")
-    #sys.exit(0)
     
     # Data augmentation 
     train_transform = torchvision.transforms.Compose([
@@ -175,14 +150,13 @@ def main():
     # Train and test ResNet18
     # load the torchvision resnet18 implementation 
     resnet18 = torchvision.models.resnet18(num_classes=n_classes).to(device)
-    
     resnet18.fc = nn.Linear(2048, n_classes)
+    resnet18.to(device)
     
     resnet18.apply(weights_init)
     
     resnet18_optim = optim.Adam(resnet18.parameters(), lr=lr)
     
-    resnet18 = resnet18.to(device)
     train(resnet18, trainloader, testloader, resnet18_optim, loss, n_epochs, verbose=False)
     
     print("\nPerformance on training set: ")
@@ -193,7 +167,7 @@ def main():
     
     
     # Train and test VGG16
-    vgg16 = torchvision.models.vgg16(num_classes=n_classes)
+    vgg16 = torchvision.models.vgg16(num_classes=n_classes).to(device)
     
     vgg16.apply(weights_init)
     
@@ -201,7 +175,6 @@ def main():
     vgg16_optim = optim.SGD(vgg16.parameters(), lr=lr)
     #vgg16_optim = optim.Adam(vgg16.parameters(), lr=lr)
     
-    vgg16 = vgg16.to(device)
     train(vgg16, trainloader, testloader, vgg16_optim, loss, n_epochs, verbose=False)
     
     print("\nPerformance on training set: ")

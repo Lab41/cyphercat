@@ -16,6 +16,12 @@ def check_fields(cfg=None, tset=None):
 
     return tset.issubset(seen)
 
+# Test if path is absolute or relative
+def test_abs_path(self, path=''):
+    if path.startswith('/'):
+        return path
+    else:
+        return os.path.join(REPO_DIR, path)
 
 class Configurator(object):
     """
@@ -23,7 +29,7 @@ class Configurator(object):
     """
 
     # Fields, subfields required in configuration file
-    reqs = set(["data"])
+    reqs = set(["data", "train"])
 
     def __init__(self, config_file=""):
 
@@ -42,11 +48,32 @@ class Configurator(object):
                                                               self.reqs))
 
         # Extract config parameters
-        self.dataset = cfg['data']
+        self.dataset       = cfg['data']
+        self.train_model   = cfg['train']
         #self.avail_models = cfg.get('models_to_run', '').split(',')
         #self.head_outpath = cfg.get('outpath', os.path.join(self.datapath, 'saved_models'))
 
 
+
+class ModelConfig(object):
+    """
+    Expected information defining a model.
+    """
+    reqs = set(["model", "runtrain"])
+
+    def __init__(self, modelconfig=None):
+
+        self.modelconfig = modelconfig
+        
+        if not check_fields(cfg=modelconfig, tset=self.reqs):
+            raise AssertionError("Some subfields for 'model' field not found.\n"
+                                 "  Required fields: {}\nExiting...\n".format(set_to_string(self.reqs)))
+        self.name       = modelconfig.get('model')
+        self.runtrain   = modelconfig.get('runtrain')
+        self.model_path = test_abs_path(modelconfig.get('modelpath'))
+        self.epochs     = modelconfig.get('epochs')
+        self.batchsize  = modelconfig.get('batchsize')
+        self.learnrate  = modelconfig.get('learnrate')
 
 
 
@@ -77,7 +104,7 @@ class DataStruct(object):
                                  "  Required fields: {}\nExiting...\n".format(set_to_string(self.reqs)))
 
         self.name      = dataset.get('name')
-        self.data_path = self.test_abs_path(dataset.get('datapath'))
+        self.data_path = test_abs_path(dataset.get('datapath'))
         self.data_type = dataset.get('datatype').lower()
         self.url       = dataset.get('url', '')
         self.save_path = os.path.join(self.data_path, self.name)
@@ -111,13 +138,6 @@ class DataStruct(object):
             self.length  = float(dataset.get('length'))
             self.seconds = float(dataset.get('seconds'))
     
-    # Test if path is absolute or relative
-    def test_abs_path(self, path=''):
-        if path.startswith('/'):
-            return path
-        else:
-            return os.path.join(REPO_DIR, path)
-
     # Consecutive integers default data labels 
     def default_labels(self):
         return str(list(range(0, self.n_classes))).strip('[]')

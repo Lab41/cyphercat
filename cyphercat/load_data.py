@@ -1,4 +1,3 @@
-import io
 import os
 import sys
 import shutil
@@ -6,7 +5,29 @@ import shutil
 from .utils.config_utils import DataStruct
 from .utils.file_utils import downloader, unpacker
 
+from skimage import io
+from torch.utils.data.dataset import Dataset
 
+class LFWDataset(Dataset): 
+    def __init__(self, file_list, class_to_label, transform=None): 
+        self.file_list = file_list
+        self.transform = transform
+        
+        self.people_to_idx = class_to_label
+        
+                
+    def __len__(self): 
+        return len(self.file_list)
+    def __getitem__(self, idx): 
+        img_path = self.file_list[idx]
+        image = io.imread(img_path)
+        label = self.people_to_idx[img_path.split('/')[-2]]
+        
+        if self.transform is not None: 
+            image = self.transform(image)
+        
+        return image, label
+            
 def custom_preprocessor(out_dir=''):
     """
     Custom preprocessing functions for
