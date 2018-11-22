@@ -70,10 +70,17 @@ class ModelConfig(object):
                                  "  Required fields: {}\nExiting...\n".format(set_to_string(self.reqs)))
         self.name       = modelconfig.get('model')
         self.runtrain   = modelconfig.get('runtrain')
-        self.model_path = test_abs_path(modelconfig.get('modelpath'))
+        self.model_path = self.test_abs_path(str(modelconfig.get('modelpath')))
         self.epochs     = modelconfig.get('epochs')
         self.batchsize  = modelconfig.get('batchsize')
         self.learnrate  = modelconfig.get('learnrate')
+    
+    # Test if path is absolute or relative
+    def test_abs_path(self, path=''):
+        if path.startswith('/'):
+            return path
+        else:
+            return os.path.join(REPO_DIR, path)
 
 
 
@@ -104,7 +111,7 @@ class DataStruct(object):
                                  "  Required fields: {}\nExiting...\n".format(set_to_string(self.reqs)))
 
         self.name      = dataset.get('name')
-        self.data_path = test_abs_path(dataset.get('datapath'))
+        self.data_path = self.test_abs_path(str(dataset.get('datapath')))
         self.data_type = dataset.get('datatype').lower()
         self.url       = dataset.get('url', '')
         self.save_path = os.path.join(self.data_path, self.name)
@@ -137,6 +144,13 @@ class DataStruct(object):
         elif dtype_ind == 1:
             self.length  = float(dataset.get('length'))
             self.seconds = float(dataset.get('seconds'))
+
+    # Test if path is absolute or relative
+    def test_abs_path(self, path=''):
+        if path.startswith('/'):
+            return path
+        else:
+            return os.path.join(REPO_DIR, path)
     
     # Consecutive integers default data labels 
     def default_labels(self):
