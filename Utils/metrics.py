@@ -57,16 +57,24 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
         
     attack_net.eval()
 
-    total = 0
-    correct = 0
+    
+    precisions = []
+    recalls = []
+    accuracies = []
 
+    #for threshold in np.arange(0.5, 1, 0.005):
+    thresholds = np.arange(0.5, 1, 0.005)
+
+    total = np.zeros(len(thresholds))
+    correct = np.zeros(len(thresholds))
+
+    true_positives = np.zeros(len(thresholds))
+    false_positives = np.zeros(len(thresholds))
+    false_negatives = np.zeros(len(thresholds))   
+ 
     train_top = np.empty((0,2))
     out_top = np.empty((0,2))
-
-    true_positives = 0
-    false_positives = 0
-    false_negatives = 0
-
+    
     for i, ((train_imgs, _), (out_imgs, _)) in enumerate(zip(target_train, target_out)):
 
 
@@ -105,44 +113,48 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
 
         #print("train_top_k = ",train_top_k)
         #print("out_top_k = ",out_top_k)
-
+        
+        #print(train_top.shape)
+        
         train_lbl = torch.ones(mini_batch_size).to(device)
         out_lbl = torch.zeros(mini_batch_size).to(device)
-        #print(train_top_k)
-
+        
         #Takes in probabilities for top k most likely classes, outputs ~1 (in training set) or ~0 (out of training set)
         train_predictions = F.sigmoid(torch.squeeze(attack_net(train_top_k)))
         out_predictions = F.sigmoid(torch.squeeze(attack_net(out_top_k)))
 
-        #print("train_predictions = ",train_predictions)
-        #print("out_predictions = ",out_predictions)
+
+        for j, t in enumerate(thresholds):
+            true_positives[j] += (train_predictions >= t).sum().item()
+            false_positives[j] += (out_predictions >= t).sum().item()
+            false_negatives[j] += (train_predictions < t).sum().item()
+            #print(train_top >= threshold)
 
 
-        true_positives += (train_predictions >= 0.5).sum().item()
-        false_positives += (out_predictions >= 0.5).sum().item()
-        false_negatives += (train_predictions < 0.5).sum().item()
+            #print((train_top >= threshold).sum().item(),',',(out_top >= threshold).sum().item())
+
+            correct[j] += (train_predictions >= t).sum().item()
+            correct[j] += (out_predictions < t).sum().item()
+            total[j] += train_predictions.size(0) + out_predictions.size(0)
+
+    #print(true_positives,',',false_positives,',',false_negatives)
+
+    for j, t in enumerate(thresholds):
+        accuracy = 100 * correct[j] / total[j]
+        precision = true_positives[j] / (true_positives[j] + false_positives[j]) if true_positives[j] + false_positives[j] != 0 else 0
+        recall = true_positives[j] / (true_positives[j] + false_negatives[j]) if true_positives[j] + false_negatives[j] !=0 else 0
+        accuracies.append(accuracy)
+        precisions.append(precision)
+        recalls.append(recall)
+
+        print("threshold = %.4f, accuracy = %.2f, precision = %.2f, recall = %.2f" % (t, accuracy, precision, recall))
+        
 
         
-        correct += (train_predictions>=0.5).sum().item()
-        correct += (out_predictions<0.5).sum().item()
-        total += train_predictions.size(0) + out_predictions.size(0)
-    
-    #Plot distributions for target predictions in training set and out of training set
-    fig, ax = plt.subplots(2,1)
-    plt.subplot(2,1,1)
-    plt.hist(in_predicts, bins='auto')
-    plt.title('In')
-    plt.subplot(2,1,2)
-    plt.hist(out_predicts, bins='auto')
-    plt.title('Out')
-    
-    accuracy = 100 * correct / total
-    precision = true_positives / (true_positives + false_positives) if true_positives + false_positives != 0 else 0
-    recall = true_positives / (true_positives + false_negatives) if true_positives + false_negatives !=0 else 0
-
-    print("accuracy = %.2f, precision = %.2f, recall = %.2f" % (accuracy, precision, recall))
-    
-
+    plt.plot(recalls, precisions)
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.show()
 
 def eval_membership_inference(target_net, target_train, target_out):
 

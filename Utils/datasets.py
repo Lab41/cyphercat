@@ -20,9 +20,19 @@ def to_categorical(y, num_classes):
     return one_hot
 
 
-def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [.8,.2], attacking = False):
+def audio_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [.8,.2], attacking = False,data = 'Libri'):
     fragment_seconds = seconds
-    print('Initialising LibriSpeechDataset with minimum length = {}s and subsets = {}'.format(seconds, subsets))
+    
+    if data == 'Libri':
+        speakerF = '/LibriSpeech/SPEAKERS.TXT' #speaker info file
+    elif data == 'VOiCES':
+        speakerF = 'Lab41-SRI-VOiCES-speaker-gender-dataset_SUBSET.csv'
+    print('Initialising ' + data + ' Dataset with minimum length = {}s and subsets = {}'.format(seconds, subsets))
+
+    print(os.listdir(path))
+    for file in os.listdir(path):
+        if file.startswith("part"):
+            subsets.append(file)
 
     # Convert subset to list if it is a string
     # This allows to handle list of multiple subsets the same a single subset
@@ -43,18 +53,28 @@ def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
     if all(found_cache.values()) and cache:
         df = pd.concat(cached_df)
     else:
-        df = pd.read_csv(path+'/LibriSpeech/SPEAKERS.TXT', skiprows=11, delimiter='|', error_bad_lines=False)
-        df.columns = [col.strip().replace(';', '').lower() for col in df.columns]
-        df = df.assign(
-            sex=df['sex'].apply(lambda x: x.strip()),
-            subset=df['subset'].apply(lambda x: x.strip()),
-            name=df['name'].apply(lambda x: x.strip()),
-        )
-
+        if data == 'Libri':
+            df = pd.read_csv(path+speakerF, skiprows=11, delimiter='|', error_bad_lines=False)
+            df.columns = [col.strip().replace(';', '').lower() for col in df.columns]
+            df = df.assign(
+                sex=df['sex'].apply(lambda x: x.strip()),
+                subset=df['subset'].apply(lambda x: x.strip()),
+                name=df['name'].apply(lambda x: x.strip()),
+            )
+        elif data == 'VOiCES':
+            df = pd.read_csv(path+speakerF, skiprows=0, delimiter=',', error_bad_lines=False)
+            df.columns = [col.strip().replace(';', '').lower() for col in df.columns]
+            df = df.rename(columns={'speaker': 'speaker_id', 'gender': 'sex','dataset':'subset'})
+            print(df.head())
+            df = df.assign(
+                sex=df['sex'].apply(lambda x: x.strip()),
+                subset=df['subset'].apply(lambda x: x.strip()),
+            )
+        
         audio_files = []
         for subset, found in found_cache.items():
             if not found:
-                audio_files += index_subset(path, subset)
+                audio_files += index_subset(path, subset,data)
 
         # Merge individual audio files with indexing dataframe
         df = pd.merge(df, pd.DataFrame(audio_files))
@@ -72,7 +92,8 @@ def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
     num_speakers = len(df['id'].unique())
 
     # Renaming for clarity
-    df = df.rename(columns={'id': 'speaker_id', 'minutes': 'speaker_minutes'})
+    if data == 'Libri':
+        df = df.rename(columns={'id': 'speaker_id', 'minutes': 'speaker_minutes'})
 
     # Index of dataframe has direct correspondence to item in dataset
     df = df.reset_index(drop=True)
@@ -125,7 +146,7 @@ def Libri_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
 
     return dfs
 
-def index_subset(path , subset):
+def index_subset(path , subset, data):
     """
     Index a subset by looping through all of it's files and recording their speaker ID, filepath and length.
     :param subset: Name of the subset
@@ -136,19 +157,29 @@ def index_subset(path , subset):
     print('Indexing {}...'.format(subset))
     # Quick first pass to find total for tqdm bar
     subset_len = 0
-    for root, folders, files in os.walk(path + '/LibriSpeech/{}/'.format(subset)):
-        subset_len += len([f for f in files if f.endswith('.flac')])
+    if data == 'Libri':
+        addpath = '/LibriSpeech/'
+        ftype = '.flac'
+    else:
+        addpath = ''
+        ftype = '.wav'
+                    
+   
+                    
+    for root, folders, files in os.walk(path + addpath +'{}/'.format(subset)):
+        subset_len += len([f for f in files if f.endswith(ftype)])
 
     progress_bar = tqdm(total=subset_len)
-    for root, folders, files in os.walk(path + '/LibriSpeech/{}/'.format(subset)):
+    for root, folders, files in os.walk(path + addpath + '{}/'.format(subset)):
         if len(files) == 0:
             continue
-
+        print(root)
+        print(root.split('/')[-2])
         librispeech_id = int(root.split('/')[-2])
 
         for f in files:
             # Skip non-sound files
-            if not f.endswith('.flac'):
+            if not f.endswith('ftype'):
                 continue
 
             progress_bar.update(1)
