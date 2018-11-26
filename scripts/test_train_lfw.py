@@ -12,8 +12,7 @@ try:
     import torch.nn as nn
     import torch.optim as optim
     
-    #from cyphercat.models import get_predef_model, weights_init
-    from cyphercat.models import *
+    from cyphercat.models import get_predef_model, weights_init
     from cyphercat.train import *
     from cyphercat.metrics import *  
     
@@ -212,7 +211,7 @@ def main():
     
     print("\nPerformance on test set: ")
     test_accuracy = eval_target_net(model, testloader, classes=None)
-    
+
 
 
 if __name__ == "__main__":

@@ -241,6 +241,86 @@ class mlp(nn.Module):
 
         return out
 
+
+
+class audio_cnn_block(nn.Module):
+    '''
+    1D convolution block used to build audio cnn classifiers
+    Args:
+    input: input channels
+    output: output channels
+    kernel_size: convolution kernel size
+    '''
+    def __init__(self, n_input, n_out, kernel_size):
+        super(audio_cnn_block, self).__init__()
+        self.cnn_block = nn.Sequential(
+            nn.Conv1d(n_input, n_out, kernel_size, padding=1),
+            nn.BatchNorm1d(n_out),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=4, stride=4)
+        )
+    
+    def forward(self, x):
+        return self.cnn_block(x)
+
+
+class audio_tiny_cnn(nn.Module):
+    '''
+    Template for convolutional audio classifiers.
+    '''
+    def __init__(self, cnn_sizes, n_hidden, kernel_size, n_classes):
+        '''
+        Init
+        Args: 
+        cnn_sizes: List of sizes for the convolution blocks
+        n_hidden: number of hidden units in the first fully connected layer
+        kernel_size: convolution kernel size
+        n_classes: number of speakers to classify
+        '''
+        super(audio_tiny_cnn, self).__init__()
+        self.down_path = nn.ModuleList()
+        self.down_path.append(audio_cnn_block(cnn_sizes[0], cnn_sizes[1],
+                                              kernel_size,))
+        self.down_path.append(audio_cnn_block(cnn_sizes[1], cnn_sizes[2],
+                                              kernel_size,))
+        self.down_path.append(audio_cnn_block(cnn_sizes[2], cnn_sizes[3],
+                                              kernel_size,))
+        self.fc = nn.Sequential(
+            nn.Linear(cnn_sizes[4], n_hidden),
+            nn.ReLU()
+        )
+        self.out = nn.Linear(n_hidden, n_classes)
+
+    def forward(self, x):
+        for down in self.down_path:
+            x = down(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return self.out(x)
+
+
+def MFCC_cnn_classifier(n_classes):
+    '''
+    Builds speaker classifier that ingests MFCC's
+    '''
+    in_size = 20
+    n_hidden = 512
+    sizes_list = [in_size, 2*in_size, 4*in_size, 8*in_size, 8*in_size]
+    return audio_tiny_cnn(cnn_sizes=sizes_list, n_hidden=n_hidden,
+                          kernel_size=3, n_classes=125)
+
+
+def ft_cnn_classifer(n_classes):
+    '''
+    Builds speaker classifier that ingests the abs value of fourier transforms
+    '''
+    in_size = 94
+    n_hidden = 512
+    sizes_list = [in_size, in_size, 2*in_size, 4*in_size, 14*4*in_size]
+    return audio_tiny_cnn(cnn_sizes=sizes_list, n_hidden=n_hidden,
+                          kernel_size=7, n_classes=125)
+
+
             
 def weights_init(m): 
     if isinstance(m, nn.Conv2d):
@@ -284,3 +364,34 @@ def get_predef_model(name=""):
     else:
         raise ValueError('Invalid predefined model, {}, requested.'
                          ' Must be in {}'.format(name, PREDEF_MODELS.keys()))
+
+
+
+
+
+def save_checkpoint(model=None, optimizer=None, epoch=None,
+                    data_descriptor=None, loss=None, accuracy=None, path='./',
+                    filename='checkpoint', ext='.pth.tar'):
+    state = {
+        'epoch': epoch,
+        'arch': str(model.type),
+        'state_dict': model.state_dict(),
+        'optimizer' : optimizer.state_dict(),
+        'loss': loss,
+        'accuracy': accuracy,
+        'dataset': data_descriptor
+        }
+    torch.save(state, path+filename+ext)
+
+
+def load_checkpoint(model=None, optimizer=None,  checkpoint=None):
+    assert os.path.isfile(checkpoint), 'Checkpoint not found, aborting load'
+    chpt = torch.load(checkpoint)
+    assert str(model.type) == chpt['arch'], 'Model arquitecture mismatch,\
+  aborting load'
+    model.load_state_dict(chpt['state_dict'])
+    if optimizer is not None:
+        optimizer.load_state_dict['optimizer']
+    print('Succesfully loaded checkpoint \nDataset: %s \nEpoch: %s \nLoss: %s\
+\nAccuracy: %s' % (chpt['dataset'], chpt['epoch'], chpt['loss'],
+                   chpt['accuracy']))
