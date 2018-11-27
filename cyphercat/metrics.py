@@ -48,6 +48,7 @@ def eval_target_net(model, data_loader, classes=None):
     
     return accuracy
 
+
 def eval_attack_net(attack_net, target, target_train, target_out, k):
     """Assess accuracy, precision, and recall of attack model for in training set/out of training set classification.
     Edited for use with SVCs."""
@@ -108,20 +109,12 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
             train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
             out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
 
-        #print("train_top_k = ",train_top_k)
-        #print("out_top_k = ",out_top_k)
-
         train_lbl = torch.ones(mini_batch_size).to(device)
         out_lbl = torch.zeros(mini_batch_size).to(device)
-        #print(train_top_k)
 
         #Takes in probabilities for top k most likely classes, outputs ~1 (in training set) or ~0 (out of training set)
         train_predictions = F.sigmoid(torch.squeeze(attack_net(train_top_k)))
         out_predictions = F.sigmoid(torch.squeeze(attack_net(out_top_k)))
-
-        #print("train_predictions = ",train_predictions)
-        #print("out_predictions = ",out_predictions)
-
 
         true_positives += (train_predictions >= 0.5).sum().item()
         false_positives += (out_predictions >= 0.5).sum().item()
@@ -145,8 +138,7 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
     precision = true_positives / (true_positives + false_positives) if true_positives + false_positives != 0 else 0
     recall = true_positives / (true_positives + false_negatives) if true_positives + false_negatives !=0 else 0
 
-    print("accuracy = {:.2f}, precision = {:.2f}, recall = {:.2f}".format(accuracy, precision, recall))
-    
+    print("accuracy = {:.2f} %%\nprecision = {:.2f} \nrecall = {:.2f}".format(accuracy, precision, recall))
 
 
 def eval_membership_inference(target_net, target_train, target_out):
@@ -182,22 +174,14 @@ def eval_membership_inference(target_net, target_train, target_out):
         out_sort, _ = torch.sort(out_posteriors, descending=True)
         out_top = out_sort[:,0].clone().to(device)
 
-        #print(train_top.shape)
-
         for j, t in enumerate(thresholds):
             true_positives[j] += (train_top >= t).sum().item()
             false_positives[j] += (out_top >= t).sum().item()
             false_negatives[j] += (train_top < t).sum().item()
-            #print(train_top >= threshold)
-
-
-            #print((train_top >= threshold).sum().item(),',',(out_top >= threshold).sum().item())
 
             correct[j] += (train_top >= t).sum().item()
             correct[j] += (out_top < t).sum().item()
             total[j] += train_top.size(0) + out_top.size(0)
-
-    #print(true_positives,',',false_positives,',',false_negatives)
 
     for j, t in enumerate(thresholds):
         accuracy = 100 * correct[j] / total[j]
@@ -208,7 +192,6 @@ def eval_membership_inference(target_net, target_train, target_out):
         recalls.append(recall)
 
         print("threshold = {:.4f}, accuracy = {:.2f}, precision = {:.2f}, recall = {:.2f}".format(t, accuracy, precision, recall))
-
 
     plt.plot(recalls, precisions)
     plt.xlabel("Recall")

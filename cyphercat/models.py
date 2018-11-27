@@ -13,17 +13,6 @@ def new_size_max_pool(size, kernel, stride=None, padding=0):
         stride = kernel
     return np.floor((size + 2*padding - (kernel -1)-1)/stride +1)
 
-def calc_alexnet_size(size): 
-    x = new_size_conv(size, 6,3,2)
-    x = new_size_max_pool(x,3,2)
-    x = new_size_conv(x,5,1,2)
-    x = new_size_max_pool(x,3,2)
-    x = new_size_conv(x,3,1,1)
-    x = new_size_conv(x,3,1,1)
-    x = new_size_conv(x,3,1,1)
-    out = new_size_max_pool(x,2,2)
-    
-    return out
 
 
 class AlexNet(nn.Module):
@@ -48,7 +37,7 @@ class AlexNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
         )
-        out_feat_size = calc_alexnet_size(size)
+        out_feat_size = self.calc_alexnet_size(size)
         self.classifier = nn.Sequential(
             nn.Dropout(),
             nn.Linear(256 * out_feat_size * out_feat_size, 4096),
@@ -98,6 +87,19 @@ class tiny_cnn(nn.Module):
         out = self.output(x)
         
         return out
+
+    def calc_alexnet_size(size): 
+        x = new_size_conv(size, 6,3,2)
+        x = new_size_max_pool(x,3,2)
+        x = new_size_conv(x,5,1,2)
+        x = new_size_max_pool(x,3,2)
+        x = new_size_conv(x,3,1,1)
+        x = new_size_conv(x,3,1,1)
+        x = new_size_conv(x,3,1,1)
+        out = new_size_max_pool(x,2,2)
+        
+        return out
+
     
     
 class mlleaks_cnn(nn.Module): 
