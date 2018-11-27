@@ -62,7 +62,7 @@ def main():
     # Hyperparameters
     n_epochs = train_config.epochs
     batch_size = train_config.batchsize
-    lr = train_config.learnrate
+    learnrate = train_config.learnrate
     loss = nn.CrossEntropyLoss()
     
     img_paths = []
@@ -70,27 +70,27 @@ def main():
         for i in os.listdir(os.path.join(data_dir,p)): 
             img_paths.append(os.path.join(data_dir,p,i))
             
-    people = []
-    people_to_idx = {}
+    class_list = []
+    class_to_idx = {}
     k = 0 
     for i in img_paths: 
         name = i.split('/')[-2]
-        if name not in people_to_idx: 
-            people.append(name)
-            people_to_idx[name] = k
+        if name not in class_to_idx: 
+            class_list.append(name)
+            class_to_idx[name] = k
             k += 1
     
     
-    n_classes = len(people)
+    n_classes = len(class_list)
     
     img_paths = np.random.permutation(img_paths)
     
-    lfw_size = len(img_paths)
+    dataset_size = len(img_paths)
     
-    lfw_train_size = int(0.8 * lfw_size)
+    trainset_size = int(0.8 * dataset_size)
     
-    lfw_train_list = img_paths[:lfw_train_size]
-    lfw_test_list = img_paths[lfw_train_size:]
+    trainset_list = img_paths[:trainset_size]
+    testset_list = img_paths[trainset_size:]
     
     # Data augmentation 
     train_transform = torchvision.transforms.Compose([
@@ -110,8 +110,8 @@ def main():
     ])
         
     
-    trainset = LFWDataset(lfw_train_list, people_to_idx, transform=train_transform)
-    testset = LFWDataset(lfw_test_list, people_to_idx, transform=test_transform)
+    trainset = LFWDataset(trainset_list, class_to_idx, transform=train_transform)
+    testset = LFWDataset(testset_list, class_to_idx, transform=test_transform)
     
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
@@ -136,7 +136,7 @@ def main():
     #
     #conv_net.apply(weights_init)
     #
-    #conv_optim = optim.Adam(conv_net.parameters(), lr=lr)
+    #conv_optim = optim.Adam(conv_net.parameters(), lr=learnrate)
     #
     #train(conv_net, trainloader, testloader, conv_optim, loss, n_epochs, verbose=False)
     #
@@ -156,7 +156,7 @@ def main():
     #
     #resnet18.apply(weights_init)
     #
-    #resnet18_optim = optim.Adam(resnet18.parameters(), lr=lr)
+    #resnet18_optim = optim.Adam(resnet18.parameters(), lr=learnrate)
     #
     #train(resnet18, trainloader, testloader, resnet18_optim, loss, n_epochs, verbose=False)
     #
@@ -173,8 +173,8 @@ def main():
     #vgg16.apply(weights_init)
     #
     #
-    #vgg16_optim = optim.SGD(vgg16.parameters(), lr=lr)
-    ##vgg16_optim = optim.Adam(vgg16.parameters(), lr=lr)
+    #vgg16_optim = optim.SGD(vgg16.parameters(), lr=learnrate)
+    ##vgg16_optim = optim.Adam(vgg16.parameters(), lr=learnrate)
     #
     #train(vgg16, trainloader, testloader, vgg16_optim, loss, n_epochs, verbose=False)
     #
@@ -189,7 +189,7 @@ def main():
     #
     #alexnet.apply(weights_init)
     #
-    #alexnet_optim = optim.Adam(alexnet.parameters(), lr=lr/10)
+    #alexnet_optim = optim.Adam(alexnet.parameters(), lr=learnrate/10)
     #
     #train(alexnet, trainloader, testloader, alexnet_optim, loss, n_epochs, verbose=False)
     #
@@ -204,7 +204,7 @@ def main():
     model = get_predef_model(model_name)(n_in=3, n_classes=n_classes, n_filters=64, size=250)
     model.to(device)
     model.apply(weights_init)
-    model_optim = optim.Adam(model.parameters(), lr=lr/10)
+    model_optim = optim.Adam(model.parameters(), lr=learnrate/10)
     train(model, trainloader, testloader, model_optim, loss, n_epochs, verbose=False)
     print("\nPerformance on training set: ")
     train_accuracy = eval_target_net(model, trainloader, classes=None)
