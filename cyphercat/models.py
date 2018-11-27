@@ -54,6 +54,19 @@ class AlexNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
+
+    def calc_alexnet_size(self, size): 
+        x = new_size_conv(size, 6,3,2)
+        x = new_size_max_pool(x,3,2)
+        x = new_size_conv(x,5,1,2)
+        x = new_size_max_pool(x,3,2)
+        x = new_size_conv(x,3,1,1)
+        x = new_size_conv(x,3,1,1)
+        x = new_size_conv(x,3,1,1)
+        out = new_size_max_pool(x,2,2)
+        
+        return out
+
     
 class tiny_cnn(nn.Module): 
     def __init__(self, n_in=3, n_classes=10, n_filters=64, size=64): 
@@ -87,19 +100,6 @@ class tiny_cnn(nn.Module):
         out = self.output(x)
         
         return out
-
-    def calc_alexnet_size(size): 
-        x = new_size_conv(size, 6,3,2)
-        x = new_size_max_pool(x,3,2)
-        x = new_size_conv(x,5,1,2)
-        x = new_size_max_pool(x,3,2)
-        x = new_size_conv(x,3,1,1)
-        x = new_size_conv(x,3,1,1)
-        x = new_size_conv(x,3,1,1)
-        out = new_size_max_pool(x,2,2)
-        
-        return out
-
     
     
 class mlleaks_cnn(nn.Module): 

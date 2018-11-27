@@ -65,32 +65,6 @@ def main():
     learnrate = train_config.learnrate
     loss = nn.CrossEntropyLoss()
     
-    img_paths = []
-    for p in os.listdir(data_dir): 
-        for i in os.listdir(os.path.join(data_dir, p)): 
-            img_paths.append(os.path.join(data_dir, p, i))
-            
-    class_list = []
-    class_to_idx = {}
-    k = 0 
-    for i in img_paths: 
-        name = i.split('/')[-2]
-        if name not in class_to_idx: 
-            class_list.append(name)
-            class_to_idx[name] = k
-            k += 1
-    
-    
-    n_classes = len(class_list)
-    
-    img_paths = np.random.permutation(img_paths)
-    
-    dataset_size = len(img_paths)
-    
-    trainset_size = int(0.8 * dataset_size)
-    
-    trainset_list = img_paths[:trainset_size]
-    testset_list = img_paths[trainset_size:]
     
     # Data augmentation 
     train_transform = torchvision.transforms.Compose([
@@ -110,8 +84,9 @@ def main():
     ])
         
     
-    trainset = LFWDataset(trainset_list, class_to_idx, transform=train_transform)
-    testset = LFWDataset(testset_list, class_to_idx, transform=test_transform)
+    trainset = LFWDataset(data_dir=data_dir, train_set=True, transform=train_transform)
+    testset = LFWDataset(data_dir=data_dir, train_set=False, transform=test_transform)
+    n_classes = trainset.n_classes
     
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
