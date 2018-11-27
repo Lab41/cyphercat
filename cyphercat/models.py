@@ -322,7 +322,10 @@ def ft_cnn_classifer(n_classes):
 
 
             
-def weights_init(m): 
+def weights_init(m):
+    """
+    Initializes weights of layers of model m
+    """
     if isinstance(m, nn.Conv2d):
         nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
         if m.bias is not None:
@@ -335,12 +338,14 @@ def weights_init(m):
         nn.init.constant_(m.bias, 0)
 
 
+# Dictionary for access of models defined above
 PREDEF_MODELS = {"alexnet"     : AlexNet,
                  "cnn"         : cnn,
                  "tiny_cnn"    : tiny_cnn,
                  "mlleaks_cnn" : mlleaks_cnn,
                  "mlp"         : mlp,
-                 "mlleaks_mlp" : mlleaks_mlp}
+                 "mlleaks_mlp" : mlleaks_mlp
+                }
 
 
 def get_predef_model(name=""):
@@ -372,26 +377,33 @@ def get_predef_model(name=""):
 def save_checkpoint(model=None, optimizer=None, epoch=None,
                     data_descriptor=None, loss=None, accuracy=None, path='./',
                     filename='checkpoint', ext='.pth.tar'):
+
     state = {
-        'epoch': epoch,
-        'arch': str(model.type),
-        'state_dict': model.state_dict(),
-        'optimizer' : optimizer.state_dict(),
-        'loss': loss,
-        'accuracy': accuracy,
-        'dataset': data_descriptor
-        }
+             'epoch': epoch,
+             'arch': str(model.type),
+             'state_dict': model.state_dict(),
+             'optimizer' : optimizer.state_dict(),
+             'loss': loss,
+             'accuracy': accuracy,
+             'dataset': data_descriptor
+            }
     torch.save(state, path+filename+ext)
 
 
-def load_checkpoint(model=None, optimizer=None,  checkpoint=None):
+def load_checkpoint(model=None, optimizer=None, checkpoint=None):
+
     assert os.path.isfile(checkpoint), 'Checkpoint not found, aborting load'
+    
     chpt = torch.load(checkpoint)
+    
     assert str(model.type) == chpt['arch'], 'Model arquitecture mismatch,\
-  aborting load'
+                                             aborting load'
+    
     model.load_state_dict(chpt['state_dict'])
+    
     if optimizer is not None:
         optimizer.load_state_dict['optimizer']
-    print('Succesfully loaded checkpoint \nDataset: %s \nEpoch: %s \nLoss: %s\
-\nAccuracy: %s' % (chpt['dataset'], chpt['epoch'], chpt['loss'],
+    
+    print('Succesfully loaded checkpoint \nDataset: {} \nEpoch: {} \nLoss: {}\
+           \nAccuracy: {}'.format(chpt['dataset'], chpt['epoch'], chpt['loss'],
                    chpt['accuracy']))
