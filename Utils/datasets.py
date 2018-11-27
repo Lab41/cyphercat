@@ -29,7 +29,6 @@ def audio_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
         speakerF = 'Lab41-SRI-VOiCES-speaker-gender-dataset_SUBSET.csv'
     print('Initialising ' + data + ' Dataset with minimum length = {}s and subsets = {}'.format(seconds, subsets))
 
-    print(os.listdir(path))
     for file in os.listdir(path):
         if file.startswith("part"):
             subsets.append(file)
@@ -43,11 +42,20 @@ def audio_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
     found_cache = {s: False for s in subsets}
     if cache:
         # Check for cached files
-        for s in subsets:
-            subset_index_path = path + '/{}.index.csv'.format(s)
+        if data == 'Libri':
+            for s in subsets:
+                subset_index_path = path + '/{}.index.csv'.format(s)
+                if os.path.exists(subset_index_path):
+                    print(subset_index_path)
+                    cached_df.append(pd.read_csv(subset_index_path))
+                    found_cache[s] = True
+        elif data == 'VOiCES':
+            subset_index_path = path + '/index.csv'
             if os.path.exists(subset_index_path):
                 cached_df.append(pd.read_csv(subset_index_path))
-                found_cache[s] = True
+                for s in subsets:
+                    found_cache[s] = True
+        
 
     # Index the remaining subsets if any
     if all(found_cache.values()) and cache:
@@ -64,8 +72,7 @@ def audio_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
         elif data == 'VOiCES':
             df = pd.read_csv(path+speakerF, skiprows=0, delimiter=',', error_bad_lines=False)
             df.columns = [col.strip().replace(';', '').lower() for col in df.columns]
-            df = df.rename(columns={'speaker': 'speaker_id', 'gender': 'sex','dataset':'subset'})
-            print(df.head())
+            df = df.rename(columns={'speaker': 'id', 'gender': 'sex','dataset':'subset'})
             df = df.assign(
                 sex=df['sex'].apply(lambda x: x.strip()),
                 subset=df['subset'].apply(lambda x: x.strip()),
@@ -75,16 +82,23 @@ def audio_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
         for subset, found in found_cache.items():
             if not found:
                 audio_files += index_subset(path, subset,data)
-
+                
+       
         # Merge individual audio files with indexing dataframe
         df = pd.merge(df, pd.DataFrame(audio_files))
-
+       
         # # Concatenate with already existing dataframe if any exist
+        
         df = pd.concat(cached_df+[df])
+    
 
     # Save index files to data folder
-    for s in subsets:
-        df[df['subset'] == s].to_csv(path + '/{}.index.csv'.format(s), index=False)
+    if data == 'Libri':
+        for s in subsets:
+
+            df[df['subset'] == s].to_csv(path + '/{}.index.csv'.format(s), index=False)
+    else:
+        df.to_csv(path + '/index.csv', index=False)
 
     # Trim too-small files
     if not pad:
@@ -92,8 +106,9 @@ def audio_preload_and_split(path,subsets,seconds,pad=False,cache=True,splits = [
     num_speakers = len(df['id'].unique())
 
     # Renaming for clarity
+    df = df.rename(columns={'id': 'speaker_id'})
     if data == 'Libri':
-        df = df.rename(columns={'id': 'speaker_id', 'minutes': 'speaker_minutes'})
+        df = df.rename(columns={'minutes': 'speaker_minutes'})
 
     # Index of dataframe has direct correspondence to item in dataset
     df = df.reset_index(drop=True)
@@ -168,20 +183,23 @@ def index_subset(path , subset, data):
                     
     for root, folders, files in os.walk(path + addpath +'{}/'.format(subset)):
         subset_len += len([f for f in files if f.endswith(ftype)])
-
+       
     progress_bar = tqdm(total=subset_len)
     for root, folders, files in os.walk(path + addpath + '{}/'.format(subset)):
         if len(files) == 0:
             continue
-        print(root)
-        print(root.split('/')[-2])
-        librispeech_id = int(root.split('/')[-2])
+        if data == 'Libri':
+            librispeech_id = int(root.split('/')[-2])
+            
 
         for f in files:
             # Skip non-sound files
-            if not f.endswith('ftype'):
+            if not f.endswith(ftype):
                 continue
-
+                     
+            if data == 'VOiCES':
+                librispeech_id = int(f[f.index('sp')+2:f.index('sp')+6])
+                
             progress_bar.update(1)
 
             instance, samplerate = sf.read(os.path.join(root, f))
