@@ -148,10 +148,11 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
         plt.show()
         '''
 
+        
 class softCrossEntropy(torch.nn.Module):
-    def __init__(self, alpha = 0.95):
+    def __init__(self, alpha=0.95):
         """
-        :param alpha: Strength (0-1) of influence from soft labels in training 
+        :param alpha: Strength (0-1) of influence from soft labels in training
         """
         super(softCrossEntropy, self).__init__()
         self.alpha = alpha
@@ -164,19 +165,22 @@ class softCrossEntropy(torch.nn.Module):
         :param true_labels: true (hard) labels
         :return: loss
         """
-        KD_loss = self.alpha*nn.KLDivLoss(size_average=False)(F.log_softmax(inputs, dim=1), 
+        KD_loss = self.alpha*torch.nn.KLDivLoss(size_average=False)(F.log_softmax(inputs, dim=1), 
                                                          F.softmax(target, dim=1)) 
-        + (1-self.alpha)*F.cross_entropy(inputs,true_labels)
+        + (1-self.alpha)*F.cross_entropy(inputs, true_labels)
         return KD_loss
     
-def distill_training(teacher, learner, data_loader, test_loader, optimizer, criterion, n_epochs, verbose = False):
+
+def distill_training(teacher, learner, data_loader, test_loader, optimizer,
+                     criterion, n_epochs, verbose=False):
     """
     :param teacher: network to provide soft labels in training
     :param learner: network to distill knowledge into
     :param data_loader: data loader for training data set
     :param test_loaderL data loader for validation data
     :param optimizer: optimizer for training
-    :param criterion: objective function, should allow for soft labels. We suggested softCrossEntropy
+    :param criterion: objective function, should allow for soft labels. 
+    We suggest softCrossEntropy
     :param n_epochs: epochs for training
     :param verbose: verbose == True will print loss at each batch
     :return: None, teacher model is trained in place
@@ -200,7 +204,9 @@ def distill_training(teacher, learner, data_loader, test_loader, optimizer, crit
                 losses.append(loss.item())
 
                 if verbose:
-                    print("[%d/%d][%d/%d] loss = %f" % (epoch, n_epochs, i, len(data_loader), loss.item()))
+                    print("[%d/%d][%d/%d] loss = %f" % (epoch, n_epochs, i,
+                                                        len(data_loader),
+                                                        loss.item()))
         # evaluate performance on testset at the end of each epoch
         print("[%d/%d]" %(epoch, n_epochs))
         print("Training:")
