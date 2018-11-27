@@ -38,7 +38,7 @@ Everything that must be done to make it happen!
 - [ ] fini! (complete)
 
 ### Documentation
-- [ ] contributing guide
+- [x] contributing guide
 - [ ] gh-pages
 - [ ] detailed descriptions of models/attacks
 - [x] pas fini (incomplete)
