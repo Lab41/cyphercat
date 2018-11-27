@@ -31,10 +31,10 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
             losses.append(loss.item())
 
             if verbose:
-                print("[%d/%d][%d/%d] loss = %f" % (epoch, n_epochs, i, len(data_loader), loss.item()))
+                print("[{}/{}][{}/{}] loss = {}".format(epoch, n_epochs, i, len(data_loader), loss.item()))
 
         # evaluate performance on testset at the end of each epoch
-        print("[%d/%d]" %(epoch, n_epochs))
+        print("[{}/{}]".format(epoch, n_epochs))
         print("Training:")
         eval_target_net(net, data_loader, classes=classes)
         print("Test:")
@@ -131,7 +131,7 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
             total += train_predictions.size(0) + out_predictions.size(0)
 
 
-            print("[%d/%d][%d/%d] loss = %.2f, accuracy = %.2f" % (epoch, n_epochs, i, len(shadow_train), loss.item(), 100 * correct / total))
+            print("[{}/{}][{}/{}] loss = {:.2f}, accuracy = {:.2f}".format(epoch, n_epochs, i, len(shadow_train), loss.item(), 100 * correct / total))
             
         #Plot distributions for target predictions in training set and out of training set
         """
@@ -202,9 +202,9 @@ def distill_training(teacher, learner, data_loader, test_loader, optimizer, crit
                 losses.append(loss.item())
 
                 if verbose:
-                    print("[%d/%d][%d/%d] loss = %f" % (epoch, n_epochs, i, len(data_loader), loss.item()))
+                    print("[{}/{}][{}/{}] loss = {}".format(epoch, n_epochs, i, len(data_loader), loss.item()))
         # evaluate performance on testset at the end of each epoch
-        print("[%d/%d]" %(epoch, n_epochs))
+        print("[{}/{}]".format(epoch, n_epochs))
         print("Training:")
         eval_target_net(learner, data_loader, classes=None)
         print("Test:")

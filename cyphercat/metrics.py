@@ -13,20 +13,21 @@ from .utils.svc_utils import *
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def eval_target_net(net, testloader, classes=None):
+def eval_target_net(model, data_loader, classes=None):
 
     if classes is not None:
-        class_correct = np.zeros(10)
-        class_total = np.zeros(10)
+        n_classes = len(classes)
+        class_correct = np.zeros(n_classes)
+        class_total   = np.zeros(n_classes)
     total = 0
     correct = 0
     with torch.no_grad():
-        net.eval()
-        for i, (imgs, lbls) in enumerate(testloader):
+        model.eval()
+        for i, (imgs, lbls) in enumerate(data_loader):
 
             imgs, lbls = imgs.to(device), lbls.to(device)
 
-            output = net(imgs)
+            output = model(imgs)
 
             predicted = output.argmax(dim=1)
 
@@ -42,8 +43,8 @@ def eval_target_net(net, testloader, classes=None):
     accuracy = 100*(correct/total)
     if classes is not None:
         for i in range(len(classes)):
-            print('Accuracy of %s : %.2f %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-    print("\nAccuracy = %.2f %%\n\n" % (accuracy) )
+            print('Accuracy of {} : {:.2f} %%'.format(classes[i], 100 * class_correct[i] / class_total[i]))
+    print("\nAccuracy = {:.2f} %%\n\n".format(accuracy))
     
     return accuracy
 
@@ -144,7 +145,7 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
     precision = true_positives / (true_positives + false_positives) if true_positives + false_positives != 0 else 0
     recall = true_positives / (true_positives + false_negatives) if true_positives + false_negatives !=0 else 0
 
-    print("accuracy = %.2f, precision = %.2f, recall = %.2f" % (accuracy, precision, recall))
+    print("accuracy = {:.2f}, precision = {:.2f}, recall = {:.2f}".format(accuracy, precision, recall))
     
 
 
@@ -206,7 +207,7 @@ def eval_membership_inference(target_net, target_train, target_out):
         precisions.append(precision)
         recalls.append(recall)
 
-        print("threshold = %.4f, accuracy = %.2f, precision = %.2f, recall = %.2f" % (t, accuracy, precision, recall))
+        print("threshold = {:.4f}, accuracy = {:.2f}, precision = {:.2f}, recall = {:.2f}".format(t, accuracy, precision, recall))
 
 
     plt.plot(recalls, precisions)
