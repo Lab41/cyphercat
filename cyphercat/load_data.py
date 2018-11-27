@@ -12,12 +12,11 @@ class LFWDataset(Dataset):
     def __init__(self, file_list, class_to_label, transform=None): 
         self.file_list = file_list
         self.transform = transform
-        
         self.people_to_idx = class_to_label
-        
                 
     def __len__(self): 
         return len(self.file_list)
+        
     def __getitem__(self, idx): 
         img_path = self.file_list[idx]
         image = io.imread(img_path)

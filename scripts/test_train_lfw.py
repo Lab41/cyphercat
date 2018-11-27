@@ -200,15 +200,18 @@ def main():
     #test_accuracy = eval_target_net(alexnet, testloader, classes=None)
 
     
-    # Train and test model
+    # Prepare the model for training
     model = get_predef_model(model_name)(n_in=3, n_classes=n_classes, n_filters=64, size=250)
     model.to(device)
     model.apply(weights_init)
     model_optim = optim.Adam(model.parameters(), lr=learnrate/10)
+
+    # Train the model
     train(model, trainloader, testloader, model_optim, loss, n_epochs, verbose=False)
+
+    # Evaluate analytics on triaining and testing sets
     print("\nPerformance on training set: ")
     train_accuracy = eval_target_net(model, trainloader, classes=None)
-    
     print("\nPerformance on test set: ")
     test_accuracy = eval_target_net(model, testloader, classes=None)
 
