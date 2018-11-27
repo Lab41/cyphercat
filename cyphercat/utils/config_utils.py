@@ -3,9 +3,10 @@ from __future__ import print_function
 import os
 import sys
 import yaml
-from .utils import set_to_string, keys_to_string, color_mode_dict
-from cyphercat.definitions import REPO_DIR
 
+from .utils import set_to_string, keys_to_string, color_mode_dict
+
+from cyphercat.definitions import REPO_DIR
 
 
 # Ensure basic, necessary fields are in the config file

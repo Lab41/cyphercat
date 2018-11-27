@@ -8,11 +8,11 @@ roughly, on work in the following repository (https://github.com/sar-gupta/weakl
 import numpy as np
 import PIL
 
-
 import torch
 import torchvision
 import torch.nn as nn
 from torch.autograd import Variable
+
 
 def saliency_map_general(model, input, label, plot = False):
     """
