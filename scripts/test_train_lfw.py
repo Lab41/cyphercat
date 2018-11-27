@@ -67,8 +67,8 @@ def main():
     
     img_paths = []
     for p in os.listdir(data_dir): 
-        for i in os.listdir(os.path.join(data_dir,p)): 
-            img_paths.append(os.path.join(data_dir,p,i))
+        for i in os.listdir(os.path.join(data_dir, p)): 
+            img_paths.append(os.path.join(data_dir, p, i))
             
     class_list = []
     class_to_idx = {}
@@ -211,7 +211,6 @@ def main():
     
     print("\nPerformance on test set: ")
     test_accuracy = eval_target_net(model, testloader, classes=None)
-
 
 
 if __name__ == "__main__":

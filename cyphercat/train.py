@@ -17,12 +17,12 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
         net.train()
         for i, batch in enumerate(data_loader):
 
-            imgs, labels = batch
-            imgs, labels = imgs.to(device), labels.to(device)
+            data, labels = batch
+            data, labels = data.to(device), labels.to(device)
 
             optimizer.zero_grad()
 
-            outputs = net(imgs)
+            outputs = net(data)
 
             loss = criterion(outputs, labels)
             loss.backward()
@@ -67,22 +67,22 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
         #train_top = []
         train_top = np.empty((0,2))
         out_top = np.empty((0,2))
-        for i, ((train_imgs, _), (out_imgs, _)) in enumerate(zip(shadow_train, shadow_out)):
+        for i, ((train_data, _), (out_data, _)) in enumerate(zip(shadow_train, shadow_out)):
 
-            #######out_imgs = torch.randn(out_imgs.shape)
-            mini_batch_size = train_imgs.shape[0]
+            #######out_data = torch.randn(out_data.shape)
+            mini_batch_size = train_data.shape[0]
             
             if type(shadow) is not Pipeline:
-                train_imgs, out_imgs = train_imgs.to(device), out_imgs.to(device)
+                train_data, out_data = train_data.to(device), out_data.to(device)
 
-                train_posteriors = F.softmax(shadow_net(train_imgs.detach()), dim=1)
+                train_posteriors = F.softmax(shadow_net(train_data.detach()), dim=1)
                 
-                out_posteriors = F.softmax(shadow_net(out_imgs.detach()), dim=1)
+                out_posteriors = F.softmax(shadow_net(out_data.detach()), dim=1)
 
                 
             else:
-                traininputs= train_imgs.view(train_imgs.shape[0],-1)
-                outinputs=out_imgs.view(out_imgs.shape[0], -1)
+                traininputs= train_data.view(train_data.shape[0],-1)
+                outinputs=out_data.view(out_data.shape[0], -1)
                 
                 in_preds=shadow.predict_proba(traininputs)
                 train_posteriors=torch.from_numpy(in_preds).float()
@@ -189,13 +189,13 @@ def distill_training(teacher, learner, data_loader, test_loader, optimizer, crit
         learner.train()
         for i, batch in enumerate(data_loader):
             with torch.set_grad_enabled(False):
-                imgs, labels = batch
-                imgs, labels = imgs.to(device), labels.to(device)
-                soft_lables = teacher(imgs)
+                data, labels = batch
+                data, labels = data.to(device), labels.to(device)
+                soft_lables = teacher(data)
             
             with torch.set_grad_enabled(True):
                 optimizer.zero_grad()
-                outputs = learner(imgs)
+                outputs = learner(data)
                 loss = criterion(outputs, soft_lables, labels)
                 loss.backward()
                 optimizer.step()
