@@ -64,7 +64,25 @@ class LFWDataset(Dataset):
             file_list = img_paths[trainset_size:]
 
         return n_classes, file_list, class_to_idx 
-        
+
+
+PREDEFINED_DATASETS = {'lfw' : LFWDataset,
+                      }
+
+
+def get_split_dataset(data_dir='', transforms=[]):
+
+    trainset = None
+    testset  = None
+    assert len(transforms) == 2, "Need exactly two transforms"
+
+    # Grab correct predefined dataset class
+    bname = os.path.basename(data_dir)
+    trainset = PREDEFINED_DATASETS[bname](data_dir=data_dir, train_set=True, transform=transforms[0])
+    testset  = PREDEFINED_DATASETS[bname](data_dir=data_dir, train_set=False, transform=transforms[1])
+
+    return trainset, testset
+
 
 def custom_preprocessor(out_dir=''):
     """

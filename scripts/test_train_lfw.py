@@ -16,7 +16,7 @@ try:
     from cyphercat.train import *
     from cyphercat.metrics import *  
     
-    from cyphercat.load_data import prep_data, LFWDataset
+    from cyphercat.load_data import prep_data, get_split_dataset
     from cyphercat.utils import Configurator, DataStruct, ModelConfig
 
 except ImportError as e:
@@ -65,7 +65,6 @@ def main():
     learnrate = train_config.learnrate
     loss = nn.CrossEntropyLoss()
     
-    
     # Data augmentation 
     train_transform = torchvision.transforms.Compose([
         #torchvision.transforms.RandomRotation(10),
@@ -83,11 +82,11 @@ def main():
         torchvision.transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
     ])
         
-    
-    trainset = LFWDataset(data_dir=data_dir, train_set=True, transform=train_transform)
-    testset = LFWDataset(data_dir=data_dir, train_set=False, transform=test_transform)
+    # Defined training and testing set splits 
+    trainset, testset = get_split_dataset(data_dir=data_dir, transforms=[train_transform, test_transform])
     n_classes = trainset.n_classes
     
+    # Define pyTorch ingestors for training and testing
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
     
