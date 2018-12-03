@@ -23,8 +23,8 @@ Everything that must be done to make it happen!
 - [ ] fini! (complete)
 
 ### Model Training and Testing Suite
-- [ ] train requested model
-- [ ] hyperparameter definition capabilities
+- [x] train requested model
+- [x] hyperparameter definition capabilities
 - [ ] access previously trained model
 - [ ] test selected model
 - [ ] performance metrics output

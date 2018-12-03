@@ -44,7 +44,7 @@ def train_grid(clfs, inputs, targets):
     for i in range(len(clfs)):
         x=clfs[i].fit(inputs, targets)
         fitted_clfs.append(x)
-        print('Fitted: ', i+1, '/', len(clfs))
+        print("Fitted: {} / {}".format(i+1, len(clfs)))
     return fitted_clfs
 
 
@@ -54,10 +54,11 @@ def predict_eval(clf, inputs, targets, training=False):
     num_correct=torch.eq(torch.from_numpy(preds), targets).sum().item()
     acc=(num_correct/len(targets))*100
     if training:
-        print('C: ', clf.get_params(deep=True)['svc__C'], 'gamma: ', clf.get_params(deep=True)['svc__gamma'])
-        print('Training Accuracy: ', acc)
+        # print('C: ', clf.get_params(deep=True)['svc__C'], 'gamma: ', clf.get_params(deep=True)['svc__gamma'])
+        print("C: {} gamma: {}".format(clf.get_params(deep=True)['svc__C'], clf.get_params(deep=True)['svc__gamma']))
+        print('Training Accuracy: {}'.format(acc))
     else:
-        print('Testing Accuracy: ', acc)
+        print('Testing Accuracy: {}'.format(acc))
     return preds, acc
 
 
@@ -119,5 +120,5 @@ def class_acc(preds, targets, classes):
     accuracy=(correct/len(targets))*100
 
     for i in range(len(class_accuracies)):
-        print('Accuracy of', classes[i], ': ', class_accuracies[i], '%')
-    print('Total Accuracy: ', accuracy, '%')
+        print('Accuracy of {} : {} %%'.format(classes[i], class_accuracies[i]))
+    print('Total Accuracy: {} %%'.format(accuracy))

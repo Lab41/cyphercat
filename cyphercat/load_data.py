@@ -1,10 +1,87 @@
-import io
 import os
 import sys
 import shutil
+import numpy as np
 
 from .utils.config_utils import DataStruct
 from .utils.file_utils import downloader, unpacker
+
+from skimage import io
+from torch.utils.data.dataset import Dataset
+
+
+class LFWDataset(Dataset):
+    """
+    Faces in the Wild specific dataset class.
+    Includes indexing functionality.
+    """
+    def __init__(self, data_dir='', train_set=True, transform=None): 
+        self.test_train_split = 0.8
+        self.transform = transform
+        n_classes, file_list, class_to_label = self.index(data_dir, train_set)
+        self.n_classes = n_classes
+        self.file_list = file_list
+        self.people_to_idx = class_to_label
+                
+    def __len__(self): 
+        return len(self.file_list)
+        
+    def __getitem__(self, idx): 
+        img_path = self.file_list[idx]
+        image = io.imread(img_path)
+        label = self.people_to_idx[img_path.split('/')[-2]]
+        
+        if self.transform is not None: 
+            image = self.transform(image)
+        
+        return image, label
+
+    def index(self, data_dir, is_train_set):
+        img_paths = []
+        for p in os.listdir(data_dir): 
+            for i in os.listdir(os.path.join(data_dir, p)): 
+                img_paths.append(os.path.join(data_dir, p, i))
+                
+        class_list = []
+        class_to_idx = {}
+        k = 0 
+        for i in img_paths: 
+            name = i.split('/')[-2]
+            if name not in class_to_idx: 
+                class_list.append(name)
+                class_to_idx[name] = k
+                k += 1
+
+        n_classes = len(class_list)
+        
+        img_paths = np.random.permutation(img_paths)
+        
+        dataset_size = len(img_paths)
+        trainset_size = int(self.test_train_split * dataset_size)
+        if is_train_set:
+            file_list = img_paths[:trainset_size]
+        else:
+            file_list = img_paths[trainset_size:]
+
+        return n_classes, file_list, class_to_idx 
+
+
+PREDEFINED_DATASETS = {'lfw' : LFWDataset,
+                      }
+
+
+def get_split_dataset(data_dir='', transforms=[]):
+
+    trainset = None
+    testset  = None
+    assert len(transforms) == 2, "Need exactly two transforms"
+
+    # Grab correct predefined dataset class
+    bname = os.path.basename(data_dir)
+    trainset = PREDEFINED_DATASETS[bname](data_dir=data_dir, train_set=True, transform=transforms[0])
+    testset  = PREDEFINED_DATASETS[bname](data_dir=data_dir, train_set=False, transform=transforms[1])
+
+    return trainset, testset
 
 
 def custom_preprocessor(out_dir=''):

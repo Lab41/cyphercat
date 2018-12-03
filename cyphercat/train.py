@@ -17,12 +17,12 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
         net.train()
         for i, batch in enumerate(data_loader):
 
-            imgs, labels = batch
-            imgs, labels = imgs.to(device), labels.to(device)
+            data, labels = batch
+            data, labels = data.to(device), labels.to(device)
 
             optimizer.zero_grad()
 
-            outputs = net(imgs)
+            outputs = net(data)
 
             loss = criterion(outputs, labels)
             loss.backward()
@@ -31,10 +31,11 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
             losses.append(loss.item())
 
             if verbose:
-                print("[%d/%d][%d/%d] loss = %f" % (epoch, n_epochs, i, len(data_loader), loss.item()))
+                print("[{}/{}][{}/{}] loss = {}"\
+                      .format(epoch, n_epochs, i, len(data_loader), loss.item()))
 
         # evaluate performance on testset at the end of each epoch
-        print("[%d/%d]" %(epoch, n_epochs))
+        print("[{}/{}]".format(epoch, n_epochs))
         print("Training:")
         eval_target_net(net, data_loader, classes=classes)
         print("Test:")
@@ -67,22 +68,22 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
         #train_top = []
         train_top = np.empty((0,2))
         out_top = np.empty((0,2))
-        for i, ((train_imgs, _), (out_imgs, _)) in enumerate(zip(shadow_train, shadow_out)):
+        for i, ((train_data, _), (out_data, _)) in enumerate(zip(shadow_train, shadow_out)):
 
-            #######out_imgs = torch.randn(out_imgs.shape)
-            mini_batch_size = train_imgs.shape[0]
+            #######out_data = torch.randn(out_data.shape)
+            mini_batch_size = train_data.shape[0]
             
             if type(shadow) is not Pipeline:
-                train_imgs, out_imgs = train_imgs.to(device), out_imgs.to(device)
+                train_data, out_data = train_data.to(device), out_data.to(device)
 
-                train_posteriors = F.softmax(shadow_net(train_imgs.detach()), dim=1)
+                train_posteriors = F.softmax(shadow_net(train_data.detach()), dim=1)
                 
-                out_posteriors = F.softmax(shadow_net(out_imgs.detach()), dim=1)
+                out_posteriors = F.softmax(shadow_net(out_data.detach()), dim=1)
 
                 
             else:
-                traininputs= train_imgs.view(train_imgs.shape[0],-1)
-                outinputs=out_imgs.view(out_imgs.shape[0], -1)
+                traininputs= train_data.view(train_data.shape[0],-1)
+                outinputs=out_data.view(out_data.shape[0], -1)
                 
                 in_preds=shadow.predict_proba(traininputs)
                 train_posteriors=torch.from_numpy(in_preds).float()
@@ -131,7 +132,8 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
             total += train_predictions.size(0) + out_predictions.size(0)
 
 
-            print("[%d/%d][%d/%d] loss = %.2f, accuracy = %.2f" % (epoch, n_epochs, i, len(shadow_train), loss.item(), 100 * correct / total))
+            print("[{}/{}][{}/{}] loss = {:.2f}, accuracy = {:.2f}"\
+                  .format(epoch, n_epochs, i, len(shadow_train), loss.item(), 100 * correct / total))
             
         #Plot distributions for target predictions in training set and out of training set
         """
@@ -189,25 +191,27 @@ def distill_training(teacher, learner, data_loader, test_loader, optimizer, crit
         learner.train()
         for i, batch in enumerate(data_loader):
             with torch.set_grad_enabled(False):
-                imgs, labels = batch
-                imgs, labels = imgs.to(device), labels.to(device)
-                soft_lables = teacher(imgs)
+                data, labels = batch
+                data, labels = data.to(device), labels.to(device)
+                soft_lables = teacher(data)
             
             with torch.set_grad_enabled(True):
                 optimizer.zero_grad()
-                outputs = learner(imgs)
+                outputs = learner(data)
                 loss = criterion(outputs, soft_lables, labels)
                 loss.backward()
                 optimizer.step()
                 losses.append(loss.item())
 
                 if verbose:
-                    print("[%d/%d][%d/%d] loss = %f" % (epoch, n_epochs, i, len(data_loader), loss.item()))
+                    print("[{}/{}][{}/{}] loss = {}"\
+                          .format(epoch, n_epochs, i, len(data_loader), loss.item()))
+
         # evaluate performance on testset at the end of each epoch
-        print("[%d/%d]" %(epoch, n_epochs))
+        print("[{}/{}]".format(epoch, n_epochs))
+
         print("Training:")
         eval_target_net(learner, data_loader, classes=None)
-        print("Test:")
+
+        print("Testing:")
         eval_target_net(learner, test_loader, classes=None)
-#        plt.plot(losses)
-#        plt.show()

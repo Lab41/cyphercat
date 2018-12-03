@@ -7,7 +7,6 @@ import zipfile
 import tarfile
 
 
-
 def downloader(save_dir='', url=''):
     """
     Function to download file from 
@@ -86,7 +85,7 @@ def unpacker(compressed_file_name='', out_directory=''):
             tar.extractall(os.path.split(out_directory)[0])
             #tar.extractall(path=out_directory)
     else:
-        print('File extension {} not recognized for unpacking.\nExiting...')
+        print('File extension {} not recognized for unpacking.\nExiting...'.format(file_ext))
         sys.exit()
 
 
