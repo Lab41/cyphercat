@@ -34,11 +34,12 @@ def train(net, data_loader, test_loader, optimizer, criterion, n_epochs, classes
         # evaluate performance on testset at the end of each epoch
         print("[%d/%d]" %(epoch, n_epochs))
         print("Training:")
-        eval_target_net(net, data_loader, classes=classes)
+        train_accuracy = eval_target_net(net, data_loader, classes=classes)
         print("Test:")
-        eval_target_net(net, test_loader, classes=classes)
+        test_accuracy = eval_target_net(net, test_loader, classes=classes)
         #plt.plot(losses)
         #plt.show()
+        return train_accuracy, test_accuracy
         
 def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, criterion, n_epochs, k):
     
