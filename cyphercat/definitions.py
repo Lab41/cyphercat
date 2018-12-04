@@ -8,3 +8,6 @@ REPO_DIR     = os.path.split(CYCAT_DIR)[0]
 
 # Local directory for datasets
 DATASETS_DIR = os.path.join(REPO_DIR, 'Datasets')
+
+# Local directory for datasets
+DATASPLITS_DIR = os.path.join(DATASETS_DIR, 'splits')
