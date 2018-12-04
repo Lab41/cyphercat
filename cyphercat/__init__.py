@@ -6,5 +6,6 @@ from .utils import *
 from .train import *
 from .models import *
 from .metrics import *
+from .attacks import *
 from .load_data import *
 from .definitions import *
