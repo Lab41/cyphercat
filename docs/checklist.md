@@ -28,6 +28,7 @@ Everything that must be done to make it happen!
 - [ ] access previously trained model
 - [ ] test selected model
 - [ ] performance metrics output
+- [ ] pytest directory and functions
 - [x] pas fini (incomplete) 
 - [ ] fini! (complete)
 
