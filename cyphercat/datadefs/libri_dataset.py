@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from .definitions import DATASETS_DIR, DATASPLITS_DIR
+from cyphercat.definitions import DATASETS_DIR, DATASPLITS_DIR
 from tqdm import tqdm
 import soundfile as sf
 import pandas as pd
@@ -150,7 +150,7 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
     return dfs
 
 
-def index_subset(path='', subset=''):
+def index_subset(path=None, subset=None):
     """Index a subset by looping through all of it's files and recording their
     speaker ID, filepath and length.
 
