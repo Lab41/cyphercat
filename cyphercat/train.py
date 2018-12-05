@@ -96,7 +96,7 @@ def train_attacker(attack_model=None, shadow_model=None,
                    PyTorch conforming loss function
     n_epochs     : int
                    number of training epochs
-    n_epochs     : int
+    k            : int
                    Value at which to end using train data list
     """
 
