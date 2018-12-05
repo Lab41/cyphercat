@@ -5,6 +5,7 @@
 *.pyc
 *.zip
 Datasets/*
+!Datasets/splits/*
 scripts/configs/*
 !/scripts/configs/config.yml
 !/scripts/configs/tiny-imagenet.yml
