@@ -37,6 +37,8 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
     Todo:
         - Write Example.
         - More work on user specified splits.
+        - Add option and functionality to split longer recording into samples
+        of length 'seconds' to augment data.
     """
     
     fragment_seconds = seconds
@@ -45,15 +47,11 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
         
     print('Initialising LibriSpeechDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))
-
-    # Convert subset to list if it is a string
-    # This allows to handle list of multiple subsets the same a single subset
     
-    df = []
     # Check for cached files
-    subset_index_path = DATASPLITS_DIR + '/{}.index.csv'.format(subset)
+    subset_index_path = DATASETS_DIR + '/libri-{}.index.csv'.format(subset)
     if os.path.exists(subset_index_path):
-        df.append(pd.read_csv(subset_index_path))
+        df = pd.read_csv(subset_index_path)
     # otherwise cache them
     else:
         df = pd.read_csv(path+'/LibriSpeech/SPEAKERS.TXT', skiprows=11,
@@ -68,10 +66,10 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
 
         audio_files = index_subset(path, subset)
         # Merge individual audio files with indexing dataframe
-        df = pd.merge(pd.DataFrame(audio_files))
+        df = pd.merge(df, pd.DataFrame(audio_files))
         
-    # Save index files to data folder
-    df.to_csv(DATASPLITS_DIR + '/{}.index.csv'.format(subset), index=False)
+        # Save index files to data folder
+        df.to_csv(DATASPLITS_DIR + '/{}.index.csv'.format(subset), index=False)
 
     # Trim too-small files
     if not pad:
@@ -99,15 +97,16 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
         # check if splits exists.
         splits_ready = [False]*5
         for i_split in range(5):
-            if os.path.exists( DATASPLITS_DIR+'libri_%i.csv' % (i_split)):
+            if os.path.exists( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
+                               (subset, i_split)):
                 splits_ready[i_split] = True
 
-                print('Found default splits, loading dataframe')
         if all(splits_ready): # Found all of the relelvant splits
+            print('Found default splits, loading dataframe')
             dfs = {}
             for i_split in range(5):
-                dfs[i_split] = pd.read_csv( DATASPLITS_DIR+'libri_%i.csv'
-                                            % (i_split) )
+                dfs[i_split] = pd.read_csv( DATASPLITS_DIR + 
+                                            '/libri-%s/libri_%i.csv' % (subset, i_split) )
 
         else:
             # Case when splits not found. This should only occur first time
@@ -117,7 +116,8 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
             dfs = default_splitter(df, unique_speakers)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
-                this_df.to_csv( DATASPLITS_DIR+'libri_%i.csv' % i_df)
+                dfs[this_df].to_csv( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
+                                     (subset, i_df) )
     else:
         name =  list(splits.keys())[0] 
         print('Creating user defined splits under name %s' %
@@ -219,7 +219,7 @@ def default_splitter(df=None, unique_speakers=0):
     Todo:
         -Write example.
     """
-    n = unique_speakers//2
+    n = len(unique_speakers)//2
     target_speakers = unique_speakers[:n]
     shadow_speaker = unique_speakers[n:]
     dfs = {}
