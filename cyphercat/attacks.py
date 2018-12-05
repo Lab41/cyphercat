@@ -22,7 +22,7 @@ def ml_leaks1(target=None, shadow_net=None, attacker_net=None,
             task.
         target_train_loader (DataLoader): Loads data used for target network
             training (split[0]).  This will be used for evaluation of the
-            attack.  
+            attack.
         target_out_loader (DataLoader): Loads data pointing to target out-of-
              training dataset (split[1]) used for attack evaluation.
         shadow_train_loader (DataLoader): Loader for shadow_net training
@@ -41,8 +41,8 @@ def ml_leaks1(target=None, shadow_net=None, attacker_net=None,
          n_max_posteriors (int): Number of maximal posteriors to use in
               membership inference attack.
          verbose (bool): If True will print the loss at each batch during all
-             training steps. 
-    
+             training steps.
+
     Example:
 
     To-do:
@@ -65,7 +65,7 @@ def ml_leaks1(target=None, shadow_net=None, attacker_net=None,
     eval_attack_net(attack_net=attacker_net, target=target,
                     target_train=target_train_loader,
                     target_out=target_out_loader, k=n_max_posteriors)
-    
+
 
 def ml_leaks3(target=None, target_train_loader=None,  target_out_loader=None):
     ''' Implementation of  ml_leaks 3 membership inference attack
@@ -79,7 +79,7 @@ def ml_leaks3(target=None, target_train_loader=None,  target_out_loader=None):
               (split[1])
 
     Example:
-    
+
     To-do:
          Add example to docstring.
     '''

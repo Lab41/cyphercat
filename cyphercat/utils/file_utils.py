@@ -1,4 +1,3 @@
-import io
 import os
 import sys
 import shutil
@@ -9,16 +8,16 @@ import tarfile
 
 def downloader(save_dir='', url=''):
     """
-    Function to download file from 
+    Function to download file from
     url to specified destination file.
     If file already exists, or the url
     is a path to a valid local file,
     then simply returns path to local file.
-    
+
     Parameters
     ----------
     save_dir : string
-               directory used for saving file 
+               directory used for saving file
     url      : string
                url or path to existing compressed
                dataset file
@@ -28,7 +27,7 @@ def downloader(save_dir='', url=''):
     dest_file    : string
                    path to compressed file
     """
-    
+
     # Need defined url for dataset
     if url == '':
         print('The url to download the dataset or path to the compressed data file was not provided.')
@@ -36,8 +35,8 @@ def downloader(save_dir='', url=''):
         sys.exit()
 
     file_bname = os.path.basename(url)
-    dest_file  = os.path.join(save_dir, file_bname)
-    
+    dest_file = os.path.join(save_dir, file_bname)
+
     # Check if url is really path to local file
     if os.path.isfile(url):
         dest_file = url
@@ -83,9 +82,7 @@ def unpacker(compressed_file_name='', out_directory=''):
     elif 'gz' in file_ext:
         with tarfile.open(compressed_file_name) as tar:
             tar.extractall(os.path.split(out_directory)[0])
-            #tar.extractall(path=out_directory)
+            # tar.extractall(path=out_directory)
     else:
         print('File extension {} not recognized for unpacking.\nExiting...'.format(file_ext))
         sys.exit()
-
-

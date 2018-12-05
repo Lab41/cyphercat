@@ -24,7 +24,7 @@ def saliency_map_general(model, input, label, plot = False):
         - label: Class to identify the regions of interest
     return: numpy array with heatmap data
     """
-    input  =  Variable(input.unsqueeze_(0),requires_grad = True)
+    input  =  Variable(input.unsqueeze_(0), requires_grad = True)
     output = model.forward(input)
     model.zero_grad()
 
@@ -32,8 +32,8 @@ def saliency_map_general(model, input, label, plot = False):
 
     grads = input.grad.data.clamp(min=0)
     grads.squeeze_()
-    grads.transpose_(0,1)
-    grads.transpose_(1,2)
+    grads.transpose_(0, 1)
+    grads.transpose_(1, 2)
     grads = np.amax(grads.cpu().numpy(), axis=2)
     
     grads -= grads.min()
@@ -81,8 +81,8 @@ def guided_saliency_map(model, input, label, plot = False):
         
     grads = input.grad.data.clamp(min=0)
     grads.squeeze_()
-    grads.transpose_(0,1)
-    grads.transpose_(1,2)
+    grads.transpose_(0, 1)
+    grads.transpose_(1, 2)
     grads = np.amax(grads.cpu().numpy(), axis=2)
     
     grads -= grads.min()
@@ -92,6 +92,7 @@ def guided_saliency_map(model, input, label, plot = False):
     grads = grads.astype(int)
 
     return grads
+
 
 def gradcam(model, input, label, layer_name, plot=False):
     """
@@ -107,7 +108,7 @@ def gradcam(model, input, label, layer_name, plot=False):
     PIL image with cativation map
     """
     imgs_shape = (input.shape[1], input.shape[2])
-    rs = torchvision.transforms.Resize( imgs_shape  )
+    rs = torchvision.transforms.Resize(imgs_shape)
 
     #find the right layer
     last_conv = None
@@ -161,7 +162,8 @@ def gradcam(model, input, label, layer_name, plot=False):
     
     return gcdata
 
-def guided_gradcam(model, input, label,layer_name,  plot = False):
+
+def guided_gradcam(model, input, label, layer_name,  plot = False):
     """
     guided_gradcam: returns a combination of a guided saliency map and class activation map. this combines 
     the sensitivity to different classes from gradcam toguether with the greater resolution of the
@@ -179,7 +181,7 @@ def guided_gradcam(model, input, label,layer_name,  plot = False):
     guided = guided_saliency_map(model=model, input=input[0], label=label, plot=False)
     gc = gc * guided
     
-    rs = torchvision.transforms.Resize((32,32))
+    rs = torchvision.transforms.Resize((32, 32))
 
     
     gc -= gc.min()
@@ -189,7 +191,8 @@ def guided_gradcam(model, input, label,layer_name,  plot = False):
 
     return gc
 
-def smooth_guided_saliency_map(model, input, label, transform,x=10, percent_noise=10, plot = True):
+
+def smooth_guided_saliency_map(model, input, label, transform, x=10, percent_noise=10, plot = True):
     """
     smooth_guided_saliency_map: Implementation of guided saliency map accounting for the fact 
     small, local variations in the local derivatives lead to the apparent noise one sees. This implementation smooths
@@ -221,7 +224,7 @@ def smooth_guided_saliency_map(model, input, label, transform,x=10, percent_nois
                                                   (tensor_input.max() - tensor_input.min()), 
                                                   size=temp_input.shape)).type(torch.cuda.FloatTensor)
         temp_input = (temp_input.cuda() + noise).cpu().numpy()
-        temp_input = np.transpose(temp_input, (1,2,0) )
+        temp_input = np.transpose(temp_input, (1, 2, 0) )
         temp_input = PIL.Image.fromarray(temp_input.astype(np.uint8))
         temp_input = Variable(transform(temp_input).unsqueeze(0).cuda(), requires_grad=True)
 
@@ -236,8 +239,8 @@ def smooth_guided_saliency_map(model, input, label, transform,x=10, percent_nois
     grads = final_grad/x
     grads = grads.clamp(min=0)
     grads.squeeze_()
-    grads.transpose_(0,1)
-    grads.transpose_(1,2)
+    grads.transpose_(0, 1)
+    grads.transpose_(1, 2)
     grads = np.amax(grads.cpu().numpy(), axis=2)
     
     grads -= grads.min()
@@ -248,12 +251,13 @@ def smooth_guided_saliency_map(model, input, label, transform,x=10, percent_nois
 
     return grads
 
+
 def smooth_guided_gradcam(model, input, label, transform, layer_name, plot = False ):
-    guided = smooth_guided_saliency_map(model, input, label,transform = transform,  plot = False)
+    guided = smooth_guided_saliency_map(model, input, label, transform = transform,  plot = False)
     gc = gradcam(model, input, label, layer_name = layer_name,  plot=False)
     gc = gc * guided
     
-    rs = torchvision.transforms.Resize((32,32))
+    rs = torchvision.transforms.Resize((32, 32))
 
     
     gc -= gc.min()
