@@ -44,12 +44,13 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
     fragment_seconds = seconds
     if path is None:
         path = DATASETS_DIR
+        index_file = DATASETS_DIR + '/libri-{}.index.csv'.format(subset)
         
     print('Initialising LibriSpeechDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))
     
     # Check for cached files
-    subset_index_path = DATASETS_DIR + '/libri-{}.index.csv'.format(subset)
+    subset_index_path = index_file
     if os.path.exists(subset_index_path):
         df = pd.read_csv(subset_index_path)
     # otherwise cache them
@@ -69,8 +70,7 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
         df = pd.merge(df, pd.DataFrame(audio_files))
         
         # Save index files to data folder
-        df.to_csv(DATASETS_DIR + '/libri-{}.index.csv'.format(subset),
-                  index=False)
+        df.to_csv(index_file, index=False)
 
     # Trim too-small files
     if not pad:
@@ -114,7 +114,7 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
             # LibriSpeech is parsed by developers (not users), so will include
             # a warning
             print('WARNING: Creating default splits for LibriSpeech!')            
-            dfs = default_splitter(df, unique_speakers)
+            dfs = default_splitter(dfs, df, unique_speakers)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
                 dfs[this_df].to_csv( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
@@ -142,9 +142,18 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
         dfs = splitter(dfs, df, unique_speakers2, splits, 2)
         # split out data for attack train  + test evenly
         dfs = splitter(dfs, df, unique_speakers3, splits=[0.5, 0.5], N=4) 
-        
+
     for d in dfs:
-        print(len(dfs[d]))
+        this_df = dfs[d]
+        male_df = this_df[this_df['sex'] == 'M']
+        female_df = this_df[this_df['sex'] == 'F']
+        print('\t\t ---- Split %i ---- \n\tUnique speakers \t Samples' % d)
+        print('Male:\t %i\t %i' %
+              (len(male_df['speaker_id'].unique()), len(male_df))) 
+        print('Female:\t %i\t %i' %
+              (len(female_df['speaker_id'].unique()), len(female_df)))
+        print('Total:\t %i\t %i' %
+              (len(this_df['speaker_id'].unique()), len(this_df)))
 
     print('Finished splitting data.')
 
@@ -204,7 +213,7 @@ def index_subset(path=None, subset=None):
     return audio_files
 
 
-def default_splitter(df=None, unique_speakers=0):
+def default_splitter(dfs=None, df=None, unique_speakers=0):
     """ Performs cycpercat default split for librspeech dataset.
     
     Args:
@@ -220,14 +229,30 @@ def default_splitter(df=None, unique_speakers=0):
     Todo:
         -Write example.
     """
-    n = len(unique_speakers)//2
-    target_speakers = unique_speakers[:n]
-    shadow_speaker = unique_speakers[n:]
-    dfs = {}
-    dfs = splitter(dfs, df, target_speakers, [0.8, 0.2], 0)
-    dfs = splitter(dfs, df, shadow_speaker, [0.5, 0.5], 2)
-    # Now for subset dataframe used to evaluate attack
-    dfs[4] = dfs[0][:len(dfs[1])]
+    # split the df by sex
+    male_df = df[df['sex'] == 'M']
+    female_df = df[df['sex'] == 'F']
+    #
+    unique_male = sorted(male_df['speaker_id'].unique())
+    unique_female = sorted(female_df['speaker_id'].unique())
+    n_male = len(unique_male)//2
+    n_female = len(unique_female)//2
+    # male splits
+    m_dfs = {}
+    m_dfs = splitter(m_dfs, male_df, unique_male[:n_male], [0.8, 0.2], 0)
+    m_dfs = splitter(m_dfs, male_df, unique_male[n_male:], [0.5, 0.5], 2)
+    m_dfs[4] = m_dfs[0][:len(m_dfs[1])]
+    # female splits
+    f_dfs = {}
+    f_dfs = splitter(f_dfs, female_df, unique_female[:n_female], [0.8, 0.2], 0)
+    f_dfs = splitter(f_dfs, female_df, unique_female[n_female:], [0.5, 0.5], 2)
+    f_dfs[4] = f_dfs[0][:len(f_dfs[1])]
+    # merge male and female into final splits
+    for i_split in range(5):
+        print('Merging split %i\n Male: %i and Female: %i' %
+              (i_split, len(m_dfs[i_split]), len(f_dfs[i_split])))
+        dfs[i_split] = m_dfs[i_split].append(f_dfs[i_split])
+        
     return dfs
 
       
