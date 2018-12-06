@@ -16,8 +16,8 @@ try:
     from cyphercat.train import *
     from cyphercat.metrics import *  
     
-    from cyphercat.load_data import prep_data, get_split_dataset
-    from cyphercat.utils import Configurator, DataStruct, ModelConfig
+    from cyphercat.load_data import get_split_dataset
+    from cyphercat.utils import Configurator, ModelConfig
 
 except ImportError as e:
     print(e)
@@ -46,15 +46,6 @@ def main():
     dataset_config       = configr.dataset
     train_model_config   = configr.train_model
 
-    # Directory structures for data and model saving
-    data_struct = DataStruct(dataset_config)
-
-    # Load LFW
-    prep_data(dataset_config)
-
-    # Data set directory
-    data_dir = data_struct.save_path
-   
     # Training model params
     train_config = ModelConfig(train_model_config)
     model_name = train_config.name
@@ -83,13 +74,12 @@ def main():
     ])
         
     # Defined training and testing set splits 
-    trainset, testset = get_split_dataset(data_dir=data_dir, transforms=[train_transform, test_transform])
+    trainset, testset = get_split_dataset(dataset_config=dataset_config, transforms=[train_transform, test_transform])
     n_classes = trainset.n_classes
     
     # Define pyTorch ingestors for training and testing
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
-    
     
     ## helper function to unnormalize and plot image 
     #def imshow(img):
@@ -106,19 +96,19 @@ def main():
     #sys.exit(0)
     
     ## Train and test CNN
-    #conv_net = tiny_cnn(n_in=3, n_classes=n_classes, n_filters=32, size=250).to(device)
+    #conv_model = tiny_cnn(n_in=3, n_classes=n_classes, n_filters=32, size=250).to(device)
     #
-    #conv_net.apply(weights_init)
+    #conv_model.apply(weights_init)
     #
-    #conv_optim = optim.Adam(conv_net.parameters(), lr=learnrate)
+    #conv_optim = optim.Adam(conv_model.parameters(), lr=learnrate)
     #
-    #train(conv_net, trainloader, testloader, conv_optim, loss, n_epochs, verbose=False)
+    #train(conv_model, trainloader, testloader, conv_optim, loss, n_epochs, verbose=False)
     #
     #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_net(conv_net, trainloader, classes=None)
+    #train_accuracy = eval_target_model(conv_model, trainloader, classes=None)
     #
     #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_net(conv_net, testloader, classes=None)
+    #test_accuracy = eval_target_model(conv_model, testloader, classes=None)
     #
     #
     #
@@ -135,10 +125,10 @@ def main():
     #train(resnet18, trainloader, testloader, resnet18_optim, loss, n_epochs, verbose=False)
     #
     #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_net(resnet18, trainloader, classes=None)
+    #train_accuracy = eval_target_model(resnet18, trainloader, classes=None)
     #
     #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_net(resnet18, testloader, classes=None)
+    #test_accuracy = eval_target_model(resnet18, testloader, classes=None)
     #
     #
     ## Train and test VGG16
@@ -153,10 +143,10 @@ def main():
     #train(vgg16, trainloader, testloader, vgg16_optim, loss, n_epochs, verbose=False)
     #
     #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_net(vgg16, trainloader, classes=None)
+    #train_accuracy = eval_target_model(vgg16, trainloader, classes=None)
     #
     #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_net(vgg16, testloader, classes=None)
+    #test_accuracy = eval_target_model(vgg16, testloader, classes=None)
     #
     ## Train and test AlexNet
     #alexnet = AlexNet(n_in=3, n_classes=n_classes, n_filters=64, size=250).to(device)
@@ -168,10 +158,10 @@ def main():
     #train(alexnet, trainloader, testloader, alexnet_optim, loss, n_epochs, verbose=False)
     #
     #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_net(alexnet, trainloader, classes=None)
+    #train_accuracy = eval_target_model(alexnet, trainloader, classes=None)
     #
     #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_net(alexnet, testloader, classes=None)
+    #test_accuracy = eval_target_model(alexnet, testloader, classes=None)
 
     
     # Prepare the model for training
@@ -181,13 +171,14 @@ def main():
     model_optim = optim.Adam(model.parameters(), lr=learnrate/10)
 
     # Train the model
-    train(model, trainloader, testloader, model_optim, loss, n_epochs, verbose=False)
+    train(model=model, data_loader=trainloader, test_loader=testloader, 
+          optimizer=model_optim, criterion=loss, n_epochs=n_epochs, classes=None, verbose=False)
 
     # Evaluate analytics on triaining and testing sets
     print("\nPerformance on training set: ")
-    train_accuracy = eval_target_net(model, trainloader, classes=None)
+    train_accuracy = eval_target_model(model, trainloader, classes=None)
     print("\nPerformance on test set: ")
-    test_accuracy = eval_target_net(model, testloader, classes=None)
+    test_accuracy = eval_target_model(model, testloader, classes=None)
 
 
 if __name__ == "__main__":
