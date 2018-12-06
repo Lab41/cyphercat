@@ -16,8 +16,8 @@ try:
     from cyphercat.train import *
     from cyphercat.metrics import *  
     
-    from cyphercat.load_data import prep_data, get_split_dataset
-    from cyphercat.utils import Configurator, DataStruct, ModelConfig
+    from cyphercat.load_data import get_split_dataset
+    from cyphercat.utils import Configurator, ModelConfig
 
 except ImportError as e:
     print(e)
@@ -46,15 +46,6 @@ def main():
     dataset_config       = configr.dataset
     train_model_config   = configr.train_model
 
-    # Directory structures for data and model saving
-    data_struct = DataStruct(dataset_config)
-
-    # Load LFW
-    prep_data(dataset_config)
-
-    # Data set directory
-    data_dir = data_struct.save_path
-   
     # Training model params
     train_config = ModelConfig(train_model_config)
     model_name = train_config.name
@@ -83,13 +74,12 @@ def main():
     ])
         
     # Defined training and testing set splits 
-    trainset, testset = get_split_dataset(data_dir=data_dir, transforms=[train_transform, test_transform])
+    trainset, testset = get_split_dataset(dataset_config=dataset_config, transforms=[train_transform, test_transform])
     n_classes = trainset.n_classes
     
     # Define pyTorch ingestors for training and testing
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
-    
     
     ## helper function to unnormalize and plot image 
     #def imshow(img):
@@ -181,7 +171,8 @@ def main():
     model_optim = optim.Adam(model.parameters(), lr=learnrate/10)
 
     # Train the model
-    train(model, trainloader, testloader, model_optim, loss, n_epochs, verbose=False)
+    train(model=model, data_loader=trainloader, test_loader=testloader, 
+          optimizer=model_optim, criterion=loss, n_epochs=n_epochs, classes=None, verbose=False)
 
     # Evaluate analytics on triaining and testing sets
     print("\nPerformance on training set: ")
