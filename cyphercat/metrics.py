@@ -12,7 +12,7 @@ from .utils.svc_utils import *
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def eval_target_net(model=None, data_loader=None, classes=None):
+def eval_target_model(model=None, data_loader=None, classes=None):
     """
     Function to evaluate a target model provided
     specified data sets.
@@ -69,7 +69,7 @@ def eval_target_net(model=None, data_loader=None, classes=None):
     return accuracy
 
 
-def eval_attack_net(attack_net=None, target=None, target_train=None, target_out=None, k=0):
+def eval_attack_model(attack_model=None, target=None, target_train=None, target_out=None, k=0):
     """
     Assess accuracy, precision, and recall of attack model 
     for in training set/out of training set classification.
@@ -77,7 +77,7 @@ def eval_attack_net(attack_net=None, target=None, target_train=None, target_out=
 
     Parameters
     ----------
-    attack_net   : Module
+    attack_model : Module
                    PyTorch conforming nn.Module function
     target       : Module
                    PyTorch conforming nn.Module function
@@ -90,15 +90,15 @@ def eval_attack_net(attack_net=None, target=None, target_train=None, target_out=
     """
 
     
-    in_predicts=[]
-    out_predicts=[]
+    in_predicts = []
+    out_predicts = []
     losses = []
     
     if type(target) is not Pipeline:
-        target_net=target
-        target_net.eval()
+        target_model = target
+        target_model.eval()
         
-    attack_net.eval()
+    attack_model.eval()
 
     total = 0
     correct = 0
@@ -118,15 +118,15 @@ def eval_attack_net(attack_net=None, target=None, target_train=None, target_out=
         
         # [mini_batch_size x num_classes] tensors, (0,1) probabilities for each class for each sample)
         if type(target) is Pipeline:
-            traininputs=train_imgs.view(train_imgs.shape[0], -1)
-            outinputs=out_imgs.view(out_imgs.shape[0], -1)
+            traininputs = train_imgs.view(train_imgs.shape[0], -1)
+            outinputs = out_imgs.view(out_imgs.shape[0], -1)
             
-            train_posteriors=torch.from_numpy(target.predict_proba(traininputs)).float()
-            out_posteriors=torch.from_numpy(target.predict_proba(outinputs)).float()
+            train_posteriors = torch.from_numpy(target.predict_proba(traininputs)).float()
+            out_posteriors = torch.from_numpy(target.predict_proba(outinputs)).float()
             
         else:
-            train_posteriors = fcnal.softmax(target_net(train_imgs.detach()), dim=1)
-            out_posteriors = fcnal.softmax(target_net(out_imgs.detach()), dim=1)
+            train_posteriors = fcnal.softmax(target_model(train_imgs.detach()), dim=1)
+            out_posteriors = fcnal.softmax(target_model(out_imgs.detach()), dim=1)
         
 
         # [k x mini_batch_size] tensors, (0,1) probabilities for top k probable classes
@@ -151,8 +151,8 @@ def eval_attack_net(attack_net=None, target=None, target_train=None, target_out=
 
         # Takes in probabilities for top k most likely classes, 
         # outputs ~1 (in training set) or ~0 (out of training set)
-        train_predictions = fcnal.sigmoid(torch.squeeze(attack_net(train_top_k)))
-        out_predictions = fcnal.sigmoid(torch.squeeze(attack_net(out_top_k)))
+        train_predictions = fcnal.sigmoid(torch.squeeze(attack_model(train_top_k)))
+        out_predictions = fcnal.sigmoid(torch.squeeze(attack_model(out_top_k)))
 
         true_positives += (train_predictions >= 0.5).sum().item()
         false_positives += (out_predictions >= 0.5).sum().item()

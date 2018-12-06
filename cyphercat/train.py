@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as fcnal
 
-from .metrics import eval_target_net
+from .metrics import eval_target_model
 
 # Determine device to run network on (runs on gpu if available)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -64,9 +64,9 @@ def train(model=None, data_loader=None, test_loader=None,
         # evaluate performance on testset at the end of each epoch
         print("[{}/{}]".format(epoch, n_epochs))
         print("Training:")
-        train_acc = eval_target_net(model, data_loader, classes=classes)
+        train_acc = eval_target_model(model, data_loader, classes=classes)
         print("Test:")
-        test_acc = eval_target_net(model, test_loader, classes=classes)
+        test_acc = eval_target_model(model, test_loader, classes=classes)
         # plt.plot(losses)
         # plt.show()
 
@@ -104,8 +104,8 @@ def train_attacker(attack_model=None, shadow_model=None,
     out_predicts = []
 
     if type(shadow_model) is not Pipeline:
-        shadow_net = shadow_model
-        shadow_net.eval()
+        shadow_model = shadow_model
+        shadow_model.eval()
 
     for epoch in range(n_epochs):
 
@@ -121,8 +121,8 @@ def train_attacker(attack_model=None, shadow_model=None,
 
             if type(shadow_model) is not Pipeline:
                 train_data, out_data = train_data.to(device), out_data.to(device)
-                train_posteriors = fcnal.softmax(shadow_net(train_data.detach()), dim=1)
-                out_posteriors = fcnal.softmax(shadow_net(out_data.detach()), dim=1)
+                train_posteriors = fcnal.softmax(shadow_model(train_data.detach()), dim=1)
+                out_posteriors = fcnal.softmax(shadow_model(out_data.detach()), dim=1)
 
             else:
                 traininputs = train_data.view(train_data.shape[0], -1)
@@ -263,7 +263,7 @@ def distill_training(teacher=None, learner=None, data_loader=None,
         print("[{}/{}]".format(epoch, n_epochs))
 
         print("Training:")
-        train_acc = eval_target_net(learner, data_loader, classes=None)
+        train_acc = eval_target_model(learner, data_loader, classes=None)
 
         print("Testing:")
-        test_acc = eval_target_net(learner, test_loader, classes=None)
+        test_acc = eval_target_model(learner, test_loader, classes=None)
