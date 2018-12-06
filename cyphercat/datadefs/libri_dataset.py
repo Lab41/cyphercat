@@ -44,7 +44,7 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
     fragment_seconds = seconds
     if path is None:
         path = DATASETS_DIR
-        index_file = DATASETS_DIR + '/libri-{}.index.csv'.format(subset)
+    index_file = path + '/libri-{}.index.csv'.format(subset)
         
     print('Initialising LibriSpeechDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))
