@@ -1,7 +1,7 @@
 
 import numpy as np 
 from torch import nn 
-import torch.nn.functional as F
+import torch.nn.functional as fcnal
 
 
 def new_size_conv(size, kernel, stride=1, padding=0): 
@@ -141,10 +141,10 @@ class mlleaks_mlp(nn.Module):
         self.output = nn.Linear(n_filters, n_classes)
         
     def forward(self, x): 
-        x = F.sigmoid(self.hidden(x))
+        x = fcnal.sigmoid(self.hidden(x))
         #x = self.bn(x)
         out = self.output(x)
-        #out = F.sigmoid(self.output(x))
+        #out = fcnal.sigmoid(self.output(x))
         
         return out
     
