@@ -69,7 +69,8 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
         df = pd.merge(df, pd.DataFrame(audio_files))
         
         # Save index files to data folder
-        df.to_csv(DATASPLITS_DIR + '/{}.index.csv'.format(subset), index=False)
+        df.to_csv(DATASETS_DIR + '/libri-{}.index.csv'.format(subset),
+                  index=False)
 
     # Trim too-small files
     if not pad:
