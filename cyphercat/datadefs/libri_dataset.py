@@ -118,7 +118,7 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
                 dfs[this_df].to_csv( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
-                                     (subset, i_df) )
+                                     (subset, i_df), index=False)
     else:
         name =  list(splits.keys())[0] 
         print('Creating user defined splits under name %s' %
@@ -204,7 +204,7 @@ def index_subset(path=None, subset=None):
 
             audio_files.append({
                 'id': librispeech_id,
-                'filepath': os.path.join(root, f),
+                'filepath': os.path.relpath(os.path.join(root, f), path),
                 'length': len(instance),
                 'seconds': len(instance) * 1. / LIBRISPEECH_SAMPLING_RATE
             })
@@ -368,7 +368,8 @@ class LibriSpeechDataset(Dataset):
         self.datasetid_to_sex = self.df.to_dict()['sex']
             
     def __getitem__(self, index):
-        instance, samplerate = sf.read(self.datasetid_to_filepath[index])
+        instance, samplerate = sf.read(
+            os.path.join(DATASETS_DIR, self.datasetid_to_filepath[index]))
         # Choose a random sample of the file
         if self.stochastic:
             upper_bound = max(len(instance) - self.fragment_length, 1)
