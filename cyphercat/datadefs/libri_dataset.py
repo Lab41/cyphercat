@@ -117,6 +117,9 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
             dfs = default_splitter(dfs, df, unique_speakers)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
+                dfs[this_df] = dfs[this_df].drop(columns=['id'])
+                dfs[this_df].rename(columns={'level_0': 'idx_in_original_df'},
+                                    inplace=True)
                 dfs[this_df].to_csv( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
                                      (subset, i_df), index=False)
     else:
@@ -148,11 +151,11 @@ def Libri_preload_and_split(subset='train-clean-100', seconds=3, path=None,
         male_df = this_df[this_df['sex'] == 'M']
         female_df = this_df[this_df['sex'] == 'F']
         print('\t\t ---- Split %i ---- \n\tUnique speakers \t Samples' % d)
-        print('Male:\t %i\t %i' %
+        print('Male:\t\t %i\t\t %i' %
               (len(male_df['speaker_id'].unique()), len(male_df))) 
-        print('Female:\t %i\t %i' %
+        print('Female:\t\t %i\t\t %i' %
               (len(female_df['speaker_id'].unique()), len(female_df)))
-        print('Total:\t %i\t %i' %
+        print('Total:\t\t %i\t\t %i' %
               (len(this_df['speaker_id'].unique()), len(this_df)))
 
     print('Finished splitting data.')
