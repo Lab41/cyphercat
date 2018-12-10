@@ -26,15 +26,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="612.09784"
+     inkscape:cx="427.09784"
      inkscape:cy="464.02268"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2219"
-     inkscape:window-height="1210"
-     inkscape:window-x="1452"
-     inkscape:window-y="105"
+     inkscape:window-width="2195"
+     inkscape:window-height="1259"
+     inkscape:window-x="1598"
+     inkscape:window-y="61"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -244,7 +244,7 @@
          x="71.501282"
          y="202.80836"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
-         id="tspan837">Class</tspan></text>
+         id="tspan837">Data</tspan></text>
     <text
        id="text843"
        y="236.25925"
@@ -526,33 +526,33 @@
          id="tspan963"
          x="8.4666662"
          y="106.60336"
-         style="stroke-width:0.26458332"></tspan></text>
+         style="stroke-width:0.26458332" /></text>
     <text
        inkscape:export-ydpi="96.099998"
        inkscape:export-xdpi="96.099998"
        id="text979"
-       y="99.016129"
-       x="5.80902"
+       y="97.957794"
+       x="-92.086815"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          id="tspan977"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332"
-         y="99.016129"
-         x="5.80902"
+         y="97.957794"
+         x="-92.086815"
          sodipodi:role="line">Model        Train      Test</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332"
-         y="112.24529"
-         x="5.80902"
+         y="111.18696"
+         x="-92.086815"
          sodipodi:role="line"
          id="tspan987">Target          [0]         [1]</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332"
-         y="125.47446"
-         x="5.80902"
+         y="124.41613"
+         x="-92.086815"
          sodipodi:role="line"
          id="tspan983">Shadow       [2]         [3]</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332"
-         y="138.70363"
-         x="5.80902"
+         y="137.64529"
+         x="-92.086815"
          sodipodi:role="line"
          id="tspan985">Attack       [2]+[3]   [1]+[4]</tspan></text>
     <path
@@ -560,7 +560,25 @@
        inkscape:export-xdpi="96.099998"
        inkscape:connector-curvature="0"
        id="path989"
-       d="M 3.653141,102.83539 H 93.644433"
+       d="M -94.242692,101.77706 H -4.2514003"
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="40.799305"
+       y="111.82102"
+       id="text900"
+       inkscape:export-xdpi="96.099998"
+       inkscape:export-ydpi="96.099998"><tspan
+         sodipodi:role="line"
+         x="40.799305"
+         y="111.82102"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
+         id="tspan911">Split Scheme for</tspan><tspan
+         sodipodi:role="line"
+         x="40.799305"
+         y="125.05019"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
+         id="tspan916">Image Data</tspan></text>
   </g>
 </svg>
