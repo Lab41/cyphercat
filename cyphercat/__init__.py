@@ -7,6 +7,6 @@ from .train import *
 from .models import *
 from .metrics import *
 from .attacks import *
+from .datadefs import *
 from .load_data import *
 from .definitions import *
-from .datadefs.libri_dataset import *
