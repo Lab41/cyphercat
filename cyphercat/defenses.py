@@ -1,3 +1,4 @@
+import copy
 # Torch imports
 import torch
 import torch.optim as optim
@@ -93,7 +94,7 @@ class dimensionality_reduction():
         Returns:
 
         """
-        self.model = model
+        self.model = copy.deepcopy(model)
         self.n_top = n_top
         self.in_eval = False
         self.break_posterior = break_posterior
@@ -114,9 +115,10 @@ class dimensionality_reduction():
 
         reduced = torch.zeros(output.shape)
         arr = output.detach().cpu().numpy()
-        to_del = arr.argsort(axis=1)[:, -self.n_top:][::-1]
+        to_del = arr.argsort(axis=1)[:, -self.n_top:]
+        
         for idx, img in enumerate(to_del):
-            for idy, label in enumerate(img):
+            for idy, label in enumerate(img[::-1]):
                 if self.break_posterior:
                     reduced[idx][label] = 1./(idy+1)
                 else:
