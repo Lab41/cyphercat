@@ -323,7 +323,7 @@ class audio_tiny_cnn(nn.Module):
         return self.out(x)
 
 
-def MFCC_cnn_classifier(n_classes):
+def MFCC_cnn_classifier(n_classes=125):
     '''
     Builds speaker classifier that ingests MFCC's
     '''
@@ -331,10 +331,10 @@ def MFCC_cnn_classifier(n_classes):
     n_hidden = 512
     sizes_list = [in_size, 2*in_size, 4*in_size, 8*in_size, 8*in_size]
     return audio_tiny_cnn(cnn_sizes=sizes_list, n_hidden=n_hidden,
-                          kernel_size=3, n_classes=125)
+                          kernel_size=3, n_classes=n_classes)
 
 
-def ft_cnn_classifer(n_classes):
+def ft_cnn_classifer(n_classes=125):
     '''
     Builds speaker classifier that ingests the abs value of fourier transforms
     '''
@@ -342,7 +342,7 @@ def ft_cnn_classifer(n_classes):
     n_hidden = 512
     sizes_list = [in_size, in_size, 2*in_size, 4*in_size, 14*4*in_size]
     return audio_tiny_cnn(cnn_sizes=sizes_list, n_hidden=n_hidden,
-                          kernel_size=7, n_classes=125)
+                          kernel_size=7, n_classes)
 
             
 def weights_init(m):
