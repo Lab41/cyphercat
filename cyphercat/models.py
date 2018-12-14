@@ -342,7 +342,7 @@ def ft_cnn_classifer(n_classes=125):
     n_hidden = 512
     sizes_list = [in_size, in_size, 2*in_size, 4*in_size, 14*4*in_size]
     return audio_tiny_cnn(cnn_sizes=sizes_list, n_hidden=n_hidden,
-                          kernel_size=7, n_classes)
+                          kernel_size=7, n_classes=n_classes)
 
             
 def weights_init(m):
