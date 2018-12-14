@@ -1,65 +1,87 @@
-import io
 import os
-import sys
 import shutil
+import numpy as np
 
 from .utils.config_utils import DataStruct
 from .utils.file_utils import downloader, unpacker
 
+from skimage import io
+from torch.utils.data.dataset import Dataset
 
-def custom_preprocessor(out_dir=''):
+
+class LFWDataset(Dataset):
     """
-    Custom preprocessing functions for
-    specific data sets.
-
-    Parameters
-    ----------
-    out_dir   : string
-                directory of unpacked data set
-                    
+    Faces in the Wild specific dataset class.
+    Includes indexing functionality.
+    Inherets from PyTorch Dataset class.
     """
+    def __init__(self, dataset_config=None, train_set=True, transform=None):
 
-    # Get name of data set from output directory
-    data_name = os.path.split(out_dir)[1]
+        self.data_struct = DataStruct(dataset_config)
+        prep_data(self.data_struct)
+        self.custom_prep_data()
+        self.test_train_split = 0.8
+        self.transform = transform
+        n_classes, file_list, class_to_label = self.index(train_set)
+        self.n_classes = n_classes
+        self.file_list = file_list
+        self.people_to_idx = class_to_label
 
-    # For tiny-imagenet-200
-    if 'tiny' in data_name.lower():
+    def __len__(self):
+        return len(self.file_list)
 
-        # Structure the training, validation, and test data directories
-        train_dir  = os.path.join(out_dir, 'train')
-        class_dirs = [os.path.join(train_dir, o) for o in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, o))]
+    def __getitem__(self, idx):
+        img_path = self.file_list[idx]
+        image = io.imread(img_path)
+        label = self.people_to_idx[img_path.split('/')[-2]]
 
-        for c in class_dirs:
-            for f in os.listdir(os.path.join(c, 'images')):
-                os.rename(os.path.join(c,'images', f), os.path.join(c, f))
-            for d in os.listdir(c):
-                if d.find("JPEG") == -1:
-                    if os.path.isfile(os.path.join(c, d)):
-                        os.remove(os.path.join(c, d))
-                    elif os.path.isdir(os.path.join(c, d)):
-                        os.rmdir(os.path.join(c, d))
+        if self.transform is not None:
+            image = self.transform(image)
 
-        # Get validation annotations
-        with open(os.path.join(out_dir, 'val/val_annotations.txt')) as f:
-            content = f.readlines()
+        return image, label
 
-        for x in content:
-            line = x.split()
+    def index(self, is_train_set):
+        data_dir = self.data_struct.save_path
+        img_paths = []
+        for p in os.listdir(data_dir):
+            for i in os.listdir(os.path.join(data_dir, p)):
+                img_paths.append(os.path.join(data_dir, p, i))
 
-            if not os.path.exists(os.path.join(out_dir, 'val/',line[1])):
-                os.makedirs(os.path.join(out_dir, 'val/',line[1]))
+        class_list = []
+        class_to_idx = {}
+        k = 0
+        for i in img_paths:
+            name = i.split('/')[-2]
+            if name not in class_to_idx:
+                class_list.append(name)
+                class_to_idx[name] = k
+                k += 1
 
-            new_file_name = os.path.join(out_dir, 'val',line[1],line[0])
-            old_file_name = os.path.join(out_dir, 'val/images',line[0])
-            os.rename(old_file_name, new_file_name)
+        n_classes = len(class_list)
+        img_paths = np.random.permutation(img_paths)
 
+        dataset_size = len(img_paths)
+        trainset_size = int(self.test_train_split * dataset_size)
+        if is_train_set:
+            file_list = img_paths[:trainset_size]
+        else:
+            file_list = img_paths[trainset_size:]
 
-    # For LFW
-    if 'lfw' in data_name.lower():
+        return n_classes, file_list, class_to_idx
 
-        lfw_dir    = out_dir + '_original/'
+    def custom_prep_data(self):
+
+        data_name = self.data_struct.name
+        out_dir = self.data_struct.save_path
+
+        # LFW specific prep steps
+        lfw_dir = out_dir + '_original/'
+
+        # If dataset already downloaded an unpacked, do nothing
+        if os.path.isdir(lfw_dir):
+            return
+
         os.rename(out_dir, lfw_dir)
-        
         people_dir = os.listdir(lfw_dir)
 
         num_per_class = 20
@@ -67,34 +89,54 @@ def custom_preprocessor(out_dir=''):
         for p in people_dir:
             imgs = os.listdir(os.path.join(lfw_dir, p))
             if len(imgs) >= num_per_class:
-                shutil.copytree(os.path.join(lfw_dir, p), os.path.join(out_dir, p))
-    
-    print('{} successfully downloaded and preprocessed.'.format(data_name))
+                shutil.copytree(os.path.join(lfw_dir, p),
+                                os.path.join(out_dir, p))
+
+        print('{} successfully downloaded and preprocessed.'.format(data_name))
 
 
+PREDEFINED_DATASETS = {'lfw': LFWDataset,
+                       }
 
-def prep_data(dataset_config=None):
+
+def get_split_dataset(dataset_config=None, transforms=[]):
+
+    trainset = None
+    testset = None
+    assert len(transforms) == 2, "Need exactly two transforms"
+
+    # Grab correct predefined dataset class
+    bname = os.path.basename(dataset_config['name'])
+    trainset = PREDEFINED_DATASETS[bname](dataset_config=dataset_config,
+                                          train_set=True,
+                                          transform=transforms[0])
+    testset = PREDEFINED_DATASETS[bname](dataset_config=dataset_config,
+                                         train_set=False,
+                                         transform=transforms[1])
+
+    return trainset, testset
+
+
+def prep_data(data_struct=None):
     """
     Function to prepare data set
     based on input configuration
 
     Parameters
     ----------
-    dataset_config  : dictionary
-                      parameters from 'data' field
-                      of global yaml configuration file
+    data_struct  : config structure
+                   parameters from 'data' field
+                   of global yaml configuration file
     """
-    
 
-    data_struct  = DataStruct(dataset_config)
-
-    data_name    = data_struct.name
+    data_name = data_struct.name
     datasets_dir = data_struct.data_path
-    out_dir      = data_struct.save_path
+    out_dir = data_struct.save_path
 
     # If dataset already downloaded an unpacked, do nothing
     if os.path.isdir(out_dir):
-        print('{} already downloaded, unpacked and processed.'.format(data_name))
+        print('{} already downloaded, unpacked and processed.'
+              .format(data_name))
         return
 
     # Check if download is required
@@ -104,6 +146,85 @@ def prep_data(dataset_config=None):
     # Unpack compressed dataset file
     unpacker(compressed_file_name, out_dir)
 
-    # Custom preprocessing steps for data sets
-    custom_preprocessor(out_dir)
-
+# OBSOLETE, KEEP FOR TILL TINYIMAGENET DATASET INCLUDED
+#def custom_preprocessor(out_dir=''):
+#    """
+#    Custom preprocessing functions for
+#    specific data sets.
+#
+#    Parameters
+#    ----------
+#    out_dir   : string
+#                directory of unpacked data set
+#    """
+#
+#    # Get name of data set from output directory
+#    data_name = os.path.split(out_dir)[1]
+#
+#    # For tiny-imagenet-200
+#    if 'tiny' in data_name.lower():
+#
+#        # Structure the training, validation, and test data directories
+#        train_dir = os.path.join(out_dir, 'train')
+#        class_dirs = [os.path.join(train_dir, o) for o in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, o))]
+#
+#        for c in class_dirs:
+#            for f in os.listdir(os.path.join(c, 'images')):
+#                os.rename(os.path.join(c, 'images', f), os.path.join(c, f))
+#            for d in os.listdir(c):
+#                if d.find("JPEG") == -1:
+#                    if os.path.isfile(os.path.join(c, d)):
+#                        os.remove(os.path.join(c, d))
+#                    elif os.path.isdir(os.path.join(c, d)):
+#                        os.rmdir(os.path.join(c, d))
+#
+#        # Get validation annotations
+#        with open(os.path.join(out_dir, 'val/val_annotations.txt')) as f:
+#            content = f.readlines()
+#
+#        for x in content:
+#            line = x.split()
+#
+#            if not os.path.exists(os.path.join(out_dir, 'val/', line[1])):
+#                os.makedirs(os.path.join(out_dir, 'val/', line[1]))
+#
+#            new_file_name = os.path.join(out_dir, 'val', line[1], line[0])
+#            old_file_name = os.path.join(out_dir, 'val/images', line[0])
+#            os.rename(old_file_name, new_file_name)
+#
+#    print('{} successfully downloaded and preprocessed.'.format(data_name))
+#
+#
+#def prep_data(dataset_config=None):
+#    """
+#    Function to prepare data set
+#    based on input configuration
+#
+#    Parameters
+#    ----------
+#    dataset_config  : dictionary
+#                      parameters from 'data' field
+#                      of global yaml configuration file
+#    """
+#
+#    data_struct = DataStruct(dataset_config)
+#
+#    data_name = data_struct.name
+#    datasets_dir = data_struct.data_path
+#    out_dir = data_struct.save_path
+#
+#    # If dataset already downloaded an unpacked, do nothing
+#    if os.path.isdir(out_dir):
+#        print('{} already downloaded, unpacked and processed.'
+#              .format(data_name))
+#        return
+#
+#    # Check if download is required
+#    data_url = data_struct.url
+#    compressed_file_name = downloader(datasets_dir, data_url)
+#
+#    # Unpack compressed dataset file
+#    unpacker(compressed_file_name, out_dir)
+#
+#    # Custom preprocessing steps for data sets
+#    custom_preprocessor(out_dir)
