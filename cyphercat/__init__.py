@@ -8,5 +8,6 @@ from .models import *
 from .metrics import *
 from .attacks import *
 from .datadefs import *
+from .defenses import *
 from .load_data import *
 from .definitions import *
