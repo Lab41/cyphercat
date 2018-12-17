@@ -69,7 +69,7 @@ def train(model=None, data_loader=None, test_loader=None,
         test_acc = eval_target_model(model, test_loader, classes=classes)
         # plt.plot(losses)
         # plt.show()
-        return train_acc, test_acc
+    return train_acc, test_acc
 
 
 def train_attacker(attack_model=None, shadow_model=None,

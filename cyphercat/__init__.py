@@ -11,3 +11,4 @@ from .defenses import *
 from .load_data import *
 from .definitions import *
 from .datadefs.libri_dataset import *
+from .datadefs.voices_dataset import *

@@ -12,7 +12,7 @@ sex_to_label = {'M': False, 'F': True}
 label_to_sex = {False: 'M', True: 'F'}
 
 
-def VOiCES_preload_and_split(subset='room-1', seconds=3, path=None,
+def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
                             pad=False, splits=None):
     """Index and split VOiCES dataset.
 
@@ -318,7 +318,7 @@ def splitter(dfs, df, unique_speakers, splits, N):
     return dfs
 
 
-class VOiCESDataset(Dataset):
+class VoicesDataset(Dataset):
     """This class subclasses the torch.utils.data.Dataset.  Calling __getitem__
     will return the transformed VOiCES audio sample and it's label
 
