@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as fcnal
+from sklearn.pipeline import Pipeline
 
 from .metrics import eval_target_model
 
@@ -118,6 +119,7 @@ def train_attacker(attack_model=None, shadow_model=None,
 
             # out_data = torch.randn(out_data.shape)
             mini_batch_size = train_data.shape[0]
+            out_mini_batch_size = out_data.shape[0]
 
             if type(shadow_model) is not Pipeline:
                 train_data, out_data = train_data.to(device), out_data.to(device)
@@ -151,7 +153,7 @@ def train_attacker(attack_model=None, shadow_model=None,
             out_top = np.vstack((out_top, out_top_k[:, :2].cpu().detach().numpy()))
 
             train_lbl = torch.ones(mini_batch_size).to(device)
-            out_lbl = torch.zeros(mini_batch_size).to(device)
+            out_lbl = torch.zeros(out_mini_batch_size).to(device)
 
             optimizer.zero_grad()
 
