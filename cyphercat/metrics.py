@@ -3,6 +3,7 @@ import torch
 import torch.nn.functional as fcnal
 
 import numpy as np
+import pandas as pd
 
 from sklearn.pipeline import Pipeline
 
@@ -261,3 +262,7 @@ def eval_membership_inference(target_model=None, target_train=None, target_out=N
     # plt.xlabel("Recall")
     # plt.ylabel("Precision")
     # plt.show()
+    
+    #Make a dataframe of precision & recall results
+    df_pr = pd.DataFrame(columns =['Accuracy','Precision','Recall'], data = [accuracy,precision,recall)
+    return df_pr
