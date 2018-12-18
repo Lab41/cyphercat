@@ -438,7 +438,8 @@ def load_checkpoint(model=None, optimizer=None, checkpoint=None):
         checkpoint (str): Path to the checkpoint file.
     
     Returns:
-        
+        (dict): Returns the loaded dicitonary
+
     """
     assert os.path.isfile(checkpoint), 'Checkpoint not found, aborting load'
     
@@ -455,3 +456,4 @@ def load_checkpoint(model=None, optimizer=None, checkpoint=None):
     print('Succesfully loaded checkpoint \nDataset: {} \nEpoch: {} \nLoss: {}\
            \nAccuracy: {}'.format(chpt['dataset'], chpt['epoch'], chpt['loss'],
                                   chpt['accuracy']))
+    return chpt
