@@ -155,34 +155,41 @@ def eval_attack_model(attack_model=None, target=None, target_train=None, target_
         train_predictions = fcnal.sigmoid(torch.squeeze(attack_model(train_top_k)))
         out_predictions = fcnal.sigmoid(torch.squeeze(attack_model(out_top_k)))
 
-        true_positives += (train_predictions >= 0.5).sum().item()
-        false_positives += (out_predictions >= 0.5).sum().item()
-        false_negatives += (train_predictions < 0.5).sum().item()
+        for j, t in enumerate(thresholds):
+            true_positives[j] += (train_predictions >= t).sum().item()
+            false_positives[j] += (out_predictions >= t).sum().item()
+            false_negatives[j] += (train_predictions < t).sum().item()
 
-        
-        correct += (train_predictions>=0.5).sum().item()
-        correct += (out_predictions<0.5).sum().item()
-        total += train_predictions.size(0) + out_predictions.size(0)
+            correct[j] += (train_predictions >= t).sum().item()
+            correct[j] += (out_predictions < t).sum().item()
+            total[j] += train_predictions.size(0) + out_predictions.size(0)
     
-    # Plot distributions for target predictions in training set and out of training set
-    # fig, ax = plt.subplots(2,1)
-    # plt.subplot(2,1,1)
-    # plt.hist(in_predicts, bins='auto')
-    # plt.title('In')
-    # plt.subplot(2,1,2)
-    # plt.hist(out_predicts, bins='auto')
-    # plt.title('Out')
+    for j, t in enumerate(thresholds):
+        accuracy = 100 * correct[j] / total[j]
+        precision = true_positives[j] / (true_positives[j] + false_positives[j]) if true_positives[j] + false_positives[j] != 0 else 0
+        recall = true_positives[j] / (true_positives[j] + false_negatives[j]) if true_positives[j] + false_negatives[j] !=0 else 0
+        accuracies.append(accuracy)
+        precisions.append(precision)
+        recalls.append(recall)
+
+        print("threshold = %.4f, accuracy = %.2f, precision = %.2f, recall = %.2f" % (t, accuracy, precision, recall))
     
-    accuracy = 100 * correct / total
-    precision = 0
-    if true_positives + false_positives != 0:
-        precision = true_positives / (true_positives + false_positives)
+#     accuracy = 100 * correct / total
+#     precision = 0
+#     if true_positives + false_positives != 0:
+#         precision = true_positives / (true_positives + false_positives)
 
-    recall = 0
-    if true_positives + false_negatives != 0:
-        recall = true_positives / (true_positives + false_negatives)
+#     recall = 0
+#     if true_positives + false_negatives != 0:
+#         recall = true_positives / (true_positives + false_negatives)
 
-    print("accuracy = {:.2f} %%\nprecision = {:.2f} \nrecall = {:.2f}".format(accuracy, precision, recall))
+#     print("accuracy = {:.2f} %%\nprecision = {:.2f} \nrecall = {:.2f}".format(accuracy, precision, recall))
+    
+    
+    #Make a dataframe of precision & recall results
+    df_pr = pd.DataFrame(columns =['Accuracy','Precision','Recall'], data = [accuracy,precision,recall])
+    return df_pr
+
 
 
 def eval_membership_inference(target_model=None, target_train=None, target_out=None):
@@ -263,6 +270,4 @@ def eval_membership_inference(target_model=None, target_train=None, target_out=N
     # plt.ylabel("Precision")
     # plt.show()
     
-    #Make a dataframe of precision & recall results
-    df_pr = pd.DataFrame(columns =['Accuracy','Precision','Recall'], data = [accuracy,precision,recall)
-    return df_pr
+    

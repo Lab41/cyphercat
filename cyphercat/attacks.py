@@ -68,9 +68,11 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
                        k=n_max_posteriors)
     #
     print('---- Evaluate attack ----')
-    eval_attack_model(attack_model=attacker_model, target=target,
+    df_pr = eval_attack_model(attack_model=attacker_model, target=target,
                       target_train=target_in_loader,
                       target_out=target_out_loader, k=n_max_posteriors)
+    
+    return df_pr
 
 
 def ml_leaks3(target=None, target_in_loader=None,  target_out_loader=None):
