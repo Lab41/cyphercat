@@ -169,7 +169,7 @@ class mlleaks_mlp(nn.Module):
         x = fcnal.sigmoid(self.hidden(x))
         # x = self.bn(x)
         out = self.output(x)
-        # out = fcnal.sigmoid(self.output(x))
+        out = fcnal.sigmoid(self.output(x))
         
         return out
     

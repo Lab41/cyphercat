@@ -7,7 +7,7 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
               shadow_train_loader=None, shadow_out_loader=None,
               shadow_optim=None, attack_optim=None, shadow_criterion=None,
               attack_criterion=None, n_epochs=0, classes=None,
-              n_max_posteriors=3, verbose=False):
+              n_max_posteriors=3, retrain=True, verbose=False):
     '''Implementation of ml_leaks 1 membership inference attack
 
     Trains shadow network an independent data set  and then trains the
@@ -41,6 +41,8 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
         classes (list): Classes for membership inference task.
         n_max_posteriors (int): Number of maximal posteriors to use in
             membership inference attack.
+        retrain (bool): If True will retrain the shadow and attack network,
+            otherwise will simply use the provided attacker model as is fed.
         verbose (bool): If True will print the loss at each batch during all
             training steps.
 
@@ -49,18 +51,19 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
     To-do:
          Add example to docstring.
     '''
-    print('---- Training shadow network ----')
-    train(model=shadow_model, data_loader=shadow_train_loader,
-          test_loader=shadow_out_loader, optimizer=shadow_optim,
-          criterion=shadow_criterion, n_epochs=n_epochs, classes=classes,
-          verbose=verbose)
-    #
-    print('---- Training attack network ----')
-    train_attacker(attack_model=attacker_model, shadow=shadow_model,
-                   shadow_train=shadow_train_loader,
-                   shadow_out=shadow_out_loader, optimizer=attack_optim,
-                   criterion=attack_criterion, n_epochs=n_epochs,
-                   k=n_max_posteriors)
+    if retrain:        
+        print('---- Training shadow network ----')
+        train(model=shadow_model, data_loader=shadow_train_loader,
+              test_loader=shadow_out_loader, optimizer=shadow_optim,
+              criterion=shadow_criterion, n_epochs=n_epochs, classes=classes,
+              verbose=verbose)
+        #
+        print('---- Training attack network ----')
+        train_attacker(attack_model=attacker_model, shadow_model=shadow_model,
+                       shadow_train=shadow_train_loader,
+                       shadow_out=shadow_out_loader, optimizer=attack_optim,
+                       criterion=attack_criterion, n_epochs=n_epochs,
+                       k=n_max_posteriors)
     #
     print('---- Evaluate attack ----')
     eval_attack_model(attack_model=attacker_model, target=target,
