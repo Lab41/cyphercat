@@ -12,6 +12,21 @@ from .metrics import eval_target_model
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
+def label_to_onehot(labels, num_classes=10):
+    """ Converts label into a vector.
+
+    Args:
+        labels (int): Class label to convert to tensor.
+        num_classes (int):  Number of classes for the model.
+
+    Returns:
+        (torch.tensor): Torch tensor with 0's everywhere except for 1 in
+            correct class.
+    """
+    one_hot = torch.eye(num_classes)
+    return one_hot[labels]
+
+
 def train(model=None, data_loader=None, test_loader=None,
           optimizer=None, criterion=None, n_epochs=0,
           classes=None, verbose=False):
@@ -115,16 +130,22 @@ def train_attacker(attack_model=None, shadow_model=None,
 
         train_top = np.empty((0, 2))
         out_top = np.empty((0, 2))
-        for i, ((train_data, _), (out_data, _)) in enumerate(zip(shadow_train, shadow_out)):
+        for i, ((train_data, _), (out_data, _)) in enumerate(zip(shadow_train,
+                                                                 shadow_out)):
 
             # out_data = torch.randn(out_data.shape)
             mini_batch_size = train_data.shape[0]
             out_mini_batch_size = out_data.shape[0]
-
+            '''if mini_batch_size != out_mini_batch_size:
+                break'''
+            
             if type(shadow_model) is not Pipeline:
-                train_data, out_data = train_data.to(device), out_data.to(device)
-                train_posteriors = fcnal.softmax(shadow_model(train_data.detach()), dim=1)
-                out_posteriors = fcnal.softmax(shadow_model(out_data.detach()), dim=1)
+                train_data = train_data.to(device).detach()
+                out_data = out_data.to(device).detach()
+                train_posteriors = fcnal.softmax(shadow_model(train_data),
+                                                 dim=1)
+                out_posteriors = fcnal.softmax(shadow_model(out_data),
+                                               dim=1)
 
             else:
                 traininputs = train_data.view(train_data.shape[0], -1)
@@ -149,8 +170,10 @@ def train_attacker(attack_model=None, shadow_model=None,
             for p in out_top_k:
                 out_predicts.append((p.max()).item())
 
-            train_top = np.vstack((train_top, train_top_k[:, :2].cpu().detach().numpy()))
-            out_top = np.vstack((out_top, out_top_k[:, :2].cpu().detach().numpy()))
+            train_top = np.vstack((train_top,
+                                   train_top_k[:, :2].cpu().detach().numpy()))
+            out_top = np.vstack((out_top,
+                                 out_top_k[:, :2].cpu().detach().numpy()))
 
             train_lbl = torch.ones(mini_batch_size).to(device)
             out_lbl = torch.zeros(out_mini_batch_size).to(device)
@@ -269,3 +292,125 @@ def distill_training(teacher=None, learner=None, data_loader=None,
 
         print("Testing:")
         test_acc = eval_target_model(learner, test_loader, classes=None)
+    return train_acc, test_acc
+
+
+def inf_adv_train(target_model=None, inf_model=None, train_set=None,
+                  test_set=None, inf_in_set=None, target_optim=None,
+                  target_criterion=None, inf_optim=None, inf_criterion=None,
+                  n_epochs=0, privacy_theta=0, verbose=False):
+    """Method to run adversarial training during membership inference
+
+    Args:
+        target_model (nn.Module): Target classifier to adversarially train.
+        inf_model (nn.Module): Adversary attacking the target during training.
+        train_set (DataLoader): DataLoader pointing to the classfier trainign
+            set (split[0]).
+        test_set (DataLoader): DataLoader poiting to the validation set. Also
+            used as out-of-set for the inference (split[1]).
+        inf_in_set (DataLoader): Data loader pointing to a subset of the
+            train_set used for inference in-set (split[4])
+        target_optim (torch.optim): Target optimizer.
+        target_criterion (nn.Module): Target loss criterion.
+        inf_optim (torch.optim): Adversary optimizer.
+        inf_criterion (nn.Module): Adversary loss criterion.
+        privacy_theta (float): Regularization constant. Sets relative
+            importance of classification loss vs. adversarial loss.
+        vebose (bool): If True will print the loss at each step in training.
+
+    Returns:
+
+    Example:
+    
+    Todos:
+        Include example.
+    
+    """
+    # inf_losses = []
+    # losses = []
+    
+    inf_model.train()
+    target_model.train()
+    
+    for epoch in range(n_epochs):
+
+        train_top = np.array([])
+        out_top = np.array([])
+        
+        train_p = np.array([])
+        out_p = np.array([])
+        
+        total_inference = 0
+        total_correct_inference = 0
+        
+        for k_count, ((in_data, _), (out_data, _)) in enumerate(zip(inf_in_set,
+                                                                    test_set)): 
+            # train inference network
+            in_data, out_data = in_data.to(device), out_data.to(device)            
+            
+            mini_batch_size = in_data.shape[0]
+            out_mini_batch_size = out_data.shape[0]
+            
+            train_lbl = torch.ones(mini_batch_size).to(device)
+            out_lbl = torch.zeros(out_mini_batch_size).to(device)
+            
+            train_posteriors = fcnal.softmax(target_model(in_data), dim=1)
+            out_posteriors = fcnal.softmax(target_model(out_data), dim=1)
+                        
+            train_sort, _ = torch.sort(train_posteriors, descending=True)
+            out_sort, _ = torch.sort(out_posteriors, descending=True)
+
+            t_p = train_sort[:, :4].cpu().detach().numpy().flatten()
+            o_p = out_sort[:, :4].cpu().detach().numpy().flatten()
+            
+            train_p = np.concatenate((train_p, t_p))
+            out_p = np.concatenate((out_p, o_p))
+                    
+            train_top = np.concatenate((train_top,
+                                        train_sort[:, 0].cpu().detach().numpy()))
+            out_top = np.concatenate((out_top,
+                                      out_sort[:, 0].cpu().detach().numpy()))
+            
+            inf_optim.zero_grad()
+
+            train_inference = inf_model(train_posteriors,
+                                        label_to_onehot(train_lbl).to(device))
+            train_inference = torch.squeeze(train_inference)
+            #
+            out_inference = inf_model(out_posteriors,
+                                      label_to_onehot(out_lbl).to(device))
+            out_inference = torch.squeeze(out_inference)
+            #
+            total_inference += 2*mini_batch_size
+            total_correct_inference += torch.sum(train_inference > 0.5).item()
+            total_correct_inference += torch.sum(out_inference < 0.5).item()
+            
+            loss_train = inf_criterion(train_inference, train_lbl)
+            loss_out = inf_criterion(out_inference, out_lbl)
+            
+            loss = privacy_theta * (loss_train + loss_out)/2
+            loss.backward()
+            
+            inf_optim.step()
+            
+        # train classifiction network
+        train_imgs, train_lbls = iter(train_set).next()
+        train_imgs, train_lbls = train_imgs.to(device), train_lbls.to(device)
+        
+        target_optim.zero_grad()
+
+        outputs = target_model(train_imgs)
+        train_posteriors = fcnal.softmax(outputs, dim=1)
+
+        loss_classification = target_criterion(outputs, train_lbls)
+        train_lbl = torch.ones(mini_batch_size).to(device)
+        
+        train_inference = inf_model(train_posteriors,
+                                    label_to_onehot(train_lbls).to(device))
+        train_inference = torch.squeeze(train_inference)
+        loss_infer = inf_criterion(train_inference, train_lbl)
+        loss = loss_classification - privacy_theta * loss_infer
+        
+        loss.backward()
+        target_optim.step()
+    
