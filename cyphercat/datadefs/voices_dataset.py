@@ -45,6 +45,8 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
     if path is None:
         path = DATASETS_DIR
     index_file = path + '/VOiCES-{}.index.csv'.format(subset)
+    
+    speaker_file = 'Lab41-SRI-VOiCES-speaker-gender-dataset.tbl'
         
     print('Initialising VOiCESDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))

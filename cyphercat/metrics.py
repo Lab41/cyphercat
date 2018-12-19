@@ -100,16 +100,23 @@ def eval_attack_model(attack_model=None, target=None, target_train=None, target_
         target_model.eval()
         
     attack_model.eval()
+    
+    precisions = []
+    recalls = []
+    accuracies = []
 
-    total = 0
-    correct = 0
+    #for threshold in np.arange(0.5, 1, 0.005):
+    thresholds = np.arange(0.5, 1, 0.005)
 
-    train_top = np.empty((0, 2))
-    out_top = np.empty((0, 2))
+    total = np.zeros(len(thresholds))
+    correct = np.zeros(len(thresholds))
 
-    true_positives = 0
-    false_positives = 0
-    false_negatives = 0
+    true_positives = np.zeros(len(thresholds))
+    false_positives = np.zeros(len(thresholds))
+    false_negatives = np.zeros(len(thresholds)) 
+    
+    train_top = np.empty((0,2))
+    out_top = np.empty((0,2))
 
     for i, ((train_imgs, _), (out_imgs, _)) in enumerate(zip(target_train, target_out)):
 
@@ -185,9 +192,8 @@ def eval_attack_model(attack_model=None, target=None, target_train=None, target_
 
 #     print("accuracy = {:.2f} %%\nprecision = {:.2f} \nrecall = {:.2f}".format(accuracy, precision, recall))
     
-    
     #Make a dataframe of precision & recall results
-    df_pr = pd.DataFrame(columns =['Accuracy','Precision','Recall'], data = [accuracy,precision,recall])
+    df_pr = pd.DataFrame(columns =['Thresholds','Accuracy','Precision','Recall'], data = np.transpose([thresholds,accuracies,precisions,recalls]))
     return df_pr
 
 
