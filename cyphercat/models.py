@@ -367,8 +367,7 @@ PREDEF_MODELS = {"alexnet"     : AlexNet,
                  "tiny_cnn"    : tiny_cnn,
                  "mlleaks_cnn" : mlleaks_cnn,
                  "mlp"         : mlp,
-                 "mlleaks_mlp" : mlleaks_mlp
-                }
+                 "mlleaks_mlp" : mlleaks_mlp}
 
 
 def get_predef_model(name=""):

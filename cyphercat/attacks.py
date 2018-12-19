@@ -53,7 +53,8 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
     To-do:
          Add example to docstring.
     '''
-    if retrain:        
+
+    if retrain:
         print('---- Training shadow network ----')
         train(model=shadow_model, data_loader=shadow_train_loader,
               test_loader=shadow_out_loader, optimizer=shadow_optim,
@@ -73,7 +74,7 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
                       target_out=target_out_loader, k=n_max_posteriors)
 
 
-def ml_leaks3(target=None, target_in_loader=None,  target_out_loader=None):
+def ml_leaks3(target=None, target_in_loader=None, target_out_loader=None):
     ''' Implementation of  ml_leaks 3 membership inference attack
 
     Args:
@@ -97,7 +98,7 @@ def ml_leaks3(target=None, target_in_loader=None,  target_out_loader=None):
 def mi_gradient_ascent(input_sample=None, target_model=None, optimizer=None,
                        category=None, iterations=0, verbose=False):
     """ Implementation of gradient based model inversion attack
-    
+
     Args:
         input_sample (torch.tensor): Initialized input sample, usually
             randomly generated. Size should match the model input.
