@@ -46,7 +46,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
         path = DATASETS_DIR
     index_file = path + '/VOiCES-{}.index.csv'.format(subset)
     
-    speaker_file = 'Lab41-SRI-VOiCES-speaker-gender-dataset.tbl'
+    speaker_file = '/VOiCES/Lab41-SRI-VOiCES-speaker-gender-dataset.tbl'
         
     print('Initialising VOiCESDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))
@@ -57,14 +57,15 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
         df = pd.read_csv(subset_index_path)
     # otherwise cache them
     else:
-        df = pd.read_csv(path+'/LibriSpeech/SPEAKERS.TXT', skiprows=11,
-                         delimiter='|', error_bad_lines=False)
+        print(path+speaker_file)
+        df = pd.read_csv(path+speaker_file, skiprows=0,
+                         delimiter=' ', error_bad_lines=False)
         df.columns = [col.strip().replace(';', '').lower()
                       for col in df.columns]
+        print(df.columns)
         df = df.assign(
-            sex=df['sex'].apply(lambda x: x.strip()),
-            subset=df['subset'].apply(lambda x: x.strip()),
-            name=df['name'].apply(lambda x: x.strip()),
+            sex=df['gender'].apply(lambda x: x.strip()),
+            subset=df['dataset'].apply(lambda x: x.strip()),
         )
 
         audio_files = index_subset(path, subset)
@@ -80,7 +81,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
     num_speakers = len(df['id'].unique())
 
     # Renaming for clarity
-    df = df.rename(columns={'id': 'speaker_id', 'minutes': 'speaker_minutes'})
+    df = df.rename(columns={'speaker': 'speaker_id', 'gender': 'sex','dataset':'subset'})
 
     # Index of dataframe has direct correspondence to item in dataset
     df = df.reset_index(drop=True)
@@ -187,23 +188,24 @@ def index_subset(path=None, subset=None):
     # Quick first pass to find total for tqdm bar
     subset_len = 0
     for root, folders, files in os.walk(path +
-                                        '/LibriSpeech/{}/'.format(subset)):
-        subset_len += len([f for f in files if f.endswith('.flac')])
+                                        '/VOiCES/{}/'.format(subset)):
+        subset_len += len([f for f in files if f.endswith('.wav')])
 
     progress_bar = tqdm(total=subset_len)
     for root, folders, files in os.walk(path +
-                                        '/LibriSpeech/{}/'.format(subset)):
+                                        '/VOiCES/{}/'.format(subset)):
         if len(files) == 0:
             continue
 
-        librispeech_id = int(root.split('/')[-2])
-
         for f in files:
             # Skip non-sound files
-            if not f.endswith('.flac'):
+            if not f.endswith('.wav'):
                 continue
 
-            progress_bar.update(1)
+            #if this subfolder has wav files in it:
+            librispeech_id = int(f[f.index('sp')+2:f.index('sp')+6])
+            
+#             progress_bar.update(1)
 
             instance, samplerate = sf.read(os.path.join(root, f))
 
