@@ -13,6 +13,7 @@ from torch.utils.data.dataset import Dataset
 
 
 PREDEFINED_DATASETS = {'lfw': LFWDataset,
+                       'cifar-10' : CIFAR10Dataset,
                        }
 
 
@@ -55,18 +56,22 @@ def prep_data(data_struct=None):
     datasets_dir = data_struct.data_path
     out_dir = data_struct.save_path
 
+    #dfs = Cifar10_preload_and_split(path=out_dir)
+
     # If dataset already downloaded an unpacked, do nothing
     if os.path.isdir(out_dir):
         print('{} already downloaded, unpacked and processed.'
               .format(data_name))
         return
 
-    # Check if download is required
-    data_url = data_struct.url
-    compressed_file_name = downloader(datasets_dir, data_url)
+    # Download and unpack any required dataset files
+    url_list = data_struct.url
+    for data_url in url_list:
+        # Check if download is required
+        compressed_file_name = downloader(datasets_dir, data_url)
 
-    # Unpack compressed dataset file
-    unpacker(compressed_file_name, out_dir)
+        # Unpack compressed dataset file
+        unpacker(compressed_file_name, out_dir)
 
 # OBSOLETE, KEEP FOR TILL TINYIMAGENET DATASET INCLUDED
 #def custom_preprocessor(out_dir=''):

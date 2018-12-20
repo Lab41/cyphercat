@@ -28,7 +28,7 @@ except ImportError as e:
 def main():
     global args
     parser = argparse.ArgumentParser(description="Convolutional NN Testing Script")
-    parser.add_argument("-c", "--config", dest="configfile", default='scripts/configs/lfw.yml', help="Path to yaml")
+    parser.add_argument("-c", "--config", dest="configfile", default='scripts/configs/librispeech.yml', help="Path to yaml")
 
     args = parser.parse_args()
 
@@ -45,15 +45,16 @@ def main():
     # Get dataset configuration 
     dataset_config       = configr.dataset
     train_model_config   = configr.train_model
-
-    # Training model params
-    train_config = ModelConfig(train_model_config)
-    model_name = train_config.name
-
+    
     # Datastruct for prepping data 
     data_struct = DataStruct(dataset_config)
     # Simple download / unpacker function
     prep_data(data_struct)
+
+
+    ## Training model params
+    #train_config = ModelConfig(train_model_config)
+    #model_name = train_config.name
 
     ## Hyperparameters
     #n_epochs = train_config.epochs
@@ -85,89 +86,6 @@ def main():
     ## Define pyTorch ingestors for training and testing
     #trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
     #testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
-    #
-    ## helper function to unnormalize and plot image 
-    #def imshow(img):
-    #    img = np.array(img)
-    #    img = img / 2 + 0.5
-    #    img = np.moveaxis(img, 0, -1)
-    #    plt.imshow(img)
-    #    
-    ## display sample from dataset 
-    #imgs,labels = iter(trainloader).next()
-    #imshow(torchvision.utils.make_grid(imgs))  
-    
-    #print("Made it to training and testing section")
-    #sys.exit(0)
-    
-    ## Train and test CNN
-    #conv_model = tiny_cnn(n_in=3, n_classes=n_classes, n_filters=32, size=250).to(device)
-    #
-    #conv_model.apply(weights_init)
-    #
-    #conv_optim = optim.Adam(conv_model.parameters(), lr=learnrate)
-    #
-    #train(conv_model, trainloader, testloader, conv_optim, loss, n_epochs, verbose=False)
-    #
-    #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_model(conv_model, trainloader, classes=None)
-    #
-    #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_model(conv_model, testloader, classes=None)
-    #
-    #
-    #
-    ## Train and test ResNet18
-    ## load the torchvision resnet18 implementation 
-    #resnet18 = torchvision.models.resnet18(num_classes=n_classes).to(device)
-    #resnet18.fc = nn.Linear(2048, n_classes)
-    #resnet18.to(device)
-    #
-    #resnet18.apply(weights_init)
-    #
-    #resnet18_optim = optim.Adam(resnet18.parameters(), lr=learnrate)
-    #
-    #train(resnet18, trainloader, testloader, resnet18_optim, loss, n_epochs, verbose=False)
-    #
-    #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_model(resnet18, trainloader, classes=None)
-    #
-    #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_model(resnet18, testloader, classes=None)
-    #
-    #
-    ## Train and test VGG16
-    #vgg16 = torchvision.models.vgg16(num_classes=n_classes).to(device)
-    #
-    #vgg16.apply(weights_init)
-    #
-    #
-    #vgg16_optim = optim.SGD(vgg16.parameters(), lr=learnrate)
-    ##vgg16_optim = optim.Adam(vgg16.parameters(), lr=learnrate)
-    #
-    #train(vgg16, trainloader, testloader, vgg16_optim, loss, n_epochs, verbose=False)
-    #
-    #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_model(vgg16, trainloader, classes=None)
-    #
-    #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_model(vgg16, testloader, classes=None)
-    #
-    ## Train and test AlexNet
-    #alexnet = AlexNet(n_in=3, n_classes=n_classes, n_filters=64, size=250).to(device)
-    #
-    #alexnet.apply(weights_init)
-    #
-    #alexnet_optim = optim.Adam(alexnet.parameters(), lr=learnrate/10)
-    #
-    #train(alexnet, trainloader, testloader, alexnet_optim, loss, n_epochs, verbose=False)
-    #
-    #print("\nPerformance on training set: ")
-    #train_accuracy = eval_target_model(alexnet, trainloader, classes=None)
-    #
-    #print("\nPerformance on test set: ")
-    #test_accuracy = eval_target_model(alexnet, testloader, classes=None)
-
     #
     ## Prepare the model for training
     #model = get_predef_model(model_name)(n_in=3, n_classes=n_classes, n_filters=64, size=250)
