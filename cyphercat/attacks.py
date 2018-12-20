@@ -53,7 +53,7 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
     To-do:
          Add example to docstring.
     '''
-    if retrain:        
+    if retrain:
         print('---- Training shadow network ----')
         train(model=shadow_model, data_loader=shadow_train_loader,
               test_loader=shadow_out_loader, optimizer=shadow_optim,
@@ -69,9 +69,9 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
     #
     print('---- Evaluate attack ----')
     df_pr = eval_attack_model(attack_model=attacker_model, target=target,
-                      target_train=target_in_loader,
-                      target_out=target_out_loader, k=n_max_posteriors)
-    
+                              target_train=target_in_loader,
+                              target_out=target_out_loader, k=n_max_posteriors)
+
     return df_pr
 
 
@@ -99,7 +99,7 @@ def ml_leaks3(target=None, target_in_loader=None,  target_out_loader=None):
 def mi_gradient_ascent(input_sample=None, target_model=None, optimizer=None,
                        category=None, iterations=0, verbose=False):
     """ Implementation of gradient based model inversion attack
-    
+
     Args:
         input_sample (torch.tensor): Initialized input sample, usually
             randomly generated. Size should match the model input.
@@ -113,13 +113,13 @@ def mi_gradient_ascent(input_sample=None, target_model=None, optimizer=None,
     Returns:
         (list(float)): Returns a list of the losses at each iteration.
     Example:
-    
+
     Todos:
         Write example
     """
     category = torch.Variable(torch.LongTensor([category])).to(device)
     losses = []
-    
+
     for i_step in range(iterations):
         target_model.zero_grad()
         out = target_model(input_sample)
@@ -130,7 +130,5 @@ def mi_gradient_ascent(input_sample=None, target_model=None, optimizer=None,
         input_sample.grad.zero_()
         losses.append(loss.data)
         #
-    
-    return losses
-    
 
+    return losses

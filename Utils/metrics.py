@@ -155,10 +155,6 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
     plt.xlabel("Recall")
     plt.ylabel("Precision")
     plt.show()
-    
-    #TO DO:
-    #return max precision + recall:
-    
 
 def eval_membership_inference(target_net, target_train, target_out):
 
