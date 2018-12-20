@@ -12,7 +12,7 @@ sex_to_label = {'M': False, 'F': True}
 label_to_sex = {False: 'M', True: 'F'}
 
 
-def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
+def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
                             pad=False, splits=None):
     """Index and split VOiCES dataset.
 
@@ -57,22 +57,48 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
         df = pd.read_csv(subset_index_path)
     # otherwise cache them
     else:
-        print(path+speaker_file)
         df = pd.read_csv(path+speaker_file, skiprows=0,
                          delimiter=' ', error_bad_lines=False)
         df.columns = [col.strip().replace(';', '').lower()
                       for col in df.columns]
-        print(df.columns)
         df = df.assign(
             sex=df['gender'].apply(lambda x: x.strip()),
             subset=df['dataset'].apply(lambda x: x.strip()),
         )
-
+        df = df.rename(columns={'speaker': 'id', 'gender': 'sex','dataset':'subset'})
+        
         audio_files = index_subset(path, subset)
         # Merge individual audio files with indexing dataframe
         df = pd.merge(df, pd.DataFrame(audio_files))
         
+        #remove duplicate column names
+        df = df[['id','sex','subset','filepath','length','seconds']]
+        
+        #add additional useful columns to dataframe:
+        snippets = []
+        mikes = []
+        degrees = []
+        for i in df.index:
+            snip = df.filepath[i]
+            
+            sg = snip.index('sg')
+            snippets.append(snip[sg+2:sg+6])
+
+            mc = snip.index('mc')
+            mikes.append(snip[mc+2:mc+4])
+
+            dg = snip.index('dg')
+            degrees.append(snip[dg+2:dg+5])
+            
+        df = df.assign(Section= snippets,Mic = mikes, Degree = degrees)
+        
+        mins = (df.groupby('id').sum()['seconds']/60)
+        min_dict = mins.to_dict()
+        df = df.assign(speaker_minutes =df['id'])
+        df['speaker_minutes'] = df['speaker_minutes'].map(min_dict)
+        
         # Save index files to data folder
+
         df.to_csv(index_file, index=False)
 
     # Trim too-small files
@@ -81,8 +107,8 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
     num_speakers = len(df['id'].unique())
 
     # Renaming for clarity
-    df = df.rename(columns={'speaker': 'speaker_id', 'gender': 'sex','dataset':'subset'})
-
+    df = df.rename(columns={'id': 'speaker_id'})
+    
     # Index of dataframe has direct correspondence to item in dataset
     df = df.reset_index(drop=True)
     df = df.assign(id=df.index.values)
@@ -101,7 +127,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
         # check if splits exists.
         splits_ready = [False]*5
         for i_split in range(5):
-            if os.path.exists( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
+            if os.path.exists( DATASPLITS_DIR+'/VOiCES-%s/VOiCES_%i.csv' %
                                (subset, i_split)):
                 splits_ready[i_split] = True
 
@@ -194,19 +220,19 @@ def index_subset(path=None, subset=None):
     progress_bar = tqdm(total=subset_len)
     for root, folders, files in os.walk(path +
                                         '/VOiCES/{}/'.format(subset)):
+ 
         if len(files) == 0:
             continue
-
+                
         for f in files:
             # Skip non-sound files
             if not f.endswith('.wav'):
                 continue
 
-            #if this subfolder has wav files in it:
-            librispeech_id = int(f[f.index('sp')+2:f.index('sp')+6])
-            
-#             progress_bar.update(1)
+            progress_bar.update(1)
 
+            librispeech_id = int(root[-4:])
+    
             instance, samplerate = sf.read(os.path.join(root, f))
 
             audio_files.append({
