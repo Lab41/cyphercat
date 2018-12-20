@@ -53,6 +53,7 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
     To-do:
          Add example to docstring.
     '''
+
     if retrain:
         print('---- Training shadow network ----')
         train(model=shadow_model, data_loader=shadow_train_loader,
@@ -75,7 +76,7 @@ def ml_leaks1(target=None, shadow_model=None, attacker_model=None,
     return df_pr
 
 
-def ml_leaks3(target=None, target_in_loader=None,  target_out_loader=None):
+def ml_leaks3(target=None, target_in_loader=None, target_out_loader=None):
     ''' Implementation of  ml_leaks 3 membership inference attack
 
     Args:
