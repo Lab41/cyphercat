@@ -137,21 +137,21 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
             dfs = {}
             for i_split in range(5):
                 dfs[i_split] = pd.read_csv(DATASPLITS_DIR +
-                                           '/libri-%s/libri_%i.csv' %
+                                           '/VOiCES-%s/VOiCES_%i.csv' %
                                            (subset, i_split))
 
         else:
             # Case when splits not found. This should only occur first time
             # LibriSpeech is parsed by developers (not users), so will include
             # a warning
-            print('WARNING: Creating default splits for LibriSpeech!')
+            print('WARNING: Creating default splits for VOiCES!')
             dfs = default_splitter(dfs, df, unique_speakers)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
                 dfs[this_df] = dfs[this_df].drop(columns=['id'])
                 dfs[this_df].rename(columns={'level_0': 'idx_in_original_df'},
                                     inplace=True)
-                dfs[this_df].to_csv(DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
+                dfs[this_df].to_csv(DATASPLITS_DIR+'/VOiCES-%s/VOiCES_%i.csv' %
                                     (subset, i_df), index=False)
     else:
         name = list(splits.keys())[0]
@@ -351,7 +351,7 @@ def splitter(dfs, df, unique_speakers, splits, N):
     return dfs
 
 
-class VoicesDataset(Dataset):
+class Voices_dataset(Dataset):
     """This class subclasses the torch.utils.data.Dataset.  Calling __getitem__
     will return the transformed VOiCES audio sample and it's label
 
