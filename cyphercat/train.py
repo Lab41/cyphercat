@@ -1,4 +1,3 @@
-
 import numpy as np
 
 import torch
@@ -139,7 +138,7 @@ def train_attacker(attack_model=None, shadow_model=None,
             out_mini_batch_size = out_data.shape[0]
             '''if mini_batch_size != out_mini_batch_size:
                 break'''
-            
+
             if type(shadow_model) is not Pipeline:
                 train_data = train_data.to(device).detach()
                 out_data = out_data.to(device).detach()
@@ -345,9 +344,9 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
         total_correct_inference = 0
         
         for k_count, ((in_data, _), (out_data, _)) in enumerate(zip(inf_in_set,
-                                                                    test_set)): 
+                                                                    test_set)):
             # train inference network
-            in_data, out_data = in_data.to(device), out_data.to(device)            
+            in_data, out_data = in_data.to(device), out_data.to(device)
             
             mini_batch_size = in_data.shape[0]
             out_mini_batch_size = out_data.shape[0]
@@ -368,7 +367,8 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
             out_p = np.concatenate((out_p, o_p))
                     
             train_top = np.concatenate((train_top,
-                                        train_sort[:, 0].cpu().detach().numpy()))
+                                        train_sort[:, 0].cpu().
+                                        detach().numpy()))
             out_top = np.concatenate((out_top,
                                       out_sort[:, 0].cpu().detach().numpy()))
             
@@ -414,4 +414,3 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
         
         loss.backward()
         target_optim.step()
-    
