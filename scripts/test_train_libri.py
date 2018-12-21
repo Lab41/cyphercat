@@ -16,7 +16,7 @@ try:
     from cyphercat.train import *
     from cyphercat.metrics import *  
     
-    from cyphercat.load_data import prep_data, get_split_dataset
+    from cyphercat.load_data import prep_data
     from cyphercat.utils import Configurator, ModelConfig, DataStruct
 
 except ImportError as e:

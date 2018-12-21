@@ -5,39 +5,8 @@ import numpy as np
 from .utils.config_utils import DataStruct
 from .utils.file_utils import downloader, unpacker
 
-from .datadefs import *
-
 from skimage import io
 from torch.utils.data.dataset import Dataset
-
-
-
-PREDEFINED_DATASETS = {'lfw': LFWDataset,
-                       'cifar-10' : CIFAR10Dataset,
-                       }
-
-
-def get_split_dataset(dataset_config=None, transforms=[]):
-
-    trainset = None
-    testset = None
-    assert len(transforms) == 2, "Need exactly two transforms"
-
-    # Grab correct predefined dataset class
-    bname = os.path.basename(dataset_config['name'])
-    data_struct = DataStruct(dataset_config)
-
-    # Simple download / unpacker function
-    prep_data(data_struct)
-
-    trainset = PREDEFINED_DATASETS[bname](data_struct=data_struct,
-                                          train_set=True,
-                                          transform=transforms[0])
-    testset = PREDEFINED_DATASETS[bname](data_struct=data_struct,
-                                         train_set=False,
-                                         transform=transforms[1])
-
-    return trainset, testset
 
 
 def prep_data(data_struct=None):
@@ -55,8 +24,6 @@ def prep_data(data_struct=None):
     data_name = data_struct.name
     datasets_dir = data_struct.data_path
     out_dir = data_struct.save_path
-
-    #dfs = Cifar10_preload_and_split(path=out_dir)
 
     # If dataset already downloaded an unpacked, do nothing
     if os.path.isdir(out_dir):

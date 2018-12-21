@@ -1,37 +1,28 @@
 from torch import randperm
 from torch._utils import _accumulate
-from torch.utils.data import Dataset, ConcatDataset
+#from torch.utils.data import Dataset, ConcatDataset
+from torch.utils.data.dataset import Subset
+#from torch.utils.data import Subset, random_split
 
 import numpy as np
 import pandas as pd
 
-class Subset(Dataset):
-    """
-    Subset of a dataset at specified indices.
-
-    Arguments:
-        dataset (Dataset): The whole Dataset
-        indices (sequence): Indices in the whole set selected for subset
-    """
-    def __init__(self, dataset, indices):
-        self.dataset = dataset
-        self.indices = indices
-
-    def __getitem__(self, idx):
-        return self.dataset[self.indices[idx]]
-
-    def __len__(self):
-        return len(self.indices)
-
-
 
 def dataset_split(dataset=None, lengths=None, indices=None):
     """
-    Randomly split a dataset into non-overlapping new datasets of given lengths.
+    Split a dataset into non-overlapping new datasets of given lengths.
+    If indices is undefined, then a random permutation of dataset
+    is generated. Slight modification of torch.utils.data.random_split
+    to gain access to permuted indices.
 
     Arguments:
         dataset (Dataset): Dataset to be split
         lengths (sequence): lengths of splits to be produced
+        indices (tensor): permutations of instances
+
+    Returns:
+        indices (tensor): premutations of instances
+
     """
     if sum(lengths) != len(dataset):
         raise ValueError("Sum of input lengths does not equal the length of the input dataset!")
@@ -39,6 +30,11 @@ def dataset_split(dataset=None, lengths=None, indices=None):
     # If requested a random split of dataset
     if indices is None:
         indices = randperm(sum(lengths))
+
+    #print((indices).int().numpy())
+    #raw_input("TEST")
+    #indices = (indices).int().numpy()
+    indices = (indices).long()
 
     return indices, [Subset(dataset, indices[offset - length:offset]) for offset, length in zip(_accumulate(lengths), lengths)]
 
