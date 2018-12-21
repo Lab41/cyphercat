@@ -13,7 +13,7 @@ label_to_sex = {False: 'M', True: 'F'}
 
 
 def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
-                             pad=False, splits=None):
+                             pad=False, splits=None, split_type = 'segment'):
     """Index and split VOiCES dataset.
 
     Args:
@@ -27,6 +27,8 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
             samples with lenght below the minimum.
         splits (dict): dictionary with {name:[fractions]} for a user specified
             split. The split will be saved to 'DATASPLITS_DIR' under 'name'
+        split_type (string): How to do the split by data: 'segment' will take 20% 
+            of each audio file, and 'file' will take 20% of files for test set
 
     Returns:
         dict(Dataframes): Dictionary containing the dataframes corresponding
@@ -75,10 +77,27 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
         # Remove duplicate column names
         df = df[['id', 'sex', 'subset', 'filepath', 'length', 'seconds']]
 
+
+
+        # Save index files to data folder
+
+        df.to_csv(index_file, index=False)
+
+    ###note to self: fix the below
+    # Add more to default dataframe
+    index_file2 = path + '/VOiCES-{}.index2.csv'.format(subset)
+    
+    # Check for cached files
+    subset_index_path2 = index_file2
+    if os.path.exists(subset_index_path2):
+        df = pd.read_csv(subset_index_path2)
+    # otherwise cache them
+    else:
         # Add additional useful columns to dataframe:
         snippets = []
         mikes = []
         degrees = []
+        noises = []
         for i in df.index:
             snip = df.filepath[i]
 
@@ -90,18 +109,20 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
 
             dg = snip.index('dg')
             degrees.append(snip[dg+2:dg+5])
+            
+            # Find where room is:
+            rm = snip.index('rm')
+            dash = snip[rm:].index('/')  # Find first / after rm
+            noises.append(snip[dash+1:dash+5])
 
-        df = df.assign(Section=snippets, Mic=mikes, Degree=degrees)
+        df = df.assign(Section=snippets, Mic=mikes, Degree=degrees, Noise=noises)
 
         mins = (df.groupby('id').sum()['seconds']/60)
         min_dict = mins.to_dict()
         df = df.assign(speaker_minutes=df['id'])
         df['speaker_minutes'] = df['speaker_minutes'].map(min_dict)
-
-        # Save index files to data folder
-
-        df.to_csv(index_file, index=False)
-
+        
+        df.to_csv(index_file2, index=False)
     # Trim too-small files
     if not pad:
         df = df[df['seconds'] > fragment_seconds]
@@ -126,8 +147,12 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
     if splits is None:
         # Default behaviour will be to load cyphercat default splits
         # Check if splits exists.
-        splits_ready = [False]*5
-        for i_split in range(5):
+        if split_type == 'file':
+            ndfs = 5
+        elif split_type == 'segment':
+            ndfs = 2
+        splits_ready = [False]*ndfs
+        for i_split in range(ndfs):
             if os.path.exists(DATASPLITS_DIR+'/VOiCES-%s/VOiCES_%i.csv' %
                               (subset, i_split)):
                 splits_ready[i_split] = True
@@ -135,7 +160,7 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
         if all(splits_ready):  # Found all of the relelvant splits
             print('Found default splits, loading dataframe')
             dfs = {}
-            for i_split in range(5):
+            for i_split in range(ndfs):
                 dfs[i_split] = pd.read_csv(DATASPLITS_DIR +
                                            '/VOiCES-%s/VOiCES_%i.csv' %
                                            (subset, i_split))
@@ -145,7 +170,10 @@ def Voices_preload_and_split(subset='room-2', seconds=3, path=None,
             # LibriSpeech is parsed by developers (not users), so will include
             # a warning
             print('WARNING: Creating default splits for VOiCES!')
-            dfs = default_splitter(dfs, df, unique_speakers)
+            if split_type == 'file':
+                dfs = default_splitter(dfs, df, unique_speakers)
+            elif split_type == 'segment':
+                dfs = default_splitter2(dfs, df, unique_speakers)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
                 dfs[this_df] = dfs[this_df].drop(columns=['id'])
@@ -291,6 +319,44 @@ def default_splitter(dfs=None, df=None, unique_speakers=0):
 
     return dfs
 
+def default_splitter2(dfs=None, df=None, unique_speakers=0):
+    """ Performs cycpercat default split for librspeech dataset.
+
+    Args:
+        df (Dataframe): Dataframe to split.
+        unique_speakers (int): Number of unique speakers in the dataframe
+
+    Returns:
+        dict(Dataframes): Returns a dictionary containing the dataframes for
+            each of the splits.
+
+    Example:
+
+    Todo:
+        -Write example.
+    """
+    # split the df by sex
+    male_df = df[df['sex'] == 'M']
+    female_df = df[df['sex'] == 'F']
+    #
+    unique_male = sorted(male_df['speaker_id'].unique())
+    unique_female = sorted(female_df['speaker_id'].unique())
+    n_male = len(unique_male)//2
+    n_female = len(unique_female)//2
+    # male splits
+    m_dfs = {}
+    # Split into train & shadow
+    m_dfs = splitter(m_dfs, male_df, unique_male[n_male:], [0.5, 0.5], 0)
+    # female splits
+    f_dfs = {}
+    f_dfs = splitter(f_dfs, female_df, unique_female[n_female:], [0.5, 0.5], 0)
+    # merge male and female into final splits
+    for i_split in range(2):
+        print('Merging split %i\n Male: %i and Female: %i' %
+              (i_split, len(m_dfs[i_split]), len(f_dfs[i_split])))
+        dfs[i_split] = m_dfs[i_split].append(f_dfs[i_split])
+
+    return dfs
 
 def splitter(dfs, df, unique_speakers, splits, N):
     """ Splits the data for given unqie speakers according to specified fractions.
