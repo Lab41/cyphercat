@@ -24,7 +24,7 @@ def label_to_onehot(labels, num_classes=10):
             correct class.
     """
     one_hot = torch.eye(num_classes)
-    return one_hot[labels]
+    return one_hot[labels.long()]
 
 
 def train(model=None, data_loader=None, test_loader=None,
@@ -89,7 +89,8 @@ def train(model=None, data_loader=None, test_loader=None,
 
 def train_attacker(attack_model=None, shadow_model=None,
                    shadow_train=None, shadow_out=None,
-                   optimizer=None, criterion=None, n_epochs=0, k=0):
+                   optimizer=None, criterion=None, n_epochs=0, k=0,
+                   adv_training=False):
     """
     Trains attack model (classifies a sample as in or
     out of training set) using shadow model outputs
@@ -130,15 +131,16 @@ def train_attacker(attack_model=None, shadow_model=None,
 
         train_top = np.empty((0, 2))
         out_top = np.empty((0, 2))
-        for i, ((train_data, _), (out_data, _)) in enumerate(zip(shadow_train,
+        for i, ((train_data, train_lbls), (out_data, out_lbls)) in enumerate(zip(shadow_train,
                                                                  shadow_out)):
 
             # out_data = torch.randn(out_data.shape)
             mini_batch_size = train_data.shape[0]
             out_mini_batch_size = out_data.shape[0]
+            if mini_batch_size != out_mini_batch_size:
+                continue
             '''if mini_batch_size != out_mini_batch_size:
                 break'''
-            
             if type(shadow_model) is not Pipeline:
                 train_data = train_data.to(device).detach()
                 out_data = out_data.to(device).detach()
@@ -180,8 +182,14 @@ def train_attacker(attack_model=None, shadow_model=None,
 
             optimizer.zero_grad()
 
-            train_predictions = torch.squeeze(attack_model(train_top_k))
-            out_predictions = torch.squeeze(attack_model(out_top_k))
+            if adv_training:
+                train_predictions = torch.squeeze(attack_model(train_top_k,
+                                                               label_to_onehot(train_lbls).to(device)))
+                out_predictions = torch.squeeze(attack_model(out_top_k,
+                                                             label_to_onehot(out_lbls).to(device)))
+            else:
+                train_predictions = torch.squeeze(attack_model(train_top_k))
+                out_predictions = torch.squeeze(attack_model(out_top_k))
 
             loss_train = criterion(train_predictions, train_lbl)
             loss_out = criterion(out_predictions, out_lbl)
@@ -392,7 +400,7 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
             loss.backward()
             
             inf_optim.step()
-            
+
         # train classifiction network
         train_imgs, train_lbls = iter(train_set).next()
         train_imgs, train_lbls = train_imgs.to(device), train_lbls.to(device)
@@ -413,4 +421,7 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
         
         loss.backward()
         target_optim.step()
-    
+        if verbose:
+            print("[{}/{}] loss = {}"
+                  .format(epoch, n_epochs, loss.item()))
+            
