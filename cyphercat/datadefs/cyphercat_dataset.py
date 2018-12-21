@@ -1,8 +1,6 @@
+from cyphercat.definitions import DATASETS_DIR, DATASPLITS_DIR
 from .cifar10_dataset import Cifar10_preload_and_split
 from .libri_dataset import Libri_preload_and_split
-from cyphercat.definitions import DATASETS_DIR, DATASPLITS_DIR
-import numpy as np
-import os
 
 
 class CCATDataset():
@@ -51,8 +49,8 @@ class CCATDataset():
 
 
 # Functions 
-PRELOAD_SPLIT_FN_DICT = {'cifar-10' : Cifar10_preload_and_split,
-                         'librispeech' : Libri_preload_and_split,
+PRELOAD_SPLIT_FN_DICT = {'cifar-10': Cifar10_preload_and_split,
+                         'librispeech': Libri_preload_and_split,
                          }
 
 

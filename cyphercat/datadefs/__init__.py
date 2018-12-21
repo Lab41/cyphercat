@@ -1,2 +1,2 @@
 
-from .cyphercat_dataset import *
+from .cyphercat_dataset import CCATDataset
