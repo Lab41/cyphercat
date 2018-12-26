@@ -13,8 +13,11 @@ data:
 
 train:
   model: AlexNet
-  modelpath:
-  hyperparameters: 1,2,3,4
+  runtrain: False
+  modelpath: Datasets
+  epochs: 1
+  batchsize: 8
+  learnrate: 0.001
 
 
 attack:

@@ -94,10 +94,10 @@ class DataStruct(object):
     """
 
     # Mandatory fields for 'data' yaml config file keyword
-    reqs = set(["name", "datapath", "datatype"])
+    reqs       = set(["name", "datapath", "datatype"])
     image_reqs = set(["nclasses", "height", "width", "channels"])
     audio_reqs = set(["length", "seconds"])
-    data_reqs = [image_reqs, audio_reqs]
+    data_reqs  = [image_reqs, audio_reqs]
 
     # Data types dictionary
     data_type_dict = {"image": 0,
@@ -114,7 +114,8 @@ class DataStruct(object):
         self.name      = dataset.get('name')
         self.data_path = self.test_abs_path(str(dataset.get('datapath')))
         self.data_type = dataset.get('datatype').lower()
-        self.url       = dataset.get('url', '')
+        url_list       = dataset.get('url', '').replace(" ", "").split(",")
+        self.url       = [x for x in url_list if x]
         self.save_path = os.path.join(self.data_path, self.name)
 
         # Ensure data type is permitted

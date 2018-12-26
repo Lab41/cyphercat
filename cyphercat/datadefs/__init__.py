@@ -1,4 +1,3 @@
-
-from .lfw_dataset import *
-from .libri_dataset import *
+from .cyphercat_dataset import CCATDataset
 from .voices_dataset import *
+
