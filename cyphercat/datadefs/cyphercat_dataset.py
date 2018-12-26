@@ -10,7 +10,7 @@ class CCATDataset():
 
     # Args
         name (string): dataset name
-        splits (list): Dataframe with audiosample path and metadata.
+        splits (list): Dataframe with data path and metadata.
         transform List(torch): list of torch transform functions
                                Must be None or length must == {1, len(splits)}
         cache: bool. Whether or not to use the cached index file
