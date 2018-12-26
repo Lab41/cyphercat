@@ -169,7 +169,7 @@ class mlleaks_mlp(nn.Module):
         x = fcnal.sigmoid(self.hidden(x))
         # x = self.bn(x)
         out = self.output(x)
-        # out = fcnal.sigmoid(self.output(x))
+        out = fcnal.sigmoid(self.output(x))
         
         return out
     
@@ -367,8 +367,7 @@ PREDEF_MODELS = {"alexnet"     : AlexNet,
                  "tiny_cnn"    : tiny_cnn,
                  "mlleaks_cnn" : mlleaks_cnn,
                  "mlp"         : mlp,
-                 "mlleaks_mlp" : mlleaks_mlp
-                }
+                 "mlleaks_mlp" : mlleaks_mlp}
 
 
 def get_predef_model(name=""):
@@ -436,7 +435,8 @@ def load_checkpoint(model=None, optimizer=None, checkpoint=None):
         checkpoint (str): Path to the checkpoint file.
     
     Returns:
-        
+        (dict): Returns the loaded dicitonary
+
     """
     assert os.path.isfile(checkpoint), 'Checkpoint not found, aborting load'
     
@@ -453,3 +453,4 @@ def load_checkpoint(model=None, optimizer=None, checkpoint=None):
     print('Succesfully loaded checkpoint \nDataset: {} \nEpoch: {} \nLoss: {}\
            \nAccuracy: {}'.format(chpt['dataset'], chpt['epoch'], chpt['loss'],
                                   chpt['accuracy']))
+    return chpt
