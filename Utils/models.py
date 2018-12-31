@@ -370,6 +370,27 @@ def ft_cnn_classifer(n_classes):
                           kernel_size=7, n_classes=125)
 
 
+class RNN(torch.nn.Module):
+    '''
+    Bidirectional LSTM for sentiment analysis
+    '''
+    def __init__(self, vocab_size, embedding_size, hidden_size, output_size, n_layers=2, bidirectional=True, dropout=0.5):
+        super(RNN, self).__init__()
+        
+        self.embedding = torch.nn.Embedding(vocab_size, embedding_size)
+        self.rnn = torch.nn.LSTM(embedding_size, hidden_size, num_layers=n_layers, bidirectional=bidirectional, dropout=dropout)
+        self.fc = torch.nn.Linear(hidden_size*2, output_size)
+        self.dropout = torch.nn.Dropout(dropout)
+        
+    def forward(self, x):
+        
+        embedded = self.dropout(self.embedding(x))
+        output, (hidden, cell) = self.rnn(embedded)
+        hidden = self.dropout(torch.cat((hidden[-2,:,:], hidden[-1,:,:]), dim=1))
+
+        return self.fc(hidden.squeeze(0))
+
+
 def weights_init(m): 
     if isinstance(m, nn.Conv2d):
         nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
