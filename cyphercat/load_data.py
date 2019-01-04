@@ -5,38 +5,8 @@ import numpy as np
 from .utils.config_utils import DataStruct
 from .utils.file_utils import downloader, unpacker
 
-from .datadefs import *
-
 from skimage import io
 from torch.utils.data.dataset import Dataset
-
-
-
-PREDEFINED_DATASETS = {'lfw': LFWDataset,
-                       }
-
-
-def get_split_dataset(dataset_config=None, transforms=[]):
-
-    trainset = None
-    testset = None
-    assert len(transforms) == 2, "Need exactly two transforms"
-
-    # Grab correct predefined dataset class
-    bname = os.path.basename(dataset_config['name'])
-    data_struct = DataStruct(dataset_config)
-
-    # Simple download / unpacker function
-    prep_data(data_struct)
-
-    trainset = PREDEFINED_DATASETS[bname](data_struct=data_struct,
-                                          train_set=True,
-                                          transform=transforms[0])
-    testset = PREDEFINED_DATASETS[bname](data_struct=data_struct,
-                                         train_set=False,
-                                         transform=transforms[1])
-
-    return trainset, testset
 
 
 def prep_data(data_struct=None):
@@ -61,12 +31,14 @@ def prep_data(data_struct=None):
               .format(data_name))
         return
 
-    # Check if download is required
-    data_url = data_struct.url
-    compressed_file_name = downloader(datasets_dir, data_url)
+    # Download and unpack any required dataset files
+    url_list = data_struct.url
+    for data_url in url_list:
+        # Check if download is required
+        compressed_file_name = downloader(datasets_dir, data_url)
 
-    # Unpack compressed dataset file
-    unpacker(compressed_file_name, out_dir)
+        # Unpack compressed dataset file
+        unpacker(compressed_file_name, out_dir)
 
 # OBSOLETE, KEEP FOR TILL TINYIMAGENET DATASET INCLUDED
 #def custom_preprocessor(out_dir=''):
