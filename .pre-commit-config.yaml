@@ -5,10 +5,15 @@ repos:
     -   id: trailing-whitespace
         files: 'cyphercat/*'
     -   id: end-of-file-fixer
+        files: 'cyphercat/*'
     -   id: autopep8-wrapper
+        files: 'cyphercat/*'
     -   id: check-case-conflict
+        files: 'cyphercat/*'
     -   id: check-json
+        files: 'cyphercat/*'
     -   id: pretty-format-json
         args: ['--autofix']
     -   id: double-quote-string-fixer
+        files: 'cyphercat/*'
     -   id: check-yaml
