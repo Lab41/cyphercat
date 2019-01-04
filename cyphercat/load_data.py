@@ -41,7 +41,7 @@ def prep_data(data_struct=None):
         unpacker(compressed_file_name, out_dir)
 
 # OBSOLETE, KEEP FOR TILL TINYIMAGENET DATASET INCLUDED
-#def custom_preprocessor(out_dir=''):
+# def custom_preprocessor(out_dir=''):
 #    """
 #    Custom preprocessing functions for
 #    specific data sets.

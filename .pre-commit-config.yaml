@@ -3,6 +3,7 @@ repos:
     rev: v1.2.3
     hooks:
     -   id: trailing-whitespace
+        files: 'cyphercat/*'
     -   id: end-of-file-fixer
     -   id: autopep8-wrapper
     -   id: check-case-conflict
