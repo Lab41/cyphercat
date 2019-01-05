@@ -24,7 +24,7 @@ def prep_data(data_struct=None):
     data_name = data_struct.name
     datasets_dir = data_struct.data_path
     out_dir = data_struct.save_path
-    # I have added a very long comment here. It is too long. Should fail flake8. For sure. Waaaaaaay too long. Excessively long.
+    print('I have added a very long string here. It is too long. Should fail flake8. For sure. Waaaaaaay too long. Excessively long')
     # If dataset already downloaded an unpacked, do nothing
     if os.path.isdir(out_dir):
         print('{} already downloaded, unpacked and processed.'
