@@ -24,7 +24,7 @@ def prep_data(data_struct=None):
         print('{} already downloaded, unpacked and processed.'
               .format(data_name))
         return
-    # This comment is way too long. It will not pass the flake8 test.
+
     # Download and unpack any required dataset files
     url_list = data_struct.url
     for data_url in url_list:
