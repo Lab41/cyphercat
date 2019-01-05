@@ -18,3 +18,4 @@ repos:
         files: 'cyphercat/*'
     -   id: check-yaml
     -   id: flake8
+        files: 'cyphercat/*'
