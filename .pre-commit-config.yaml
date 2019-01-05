@@ -6,8 +6,6 @@ repos:
         files: 'cyphercat/*'
     -   id: end-of-file-fixer
         files: 'cyphercat/*'
-    -   id: autopep8-wrapper
-        files: 'cyphercat/*'
     -   id: check-case-conflict
         files: 'cyphercat/*'
     -   id: check-json
@@ -17,6 +15,8 @@ repos:
     -   id: double-quote-string-fixer
         files: 'cyphercat/*'
     -   id: check-yaml
+    -   id: flake8
+        files: 'cyphercat/*'
 -   repo: https://github.com/pre-commit/mirrors-autopep8
     rev: v1.4.2
     hooks:
