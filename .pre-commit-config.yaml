@@ -1,4 +1,8 @@
 repos:
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.4.2
+    hooks:
+    -   id: autopep8
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v1.2.3
     hooks:
@@ -17,7 +21,3 @@ repos:
     -   id: check-yaml
     -   id: flake8
         files: 'cyphercat/*'
--   repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.4.2
-    hooks:
-    -   id: autopep8
