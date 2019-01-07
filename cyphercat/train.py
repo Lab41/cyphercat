@@ -90,7 +90,7 @@ def train(model=None, data_loader=None, test_loader=None,
 def train_attacker(attack_model=None, shadow_model=None,
                    shadow_train=None, shadow_out=None,
                    optimizer=None, criterion=None, n_epochs=0, k=0,
-                   adv_training=False):
+                   verbose=False, adv_training=False):
     """
     Trains attack model (classifies a sample as in or
     out of training set) using shadow model outputs
@@ -204,13 +204,13 @@ def train_attacker(attack_model=None, shadow_model=None,
                 loss.backward()
                 optimizer.step()
 
-            correct += (fcnal.sigmoid(train_predictions) >= 0.5).sum().item()
-            correct += (fcnal.sigmoid(out_predictions) < 0.5).sum().item()
+            correct += (train_predictions >= 0.5).sum().item()
+            correct += (out_predictions < 0.5).sum().item()
             total += train_predictions.size(0) + out_predictions.size(0)
-
-            print("[{}/{}][{}/{}] loss = {:.2f}, accuracy = {:.2f}"
-                  .format(epoch, n_epochs, i, len(shadow_train),
-                          loss.item(), 100 * correct / total))
+            if verbose:
+                print("[{}/{}][{}/{}] loss = {:.2f}, accuracy = {:.2f}"
+                      .format(epoch, n_epochs, i, len(shadow_train),
+                              loss.item(), 100 * correct / total))
 
         # Plot distributions for target predictions
         # in training set and out of training set
