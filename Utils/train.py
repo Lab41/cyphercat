@@ -68,6 +68,9 @@ def train_attacker(attack_net, shadow, shadow_train, shadow_out, optimizer, crit
         out_top = np.empty((0,2))
         for i, ((train_imgs, _), (out_imgs, _)) in enumerate(zip(shadow_train, shadow_out)):
 
+            if train_imgs.shape[0] != out_imgs.shape[0]: 
+                break
+                
             #######out_imgs = torch.randn(out_imgs.shape)
             mini_batch_size = train_imgs.shape[0]
             
