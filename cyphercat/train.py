@@ -91,7 +91,7 @@ def train(model=None, data_loader=None, test_loader=None,
 def train_attacker(attack_model=None, shadow_model=None,
                    shadow_train=None, shadow_out=None,
                    optimizer=None, criterion=None, n_epochs=0, k=0,
-                   verbose=False, adv_training=False):
+                   verbose=False):
     """
     Trains attack model (classifies a sample as in or
     out of training set) using shadow model outputs
@@ -132,8 +132,9 @@ def train_attacker(attack_model=None, shadow_model=None,
 
         train_top = np.empty((0, 2))
         out_top = np.empty((0, 2))
-        for i, ((train_data, train_lbls), (out_data, out_lbls)) in enumerate(zip(shadow_train,
-                                                                 shadow_out)):
+        for i, ((train_data, train_lbls),
+                (out_data, out_lbls)) in enumerate(zip(shadow_train,
+                                                       shadow_out)):
 
             # out_data = torch.randn(out_data.shape)
             mini_batch_size = train_data.shape[0]
@@ -184,14 +185,8 @@ def train_attacker(attack_model=None, shadow_model=None,
 
             optimizer.zero_grad()
 
-            if adv_training:
-                train_predictions = torch.squeeze(attack_model(train_top_k,
-                                                               label_to_onehot(train_lbls).to(device)))
-                out_predictions = torch.squeeze(attack_model(out_top_k,
-                                                             label_to_onehot(out_lbls).to(device)))
-            else:
-                train_predictions = torch.squeeze(attack_model(train_top_k))
-                out_predictions = torch.squeeze(attack_model(out_top_k))
+            train_predictions = torch.squeeze(attack_model(train_top_k))
+            out_predictions = torch.squeeze(attack_model(out_top_k))
 
             loss_train = criterion(train_predictions, train_lbl)
             loss_out = criterion(out_predictions, out_lbl)
