@@ -1,3 +1,4 @@
+
 import numpy as np
 
 import torch
@@ -141,10 +142,7 @@ def train_attacker(attack_model=None, shadow_model=None,
                 continue
             '''if mini_batch_size != out_mini_batch_size:
                 break'''
-<<<<<<< HEAD
-=======
 
->>>>>>> 693bb1c25f6a6ce9fbbf078b79b3faf1e1df275e
             if type(shadow_model) is not Pipeline:
                 train_data = train_data.to(device).detach()
                 out_data = out_data.to(device).detach()
@@ -426,10 +424,8 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
         
         loss.backward()
         target_optim.step()
-<<<<<<< HEAD
+
         if verbose:
             print("[{}/{}] loss = {}"
                   .format(epoch, n_epochs, loss.item()))
             
-=======
->>>>>>> 693bb1c25f6a6ce9fbbf078b79b3faf1e1df275e
