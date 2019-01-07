@@ -14,7 +14,7 @@ def prep_data(data_struct=None):
                    parameters from 'data' field
                    of global yaml configuration file
     """
-# This comment is too long, it will fail the flake8 check.
+
     data_name = data_struct.name
     datasets_dir = data_struct.data_path
     out_dir = data_struct.save_path
