@@ -1,3 +1,4 @@
+
 import numpy as np
 
 import torch
@@ -23,7 +24,7 @@ def label_to_onehot(labels, num_classes=10):
             correct class.
     """
     one_hot = torch.eye(num_classes)
-    return one_hot[labels]
+    return one_hot[labels.long()]
 
 
 def train(model=None, data_loader=None, test_loader=None,
@@ -89,7 +90,8 @@ def train(model=None, data_loader=None, test_loader=None,
 
 def train_attacker(attack_model=None, shadow_model=None,
                    shadow_train=None, shadow_out=None,
-                   optimizer=None, criterion=None, n_epochs=0, k=0):
+                   optimizer=None, criterion=None, n_epochs=0, k=0,
+                   verbose=False):
     """
     Trains attack model (classifies a sample as in or
     out of training set) using shadow model outputs
@@ -130,12 +132,15 @@ def train_attacker(attack_model=None, shadow_model=None,
 
         train_top = np.empty((0, 2))
         out_top = np.empty((0, 2))
-        for i, ((train_data, _), (out_data, _)) in enumerate(zip(shadow_train,
-                                                                 shadow_out)):
+        for i, ((train_data, train_lbls),
+                (out_data, out_lbls)) in enumerate(zip(shadow_train,
+                                                       shadow_out)):
 
             # out_data = torch.randn(out_data.shape)
             mini_batch_size = train_data.shape[0]
             out_mini_batch_size = out_data.shape[0]
+            if mini_batch_size != out_mini_batch_size:
+                continue
             '''if mini_batch_size != out_mini_batch_size:
                 break'''
 
@@ -192,13 +197,13 @@ def train_attacker(attack_model=None, shadow_model=None,
                 loss.backward()
                 optimizer.step()
 
-            correct += (fcnal.sigmoid(train_predictions) >= 0.5).sum().item()
-            correct += (fcnal.sigmoid(out_predictions) < 0.5).sum().item()
+            correct += (train_predictions >= 0.5).sum().item()
+            correct += (out_predictions < 0.5).sum().item()
             total += train_predictions.size(0) + out_predictions.size(0)
-
-            print("[{}/{}][{}/{}] loss = {:.2f}, accuracy = {:.2f}"
-                  .format(epoch, n_epochs, i, len(shadow_train),
-                          loss.item(), 100 * correct / total))
+            if verbose:
+                print("[{}/{}][{}/{}] loss = {:.2f}, accuracy = {:.2f}"
+                      .format(epoch, n_epochs, i, len(shadow_train),
+                              loss.item(), 100 * correct / total))
 
         # Plot distributions for target predictions
         # in training set and out of training set
@@ -393,7 +398,7 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
             loss.backward()
             
             inf_optim.step()
-            
+
         # train classifiction network
         train_imgs, train_lbls = iter(train_set).next()
         train_imgs, train_lbls = train_imgs.to(device), train_lbls.to(device)
@@ -414,3 +419,8 @@ def inf_adv_train(target_model=None, inf_model=None, train_set=None,
         
         loss.backward()
         target_optim.step()
+
+        if verbose:
+            print("[{}/{}] loss = {}"
+                  .format(epoch, n_epochs, loss.item()))
+            
