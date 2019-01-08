@@ -68,7 +68,7 @@ def eval_target_model(model=None, data_loader=None, classes=None):
 
 
 def eval_attack_model(attack_model=None, target=None,
-                      target_train=None, target_out=None, k=0):
+                      target_train=None, target_out=None, k=0, verbose=False):
     """
     Assess accuracy, precision, and recall of attack model
     for in training set/out of training set classification.
@@ -158,9 +158,8 @@ def eval_attack_model(attack_model=None, target=None,
 
         # Takes in probabilities for top k most likely classes,
         # outputs ~1 (in training set) or ~0 (out of training set)
-        train_predictions = fcnal.sigmoid(torch.squeeze(
-            attack_model(train_top_k)))
-        out_predictions = fcnal.sigmoid(torch.squeeze(attack_model(out_top_k)))
+        train_predictions = torch.squeeze(attack_model(train_top_k))
+        out_predictions = torch.squeeze(attack_model(out_top_k))
 
         for j, t in enumerate(thresholds):
             true_positives[j] += (train_predictions >= t).sum().item()
@@ -181,9 +180,9 @@ def eval_attack_model(attack_model=None, target=None,
         accuracies.append(accuracy)
         precisions.append(precision)
         recalls.append(recall)
-
-        print("threshold = %.4f, acc. = %.2f, precision = %.2f, recall = %.2f"
-              % (t, accuracy, precision, recall))
+        if verbose:
+            print("threshold = %.4f, acc. = %.2f, precision = %.2f, \
+            recall = %.2f" % (t, accuracy, precision, recall))
 
     # Make a dataframe of precision & recall results
     data = np.transpose([thresholds, accuracies, precisions, recalls])
