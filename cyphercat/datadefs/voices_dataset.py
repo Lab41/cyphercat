@@ -90,9 +90,13 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
     subset_index_path2 = index_file2
     if os.path.exists(subset_index_path2):
         df = pd.read_csv(subset_index_path2)
+
     # otherwise cache them
     else:
         # Add additional useful columns to dataframe:
+        df = pd.read_csv(subset_index_path)
+        # Remove duplicate column names
+        df = df[['id', 'sex', 'subset', 'filepath', 'length', 'seconds']]
         snippets = []
         mikes = []
         degrees = []
@@ -113,7 +117,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
             # Find where room is:
             rm = snip.index('rm')
             dash = snip[rm:].index('/')  # Find first / after rm
-            noises.append(snip[dash+1:dash+5])
+            noises.append(snip[rm:][dash+1:dash+5])
 
         df = df.assign(Section=snippets, Mic=mikes,
                        Degree=degrees, Noise=noises)
@@ -124,26 +128,6 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
         df['speaker_minutes'] = df['speaker_minutes'].map(min_dict)
 
         # Save index files to data folder
-
-        df.to_csv(index_file, index=False)
-
-    # Add another column! Testing out here, before putting in above df
-    index_file2 = path + '/VOiCES-{}.index2.csv'.format(subset)
-    # Check for cached files
-    subset_index_path2 = index_file2
-    if os.path.exists(subset_index_path):
-        df = pd.read_csv(subset_index_path2)
-    else:
-        df = pd.read_csv(subset_index_path)  # take 1st df
-        noises = []
-
-        for i in df.index:
-            snip = df.filepath[i]
-            # Find where room is:
-            rm = snip.index('rm')
-            dash = snip[rm:].index('/')  # Find first / after rm
-            noises.append(snip[dash+1:dash+5])
-        df = df.assign(Noise=noises)
 
         df.to_csv(index_file2, index=False)
 
