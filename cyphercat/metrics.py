@@ -1,4 +1,4 @@
-0;276;0cimport torch
+import torch
 import torch.nn.functional as fcnal
 
 import numpy as np
