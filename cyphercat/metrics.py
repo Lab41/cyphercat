@@ -158,9 +158,8 @@ def eval_attack_model(attack_model=None, target=None,
 
         # Takes in probabilities for top k most likely classes,
         # outputs ~1 (in training set) or ~0 (out of training set)
-        train_predictions = fcnal.sigmoid(torch.squeeze(
-            attack_model(train_top_k)))
-        out_predictions = fcnal.sigmoid(torch.squeeze(attack_model(out_top_k)))
+        train_predictions = torch.squeeze(attack_model(train_top_k))
+        out_predictions = torch.squeeze(attack_model(out_top_k))
 
         for j, t in enumerate(thresholds):
             true_positives[j] += (train_predictions >= t).sum().item()
