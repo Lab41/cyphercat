@@ -39,7 +39,7 @@ def dataset_split(dataset=None, lengths=None, indices=None):
     return indices, [Subset(dataset, indices[offset - length:offset]) for offset, length in zip(_accumulate(lengths), lengths)]
 
 
-def splitter(dfs, df, unique_categories=[], category_id='', splits=[], N=-1):
+def splitter(dfs={}, df=None, unique_categories=[], category_id='', splits=[], N=-1):
     """ Splits the data for given unqie categories according to specified fractions.
     
     Args:
