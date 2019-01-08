@@ -1,0 +1,23 @@
+repos:
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.4.2
+    hooks:
+    -   id: autopep8
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v1.2.3
+    hooks:
+    -   id: trailing-whitespace
+        files: 'cyphercat/*'
+    -   id: end-of-file-fixer
+        files: 'cyphercat/*'
+    -   id: check-case-conflict
+        files: 'cyphercat/*'
+    -   id: check-json
+        files: 'cyphercat/*'
+    -   id: pretty-format-json
+        args: ['--autofix']
+    -   id: double-quote-string-fixer
+        files: 'cyphercat/*'
+    -   id: check-yaml
+    -   id: flake8
+        files: 'cyphercat/*'
