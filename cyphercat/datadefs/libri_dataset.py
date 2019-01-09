@@ -99,7 +99,7 @@ def Libri_preload_and_split(subset='train-clean-100', outset='test-clean',
         - Add option and functionality to split longer recording into samples
         of length 'seconds' to augment data.
     """
-    
+    num_splits = 6
     fragment_seconds = seconds
     if path is None:
         path = DATASETS_DIR
@@ -123,8 +123,8 @@ def Libri_preload_and_split(subset='train-clean-100', outset='test-clean',
     if splits is None:
         # Default behaviour will be to load cyphercat default splits
         # check if splits exists.
-        splits_ready = [False]*6
-        for i_split in range(6):
+        splits_ready = [False]*num_splits
+        for i_split in range(num_splits):
             if os.path.exists( DATASPLITS_DIR+'/libri-%s/libri_%i.csv' %
                                (subset, i_split)):
                 splits_ready[i_split] = True
@@ -132,7 +132,7 @@ def Libri_preload_and_split(subset='train-clean-100', outset='test-clean',
         if all(splits_ready): # Found all of the relelvant splits
             print('Found default splits, loading dataframe')
             dfs = {}
-            for i_split in range(6):
+            for i_split in range(num_splits):
                 dfs[i_split] = pd.read_csv( DATASPLITS_DIR + 
                                             '/libri-%s/libri_%i.csv' % (subset, i_split) )
 
