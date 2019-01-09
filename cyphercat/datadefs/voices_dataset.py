@@ -49,7 +49,6 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
     index_file = path + '/VOiCES-{}.index.csv'.format(subset)
 
     speaker_file = '/VOiCES/Lab41-SRI-VOiCES-speaker-gender-dataset.tbl'
-    # Note: the holdout dataset speakers are included in this .tbl
 
     print('Initialising VOiCESDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))
@@ -78,25 +77,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
         # Remove duplicate column names
         df = df[['id', 'sex', 'subset', 'filepath', 'length', 'seconds']]
 
-        # Save index files to data folder
-
-        df.to_csv(index_file, index=False)
-
-    # note to self: fix the below
-    # Add more to default dataframe
-    index_file2 = path + '/VOiCES-{}.index2.csv'.format(subset)
-
-    # Check for cached files
-    subset_index_path2 = index_file2
-    if os.path.exists(subset_index_path2):
-        df = pd.read_csv(subset_index_path2)
-
-    # otherwise cache them
-    else:
         # Add additional useful columns to dataframe:
-        df = pd.read_csv(subset_index_path)
-        # Remove duplicate column names
-        df = df[['id', 'sex', 'subset', 'filepath', 'length', 'seconds']]
         snippets = []
         mikes = []
         degrees = []
@@ -114,7 +95,6 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
             dg = snip.index('dg')
             degrees.append(snip[dg+2:dg+5])
 
-            # Find where room is:
             rm = snip.index('rm')
             dash = snip[rm:].index('/')  # Find first / after rm
             noises.append(snip[rm:][dash+1:dash+5])
@@ -129,7 +109,19 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
 
         # Save index files to data folder
 
-        df.to_csv(index_file2, index=False)
+        df.to_csv(index_file, index=False)
+
+    # NOTE: REMOVE THE BELOW WHEN DONE ADDING COLUMNS
+    # Add another column! Testing out here, before putting in above df
+#     index_file2 = path + '/VOiCES-{}.index2.csv'.format(subset)
+#     # Check for cached files
+#     subset_index_path2 = index_file2
+#     if os.path.exists(subset_index_path2):
+#         df = pd.read_csv(subset_index_path2)
+#     else:
+#         df = pd.read_csv(subset_index_path) #take 1st df
+#         df = df[['id', 'sex', 'subset', 'filepath', 'length', 'seconds']]
+#         df.to_csv(index_file2, index=False)
 
     # Trim too-small files
     if not pad:
@@ -330,7 +322,6 @@ def default_splitter(dfs=None, df=None, unique_speakers=0):
 
 def default_splitter2(dfs=None, df=None, unique_speakers=0):
     """ Performs cycpercat default split for librspeech dataset.
-<<<<<<< HEAD
     Args:
         df (Dataframe): Dataframe to split.
         unique_speakers (int): Number of unique speakers in the dataframe
@@ -338,19 +329,6 @@ def default_splitter2(dfs=None, df=None, unique_speakers=0):
         dict(Dataframes): Returns a dictionary containing the dataframes for
             each of the splits.
     Example:
-=======
-
-    Args:
-        df (Dataframe): Dataframe to split.
-        unique_speakers (int): Number of unique speakers in the dataframe
-
-    Returns:
-        dict(Dataframes): Returns a dictionary containing the dataframes for
-            each of the splits.
-
-    Example:
-
->>>>>>> 8f1643e1367e32b0a26c0ad1e40c1fa7108eae57
     Todo:
         -Write example.
     """
