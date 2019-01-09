@@ -563,8 +563,6 @@ class Voices_dataset(Dataset):
         self.datasetid_to_sex = self.df.to_dict()['sex']
 
     def __getitem__(self, index):
-        print('ind', index)
-#         print(self.datasetid_to_filepath[index])
         instance, samplerate = sf.read(
             os.path.join(DATASETS_DIR, self.datasetid_to_filepath[index]))
         # Choose a random sample of the file
