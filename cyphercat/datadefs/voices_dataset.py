@@ -13,7 +13,7 @@ label_to_sex = {False: 'M', True: 'F'}
 
 
 def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
-                             pad=False, splits=None, split_type='segment'):
+                             pad=False, splits=None, split_type='file'):
     """Index and split VOiCES dataset.
 
     Args:
@@ -171,12 +171,13 @@ def Voices_preload_and_split(subset='room-1', seconds=3, path=None,
             # a warning
             print('WARNING: Creating default splits for VOiCES!')
             if split_type == 'file':
-                dfs = default_splitter(dfs, df, unique_speakers)
+                dfs = default_splitter2(dfs, df, unique_speakers)
             elif split_type == 'segment':
                 dfs = default_splitter2(dfs, df, unique_speakers)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
                 dfs[this_df] = dfs[this_df].drop(columns=['id'])
+                dfs[this_df]['index'] = dfs[this_df]['index'].astype(int)
                 dfs[this_df].rename(columns={'level_0': 'idx_in_original_df'},
                                     inplace=True)
                 dfs[this_df].to_csv(DATASPLITS_DIR+'/VOiCES-%s/VOiCES_%i.csv' %
@@ -319,16 +320,55 @@ def default_splitter(dfs=None, df=None, unique_speakers=0):
 
     return dfs
 
+# def default_splitter2(dfs=None, df=None, unique_speakers=0):
+#     """ Performs cycpercat default split for librspeech dataset.
+#     Args:
+#         df (Dataframe): Dataframe to split.
+#         unique_speakers (int): Number of unique speakers in the dataframe
+#     Returns:
+#         dict(Dataframes): Returns a dictionary containing the dataframes for
+#             each of the splits.
+#     Example:
+#     Todo:
+#         -Write example.
+#     """
+#     # split the df by sex
+#     male_df = df[df['sex'] == 'M']
+#     female_df = df[df['sex'] == 'F']
+#     #
+#     unique_male = sorted(male_df['speaker_id'].unique())
+#     unique_fem = sorted(female_df['speaker_id'].unique())
+#     n_male = len(unique_male)//2
+#     n_female = len(unique_female)//2
+#     # male splits
+#     m_dfs = {}
+#     # Split into train & shadow
+#     m_dfs = splitter(m_dfs, male_df, unique_male[n_male:], [0.5, 0.5], 0)
+#     # female splits
+#     f_dfs = {}
+#     f_dfs = splitter(f_dfs, female_df, unique_fem[n_female:], [0.5, 0.5], 0)
+#     # merge male and female into final splits
+#     for i_split in range(2):
+#         print('Merging split %i\n Male: %i and Female: %i' %
+#               (i_split, len(m_dfs[i_split]), len(f_dfs[i_split])))
+#         dfs[i_split] = m_dfs[i_split].append(f_dfs[i_split])
+
+#     return dfs
+
 
 def default_splitter2(dfs=None, df=None, unique_speakers=0):
     """ Performs cycpercat default split for librspeech dataset.
+
     Args:
         df (Dataframe): Dataframe to split.
         unique_speakers (int): Number of unique speakers in the dataframe
+
     Returns:
         dict(Dataframes): Returns a dictionary containing the dataframes for
             each of the splits.
+
     Example:
+
     Todo:
         -Write example.
     """
@@ -342,13 +382,18 @@ def default_splitter2(dfs=None, df=None, unique_speakers=0):
     n_female = len(unique_female)//2
     # male splits
     m_dfs = {}
-    # Split into train & shadow
-    m_dfs = splitter(m_dfs, male_df, unique_male[n_male:], [0.5, 0.5], 0)
+    m_dfs = splitter2(m_dfs, male_df, unique_male[:n_male], [0.8, 0.2], 0)
+    m_dfs = splitter2(m_dfs, male_df, unique_male[n_male:], [0.5, 0.5], 2)
+    m_dfs[4] = m_dfs[0][:len(m_dfs[1])]
     # female splits
     f_dfs = {}
-    f_dfs = splitter(f_dfs, female_df, unique_female[n_female:], [0.5, 0.5], 0)
+    f_dfs = splitter2(f_dfs, female_df,
+                      unique_female[:n_female], [0.8, 0.2], 0)
+    f_dfs = splitter2(f_dfs, female_df,
+                      unique_female[n_female:], [0.5, 0.5], 2)
+    f_dfs[4] = f_dfs[0][:len(f_dfs[1])]
     # merge male and female into final splits
-    for i_split in range(2):
+    for i_split in range(5):
         print('Merging split %i\n Male: %i and Female: %i' %
               (i_split, len(m_dfs[i_split]), len(f_dfs[i_split])))
         dfs[i_split] = m_dfs[i_split].append(f_dfs[i_split])
@@ -415,6 +460,54 @@ def splitter(dfs, df, unique_speakers, splits, N):
     return dfs
 
 
+def splitter2(dfs, df, unique_speakers, splits, N):
+    """ Splits the data for given unqie speakers according to specified fractions.
+
+    Args:
+        dfs (dict(Dataframe): Current dictionary of dataframes. New splits
+            will be concatenated to this dict.
+        df (Dataframe): Dataframe containg all of the data and metadata.
+        unique_speakers (list(int)): List containing the indices of speakers
+            to include in these splits.
+        splits (list(float)): List containing the fraction of the data to be
+            included in each split.
+        N (int): index to assign new splits when appending to dfs.
+
+    Returns:
+        (dict(Dataframe)): Updated dictionary of data splits.
+
+    Example:
+
+    Todo:
+        - Add example.
+    """
+    # N is to keep track of the dataframe dict keys
+    n_splits = len(splits)
+
+    dfs[N] = pd.DataFrame(columns=df.columns)
+    dfs[N+1] = pd.DataFrame(columns=df.columns)
+
+    for speaker in unique_speakers:  # For each speaker
+
+        # Speaker = valid_sequence.unique_speakers[0]
+
+        mini_df = df[df['speaker_id'] == speaker]
+        mini_df = mini_df.reset_index()
+
+        # Identify segments:
+        n_seg = len(mini_df.Section.unique())
+        seg1 = round(splits[0]*n_seg)
+        # Segments are not ordered, so just pick the first few for seg1
+        seg1s = mini_df.Section.unique()[:seg1]
+        dfs[N] = dfs[N].append(mini_df[mini_df['Section'].isin(seg1s)])
+        dfs[N+1] = dfs[N+1].append(mini_df[~mini_df['Section'].isin(seg1s)])
+
+    for idx in range(n_splits):  # For each dataframe
+        dfs[idx + N] = dfs[idx + N].reset_index()
+
+    return dfs
+
+
 class Voices_dataset(Dataset):
     """This class subclasses the torch.utils.data.Dataset.  Calling __getitem__
     will return the transformed VOiCES audio sample and it's label
@@ -470,6 +563,8 @@ class Voices_dataset(Dataset):
         self.datasetid_to_sex = self.df.to_dict()['sex']
 
     def __getitem__(self, index):
+        print('ind', index)
+#         print(self.datasetid_to_filepath[index])
         instance, samplerate = sf.read(
             os.path.join(DATASETS_DIR, self.datasetid_to_filepath[index]))
         # Choose a random sample of the file
