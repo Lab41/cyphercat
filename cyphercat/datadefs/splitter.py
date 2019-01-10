@@ -31,10 +31,7 @@ def dataset_split(dataset=None, lengths=None, indices=None):
     # If requested a random split of dataset
     if indices is None:
         indices = randperm(sum(lengths))
-
-    # print((indices).int().numpy())
-    # raw_input("TEST")
-    # indices = (indices).int().numpy()
+        
     indices = (indices).long()
 
     return indices, [Subset(dataset, indices[offset - length:offset])
@@ -91,6 +88,7 @@ def splitter(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
                 else:
                     dfs[idx + N] = dfs[idx + N].append( df[df['speaker_id'] ==
                                                            category])
+            start_category += n_categories
         for idx in range(n_splits):
             dfs[idx + N] = dfs[idx + N].reset_index()
         return dfs
