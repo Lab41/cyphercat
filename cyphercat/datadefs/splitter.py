@@ -31,10 +31,7 @@ def dataset_split(dataset=None, lengths=None, indices=None):
     # If requested a random split of dataset
     if indices is None:
         indices = randperm(sum(lengths))
-
-    # print((indices).int().numpy())
-    # raw_input("TEST")
-    # indices = (indices).int().numpy()
+        
     indices = (indices).long()
 
     return indices, [Subset(dataset, indices[offset - length:offset])
