@@ -89,3 +89,10 @@ def splitter(dfs={}, df=None, unique_categories=[], category_id='', splits=[], N
             else:
                 dfs[idx + N] = dfs[idx + N].append(mini_df.iloc[start_file:
                                                                 stop_file])
+
+            #update start_file
+            start_file += n_files
+    for idx in range(n_splits): # for each dataframe
+        dfs[idx + N] = dfs[idx + N].reset_index()
+
+    return dfs
