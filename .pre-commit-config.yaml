@@ -8,17 +8,12 @@ repos:
    rev: v1.2.3
    hooks:
    -   id: trailing-whitespace
-       files: 'cyphercat/*'
    -   id: end-of-file-fixer
-       files: 'cyphercat/*'
    -   id: check-case-conflict
-       files: 'cyphercat/*'
    -   id: double-quote-string-fixer
-       files: 'cyphercat/*'
    -   id: check-yaml
    -   id: requirements-txt-fixer
    -   id: check-added-large-files
+       args: [--maxkb=100000]
    -   id: check-docstring-first
-       files: 'cyphercat/*'
    -   id: flake8
-       files: 'cyphercat/*'
