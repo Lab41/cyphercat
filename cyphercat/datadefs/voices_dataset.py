@@ -26,7 +26,7 @@ def load_or_index_subset(subset=None, path=None, fragment_seconds=3,
     Returns:
         (pandas.Dataframe): Returns indexed subset in dataframe.
     """
-    index_file = path + '/libri-{}.index.csv'.format(subset)
+    index_file = path + '/VOiCES-{}.index.csv'.format(subset)
 
     subset_index_path = index_file
     if os.path.exists(subset_index_path):
@@ -34,19 +34,54 @@ def load_or_index_subset(subset=None, path=None, fragment_seconds=3,
     # otherwise cache them
     else:
         print('Files not found, indexing {}'.format(subset))
-        df = pd.read_csv(path+'/LibriSpeech/SPEAKERS.TXT', skiprows=11,
-                         delimiter='|', error_bad_lines=False)
+        speaker_file = '/VOiCES/Lab41-SRI-VOiCES-speaker-gender-dataset.tbl'
+        df = pd.read_csv(path+speaker_file, skiprows=0,
+                         delimiter=' ', error_bad_lines=False)
         df.columns = [col.strip().replace(';', '').lower()
                       for col in df.columns]
         df = df.assign(
-            sex=df['sex'].apply(lambda x: x.strip()),
-            subset=df['subset'].apply(lambda x: x.strip()),
-            name=df['name'].apply(lambda x: x.strip()),
+            sex=df['gender'].apply(lambda x: x.strip()),
+            subset=df['dataset'].apply(lambda x: x.strip()),
         )
+        df = df.rename(columns={'speaker': 'id', 'gender': 'sex',
+                                'dataset': 'subset'})
 
         audio_files = index_subset(path, subset)
         # Merge individual audio files with indexing dataframe
         df = pd.merge(df, pd.DataFrame(audio_files))
+
+        # Remove duplicate column names
+        df = df[['id', 'sex', 'subset', 'filepath', 'length', 'seconds']]
+
+        # Add additional useful columns to dataframe:
+        snippets = []
+        mikes = []
+        degrees = []
+        noises = []
+
+        for i in df.index:
+            snip = df.filepath[i]
+
+            sg = snip.index('sg')
+            snippets.append(snip[sg+2:sg+6])
+
+            mc = snip.index('mc')
+            mikes.append(snip[mc+2:mc+4])
+
+            dg = snip.index('dg')
+            degrees.append(snip[dg+2:dg+5])
+
+            rm = snip.index('rm')
+            dash = snip[rm:].index('/')  # Find first / after rm
+            noises.append(snip[rm:][dash+1:dash+5])
+
+        df = df.assign(Section=snippets, Mic=mikes,
+                       Degree=degrees, Noise=noises)
+
+        mins = (df.groupby('id').sum()['seconds']/60)
+        min_dict = mins.to_dict()
+        df = df.assign(speaker_minutes=df['id'])
+        df['speaker_minutes'] = df['speaker_minutes'].map(min_dict)
 
         # Save index files to data folder
         df.to_csv(index_file, index=False)
@@ -55,8 +90,8 @@ def load_or_index_subset(subset=None, path=None, fragment_seconds=3,
     if not pad:
         df = df[df['seconds'] > fragment_seconds]
     # Renaming for clarity
-    df = df.rename(columns={'id': 'speaker_id',
-                            'minutes': 'speaker_minutes'})
+    df = df.rename(columns={'id': 'speaker_id'})
+
     # Index of dataframe has direct correspondence to item in dataset
     df = df.reset_index(drop=True)
     df = df.assign(id=df.index.values)
@@ -67,9 +102,9 @@ def load_or_index_subset(subset=None, path=None, fragment_seconds=3,
     return df
 
 
-def Libri_preload_and_split(subset='train-clean-100',
-                            outset='test-clean', seconds=3,
-                            path=None, pad=False, splits=None):
+def Voices_preload_and_split(subset='train-clean-100',
+                             outset='test-clean', seconds=3,
+                             path=None, pad=False, splits=None):
     """Index and split librispeech dataset.
 
     Args:
@@ -104,7 +139,7 @@ def Libri_preload_and_split(subset='train-clean-100',
     if path is None:
         path = DATASETS_DIR
 
-    print('Initialising LibriSpeechDataset with minimum length = {}s'
+    print('Initialising VOiCESDataset with minimum length = {}s'
           ' and subset = {}'.format(seconds, subset))
     df = load_or_index_subset(subset=subset, path=path,
                               fragment_seconds=fragment_seconds, pad=pad)
@@ -128,8 +163,8 @@ def Libri_preload_and_split(subset='train-clean-100',
         print('Build/load speaker membership inference splits')
         splits_ready = [False]*num_splits
         for i_split in range(num_splits):
-            if os.path.exists(DATASPLITS_DIR+'/libri-%s/speaker_splits/'
-                              'libri_%i.csv' % (subset, i_split)):
+            if os.path.exists(DATASPLITS_DIR+'/VOiCES-%s/speaker_splits/'
+                              'VOiCES_%i.csv' % (subset, i_split)):
                 splits_ready[i_split] = True
 
         if all(splits_ready):  # Found all of the relelvant splits
@@ -137,14 +172,14 @@ def Libri_preload_and_split(subset='train-clean-100',
             dfs = {}
             for i_split in range(num_splits):
                 dfs[i_split] = pd.read_csv(DATASPLITS_DIR +
-                                           '/libri-%s/speaker_splits/'
-                                           'libri_%i.csv' % (subset, i_split))
+                                           '/VOiCES-%s/speaker_splits/'
+                                           'VOiCES_%i.csv' % (subset, i_split))
 
         else:
             # Case when splits not found. This should only occur first time
             # LibriSpeech is parsed by developers (not users), so will include
             # a warning
-            print('WARNING: Creating default speaker splits for LibriSpeech!')
+            print('WARNING: Creating default speaker splits for VOiCES!')
             dfs = default_speaker_splitter(dfs, df)
             dfs[num_splits-1] = outset_df
             # write the default dataframes
