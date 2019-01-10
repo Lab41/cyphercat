@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.pipeline import Pipeline
 from SVC_Utils import *
+from sklearn.metrics import roc_curve, auc
+
 
 # determine device to run network on (runs on gpu if available)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -155,6 +157,86 @@ def eval_attack_net(attack_net, target, target_train, target_out, k):
     plt.xlabel("Recall")
     plt.ylabel("Precision")
     plt.show()
+    
+    
+def eval_attack_roc(attack_net, target_net, target_train, target_out, k):
+    losses = []
+
+    target_net.eval()
+    attack_net.eval()
+
+    total = 0
+    correct = 0
+
+    train_top = np.empty((0,2))
+    out_top = np.empty((0,2))
+
+    true_positives = 0
+    false_positives = 0
+    false_negatives = 0
+    
+    predictions = np.array([])
+    labels = np.array([])
+
+    for i, ((train_imgs, _), (out_imgs, _)) in enumerate(zip(target_train, target_out)):
+
+        train_size = train_imgs.shape[0]
+        out_size = out_imgs.shape[0]
+        
+        train_imgs, out_imgs = train_imgs.to(device), out_imgs.to(device)
+
+        train_posteriors = F.softmax(target_net(train_imgs.detach()), dim=1)
+        out_posteriors = F.softmax(target_net(out_imgs.detach()), dim=1)
+
+        train_sort, _ = torch.sort(train_posteriors, descending=True)
+        train_top_k = train_sort[:,:k].clone().to(device)
+
+        out_sort, _ = torch.sort(out_posteriors, descending=True)
+        out_top_k = out_sort[:,:k].clone().to(device)
+
+        train_top = np.vstack((train_top,train_top_k[:,:2].cpu().detach().numpy()))
+        out_top = np.vstack((out_top, out_top_k[:,:2].cpu().detach().numpy()))
+
+        #print("train_top_k = ",train_top_k)
+        #print("out_top_k = ",out_top_k)
+
+
+        train_lbl = torch.ones(train_size).to(device)
+        out_lbl = torch.zeros(out_size).to(device)
+
+
+        train_predictions = F.sigmoid(torch.squeeze(attack_net(train_top_k)))
+        out_predictions = F.sigmoid(torch.squeeze(attack_net(out_top_k)))
+        
+        predictions = np.concatenate((predictions, train_predictions.detach().cpu().numpy()), axis=0)
+        labels = np.concatenate((labels, np.ones(train_size)), axis=0)
+        predictions = np.concatenate((predictions, out_predictions.detach().cpu().numpy()), axis=0)
+        labels = np.concatenate((labels, np.zeros(out_size)), axis=0)
+
+        #print("train_predictions = ",train_predictions)
+        #print("out_predictions = ",out_predictions)
+
+
+        true_positives += (train_predictions >= 0.5).sum().item()
+        false_positives += (out_predictions >= 0.5).sum().item()
+        false_negatives += (train_predictions < 0.5).sum().item()
+
+
+        correct += (train_predictions>=0.5).sum().item()
+        correct += (out_predictions<0.5).sum().item()
+        total += train_predictions.size(0) + out_predictions.size(0)
+
+    accuracy = 100 * correct / total
+    precision = true_positives / (true_positives + false_positives) if true_positives + false_positives != 0 else 0
+    recall = true_positives / (true_positives + false_negatives) if true_positives + false_negatives !=0 else 0
+    print("Membership Inference Performance")
+    print("Accuracy = %.2f%%, Precision = %.2f, Recall = %.2f" % (accuracy, precision, recall))
+    
+    
+    fpr, tpr, thresholds = roc_curve(labels, predictions, pos_label=1)
+    roc_auc = auc(fpr, tpr)
+    
+    return fpr, tpr, roc_auc
 
 def eval_membership_inference(target_net, target_train, target_out):
 
