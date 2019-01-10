@@ -91,6 +91,7 @@ def splitter(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
                 else:
                     dfs[idx + N] = dfs[idx + N].append( df[df['speaker_id'] ==
                                                            category])
+            start_category += n_categories
         for idx in range(n_splits):
             dfs[idx + N] = dfs[idx + N].reset_index()
         return dfs
