@@ -69,7 +69,7 @@ The package also permits users to introduce custom datasets in the image, audio,
 as well as custom architectures for target, attack, and defense models.
 
 
-``Cyphercat`` is a flexible framework designed for machine learning practicioners to test model vulnerabilities
+``Cyphercat`` is a flexible framework designed for machine learning practitioners to test model vulnerabilities
 via various methods of attack and defense covering several data types.
 Details regarding the ``Cyphercat`` API, its implementation relative to the Python ecosystem, 
 including further information on implemented datasets, attack and defense methods, 
