@@ -25,16 +25,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="362.09784"
-     inkscape:cy="424.02268"
+     inkscape:zoom="0.5"
+     inkscape:cx="71.74872"
+     inkscape:cy="406.62855"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2195"
-     inkscape:window-height="1259"
-     inkscape:window-x="1471"
-     inkscape:window-y="76"
+     inkscape:window-width="1955"
+     inkscape:window-height="1046"
+     inkscape:window-x="1688"
+     inkscape:window-y="214"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -62,14 +62,16 @@
        y="179.3047"
        ry="7.2162771"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.353;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 40.165641,192 H 55.809016"
        id="path825"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <circle
        style="opacity:0.6;fill:#32a8d1;fill-opacity:0.28971965;fill-rule:nonzero;stroke:#000000;stroke-width:0.65878892;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="path827"
@@ -77,21 +79,24 @@
        cy="192.4198"
        r="15.670606"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        inkscape:connector-curvature="0"
        id="path835"
        d="M 79.822856,178.93609 104.61267,154.14628"
        style="fill:none;stroke:#000000;stroke-width:0.37694421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.39087778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 80.224636,205.73297 24.970344,24.97034"
        id="path837"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <circle
        style="opacity:0.6;fill:#32a8d1;fill-opacity:0.28971965;fill-rule:nonzero;stroke:#000000;stroke-width:0.65878892;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="circle864"
@@ -99,21 +104,24 @@
        cy="238.86972"
        r="15.670606"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        inkscape:connector-curvature="0"
        id="path866"
        d="m 181.46389,228.47335 28.02855,-16.18227"
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 183.41687,246.35547 26.08277,15.05889"
        id="path870"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <circle
        r="15.670606"
        cy="141.70734"
@@ -121,21 +129,24 @@
        id="circle872"
        style="opacity:0.6;fill:#32a8d1;fill-opacity:0.28971965;fill-rule:nonzero;stroke:#000000;stroke-width:0.65878892;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 183.03072,133.60672 26.46746,-15.28099"
        id="path874"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        inkscape:connector-curvature="0"
        id="path876"
        d="m 181.90472,151.52047 27.58922,15.92865"
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        ry="7.2162771"
        y="249.01901"
@@ -145,7 +156,8 @@
        id="rect880"
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect882"
@@ -155,7 +167,8 @@
        y="199.30688"
        ry="7.2162771"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        ry="7.2162771"
        y="154.52931"
@@ -165,7 +178,8 @@
        id="rect884"
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect886"
@@ -175,14 +189,16 @@
        y="106.42072"
        ry="7.2162771"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        inkscape:connector-curvature="0"
        id="path888"
        d="m 249.25137,118.31416 h 17.35767"
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        ry="7.2162771"
        y="106.42072"
@@ -192,7 +208,8 @@
        id="rect892"
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        ry="7.2162771"
        y="131.55618"
@@ -202,14 +219,16 @@
        id="rect894"
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 143.1818,142.39125 h 10.41378"
        id="path896"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <rect
        style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect834"
@@ -219,14 +238,16 @@
        y="228.70244"
        ry="7.2162771"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <path
        inkscape:connector-curvature="0"
        id="path836"
        d="m 143.04006,239.53775 h 10.55552"
        style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998" />
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -234,7 +255,8 @@
        y="189.57919"
        id="text835"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          id="tspan833"
          x="71.501282"
@@ -252,7 +274,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="236.25925"
          x="169.77509"
@@ -262,7 +285,7 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="249.48842"
          x="169.77509"
-         sodipodi:role="line">Data</tspan></text>
+         sodipodi:role="line">Class</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -270,7 +293,8 @@
        y="138.89279"
        id="text849"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          id="tspan845"
          x="169.77509"
@@ -288,7 +312,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="187.99171"
          x="20.134317"
@@ -306,7 +331,8 @@
        y="140.55571"
        id="text869"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          x="123.28402"
          y="140.55571"
@@ -324,7 +350,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan881"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="237.88458"
@@ -342,7 +369,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan895"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="164.6964"
@@ -355,7 +383,8 @@
        y="226.06148"
        id="text903"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          x="84.036217"
          y="226.06148"
@@ -368,7 +397,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan905"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="216.70705"
@@ -381,7 +411,8 @@
        y="263.10504"
        id="text911"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          x="193.66415"
          y="263.10504"
@@ -394,7 +425,8 @@
        y="122.22727"
        id="text915"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          x="193.66415"
          y="122.22727"
@@ -407,7 +439,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan917"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="168.62526"
@@ -420,7 +453,8 @@
        y="208.16959"
        id="text925"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan923"
          sodipodi:role="line"
          x="229.3633"
@@ -438,7 +472,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="258.49643"
          x="229.3633"
@@ -456,7 +491,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="114.99943"
          x="229.3633"
@@ -474,7 +510,8 @@
        y="164.01665"
        id="text951"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan947"
          sodipodi:role="line"
          x="229.3633"
@@ -492,7 +529,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="114.99941"
          x="287.71851"
@@ -510,7 +548,8 @@
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan959"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          y="116.89525"
@@ -569,7 +608,8 @@
        y="111.82102"
        id="text900"
        inkscape:export-xdpi="96.099998"
-       inkscape:export-ydpi="96.099998"><tspan
+       inkscape:export-ydpi="96.099998"
+       inkscape:export-filename="/Users/zhampela/Desktop/updated_audio_graph.png"><tspan
          sodipodi:role="line"
          x="40.799305"
          y="111.82102"
@@ -588,72 +628,78 @@
        width="39.823158"
        height="25.390606"
        x="208.58846"
-       y="298.5083"
-       ry="7.2162771" />
+       y="300.09579"
+       ry="7.2162771"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <text
        inkscape:export-ydpi="96.099998"
        inkscape:export-xdpi="96.099998"
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="228.981"
-       y="307.32803"
-       id="text898"><tspan
+       y="308.91553"
+       id="text898"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan893"
          sodipodi:role="line"
          x="228.981"
-         y="307.32803"
+         y="308.91553"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">[5]</tspan><tspan
          sodipodi:role="line"
          x="228.981"
-         y="320.55719"
+         y="322.14468"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
-         id="tspan896">Class Test</tspan></text>
+         id="tspan896">Class Train</tspan></text>
     <rect
        inkscape:export-ydpi="96.099998"
        inkscape:export-xdpi="96.099998"
        ry="7.2162771"
-       y="298.5083"
+       y="300.09579"
        x="0.34248269"
        height="25.390606"
        width="39.823158"
        id="rect900"
-       style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke" />
+       style="opacity:0.75;fill:#d10000;fill-opacity:0.42056077;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <text
        inkscape:export-ydpi="96.099998"
        inkscape:export-xdpi="96.099998"
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="20.134317"
-       y="307.37061"
-       id="text906"><tspan
+       y="308.9581"
+       id="text906"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          id="tspan902"
          sodipodi:role="line"
          x="20.134317"
-         y="307.37061"
+         y="308.9581"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">Out</tspan><tspan
          id="tspan904"
          sodipodi:role="line"
          x="20.134317"
-         y="320.59976"
+         y="322.18726"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332">Dataset</tspan></text>
     <path
        inkscape:export-ydpi="96.099998"
        inkscape:export-xdpi="96.099998"
        inkscape:connector-curvature="0"
        id="path912"
-       d="M 40.165641,311.85625 H 207.94443"
-       style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       d="M 40.165641,313.44375 H 207.94443"
+       style="fill:none;stroke:#000000;stroke-width:0.35277778;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png" />
     <text
        inkscape:export-ydpi="96.099998"
        inkscape:export-xdpi="96.099998"
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        x="120.37457"
-       y="307.98828"
-       id="text916"><tspan
+       y="309.57578"
+       id="text916"
+       inkscape:export-filename="/Users/zhampela/lab41/conferences/ICML/2019/paper/figures/audio_diagram.png"><tspan
          sodipodi:role="line"
          x="120.37457"
-         y="307.98828"
+         y="309.57578"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.26458332"
          id="tspan914">Size of O([1])</tspan></text>
     <text
@@ -688,6 +734,6 @@
          x="-117.22224"
          y="224.69322"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111126px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332"
-         id="tspan928">Class Attack          [2]+[5]   [4]+[5]</tspan></text>
+         id="tspan928">Class Attack          [2]+[5]   [4]+[6]</tspan></text>
   </g>
 </svg>
