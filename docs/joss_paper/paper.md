@@ -60,7 +60,7 @@ as current attack and defense tactics are studied on a case by case basis.
 ``Cyphercat`` is an extensible Python package for benchmarking privacy attack and defense efficacy
 in a reproduceable manner.
 The ``Cyphercat`` application programming interface (API) allows users to test the robustness a specified 
-target model against several well-documented privacy attacks (such as those presented in [@mlleaks], [@fredrickson2015model])
+target model against several well-documented privacy attacks (such as those presented in [@mlleaks], [@fredrikson2015model])
 that extract details of the training data from the model, with the option to assess defenses.
 The API is based on the PyTorch [@pytorch] machine learning library, provides access to datasets 
 traditionally used for benchmarking machine learning models, and the option to train commonly used 
