@@ -295,23 +295,23 @@ def index_subset(path=None, subset=None):
     # Quick first pass to find total for tqdm bar
     subset_len = 0
     for root, folders, files in os.walk(path +
-                                        '/LibriSpeech/{}/'.format(subset)):
-        subset_len += len([f for f in files if f.endswith('.flac')])
+                                        '/VOiCES/{}/'.format(subset)):
+        subset_len += len([f for f in files if f.endswith('.wav')])
 
     progress_bar = tqdm(total=subset_len)
     for root, folders, files in os.walk(path +
-                                        '/LibriSpeech/{}/'.format(subset)):
+                                        '/VOiCES/{}/'.format(subset)):
         if len(files) == 0:
             continue
 
-        librispeech_id = int(root.split('/')[-2])
-
         for f in files:
             # Skip non-sound files
-            if not f.endswith('.flac'):
+            if not f.endswith('.wav'):
                 continue
 
             progress_bar.update(1)
+
+            librispeech_id = int(root[-4:])
 
             instance, samplerate = sf.read(os.path.join(root, f))
 
