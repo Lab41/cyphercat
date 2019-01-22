@@ -1,12 +1,6 @@
 import os
-import shutil
-import numpy as np
 
-from .utils.config_utils import DataStruct
 from .utils.file_utils import downloader, unpacker
-
-from skimage import io
-from torch.utils.data.dataset import Dataset
 
 
 def prep_data(data_struct=None):
@@ -41,7 +35,7 @@ def prep_data(data_struct=None):
         unpacker(compressed_file_name, out_dir)
 
 # OBSOLETE, KEEP FOR TILL TINYIMAGENET DATASET INCLUDED
-#def custom_preprocessor(out_dir=''):
+# def custom_preprocessor(out_dir=''):
 #    """
 #    Custom preprocessing functions for
 #    specific data sets.
@@ -60,7 +54,10 @@ def prep_data(data_struct=None):
 #
 #        # Structure the training, validation, and test data directories
 #        train_dir = os.path.join(out_dir, 'train')
-#        class_dirs = [os.path.join(train_dir, o) for o in os.listdir(train_dir) if os.path.isdir(os.path.join(train_dir, o))]
+#        class_dirs = [os.path.join(train_dir, o) for
+#              o in os.listdir(train_dir)
+#              if os.path.isdir(os.path.join(train_dir, o))]
+#              NOTE: ABOVE NEEDS TO BE FIXED IF THIS CODE IS USED (TOO LONG)
 #
 #        for c in class_dirs:
 #            for f in os.listdir(os.path.join(c, 'images')):

@@ -1,0 +1,19 @@
+repos:
+-  repo: https://github.com/pre-commit/mirrors-autopep8
+   rev: v1.4.2
+   hooks:
+   -   id: autopep8
+
+-  repo: https://github.com/pre-commit/pre-commit-hooks
+   rev: v1.2.3
+   hooks:
+   -   id: trailing-whitespace
+   -   id: end-of-file-fixer
+   -   id: check-case-conflict
+   -   id: double-quote-string-fixer
+   -   id: check-yaml
+   -   id: requirements-txt-fixer
+   -   id: check-added-large-files
+       args: [--maxkb=100000]
+   -   id: check-docstring-first
+   -   id: flake8
