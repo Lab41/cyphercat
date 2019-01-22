@@ -12,7 +12,7 @@ DESCRIPTION = 'A toolkit for ML security',
 MAINTAINER = 'lab41'
 MAINTAINER_EMAIL = 'info@lab41.org'
 URL = 'https://github.com/Lab41/cyphercat'
-LICENSE = 'MIT'
+LICENSE = 'Apache 2.0'
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -88,6 +88,18 @@ setup(
     author_email=MAINTAINER_EMAIL,
     url=URL,
     packages=['cyphercat'],
+    classifiers=[
+        # Trove classifiers
+        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
+        'Topic :: Security',
+        'Intended Audience :: Science/Research',
+    ],
     #packages=find_packages(),
     install_requires=INSTALL_REQUIRES, #external packages as dependencies
     setup_requires=['setuptools>=38.6.0'],
