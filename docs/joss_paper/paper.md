@@ -1,5 +1,5 @@
 ---
-title: 'Cyphercat: A Python Package for Reproduceably Evaluating Adversarial Robustness
+title: 'Cyphercat: A Python Package for Reproduceably Evaluating Adversarial Robustness'
 tags:
   - Python
   - machine learning
@@ -46,39 +46,38 @@ bibliography: paper.bib
 # Summary
 
 With the proliferation of machine learning in everyday applications,
-research efforts have increasingly focused on understanding the vulnerabilities of
-machine learning models to privacy attacks.
-For example, this can involve extracting information regarding the defining parameters of a _target_ model
-or inferring details of data samples used to train the model.
-These types of attacks pave the way for nefarious agents to infer potentially private information
-from the training data or to manipulate the intended use of a trained model, 
-for example by forcing the model to produce a desired output.
-Fundamentally assessing model vulnerabilities to privacy attacks remains an open-ended challenge,
-as current attack and defense tactics are studied on a case by case basis.
+research efforts have increasingly focused on understanding security
+vulnerabilities throughout the machine learning pipeline. 
+Attack capabilities at inference time elucidate how the model output 
+can be manipulated by having access to the training pipeline and
+poisoning the training data, or by accessing the model and
+manipulating images to fool the model [@goodfellow][@carlini]. 
+Other attacks target machine learning as a service platforms, 
+extracting the defining parameters of a target model [@tramer]. 
+Less work has focused on privacy attacks, were nefarious agents 
+can infer details of the training data from a targeted model [@mlleaks]. 
+This has significant implications for user privacy and model sharing.
+Fundamentally assessing model vulnerabilities to privacy attacks
+remains an open-ended challenge, as current attack and defense
+tactics are studied on a case by case basis.
 
+Cyphercat is an extensible Python package for benchmarking privacy
+attack and defense efficacy in a reproducible environment.
+The Cyphercat application programming interface (API) allows users to test the 
+robustness of a specified target model against several well-documented privacy
+attacks [@mlleaks][@fredrikson2015model], which extract details of the training data from the model, 
+including the option to assess defenses.
+The API is built on the PyTorch [@pytorch] machine learning library and 
+provides access to well known image, audio, and text benchmark datasets used for machine learning applications.
+The Cyphercat API includes the option to train on commonly used architectures, 
+with subsequent assessment of attack and defense performance.
+The package also enables users to introduce custom datasets and model architectures.
 
-``Cyphercat`` is an extensible Python package for benchmarking privacy attack and defense efficacy
-in a reproduceable manner.
-The ``Cyphercat`` application programming interface (API) allows users to test the robustness a specified 
-target model against several well-documented privacy attacks (such as those presented in [@mlleaks], [@fredrikson2015model])
-that extract details of the training data from the model, with the option to assess defenses.
-The API is based on the PyTorch [@pytorch] machine learning library, provides access to datasets 
-traditionally used for benchmarking machine learning models, and the option to train commonly used 
-architectures via the API, with subsequent assessment of attack and defense performance.
-The package also permits users to introduce custom datasets in the image, audio, and text data type domains,
-as well as custom architectures for target, attack, and defense models.
+To use the API, a user must define a dataset, including data transformations,
+and the desired architectures for the target model (the model being assessed for vulnerabilities)
+and the attack model (the model used for generating an attack on the target model).
+These are then fed into specified functions to initiate training, attacking and defending.
+The source code for Cyphercat is available [here](https://github.com/Lab41/cyphercat/).
 
-
-``Cyphercat`` is a flexible framework designed for machine learning practitioners to test model vulnerabilities
-via various methods of attack and defense covering several data types.
-Details regarding the ``Cyphercat`` API, its implementation relative to the Python ecosystem, 
-including further information on implemented datasets, attack and defense methods, 
-and performance metrics are found in the online documentation.
-
-
-# Acknowledgements
-
-The authors acknowledge support from 
-We also acknowledge the financial support provided by the 
 
 # References
