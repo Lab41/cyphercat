@@ -40,9 +40,9 @@ Select `cyphercat_virtualenv` kernel when running Jupyter.
 
 We are using [GraphViz](https://www.graphviz.org/) for our research in order to get a handle on the papers in the space, as well as describe our research. You can view some of that here. To install visualization tools via Mac, use:
 
-```
-brew install graphviz
-pip install graphviz
+```console
+$ brew install graphviz
+$ pip install graphviz
 ```
 
 ## References
