@@ -65,7 +65,7 @@ Cyphercat is an extensible Python package for benchmarking privacy
 attack and defense efficacy in a reproducible environment.
 The Cyphercat application programming interface (API) allows users to test the 
 robustness of a specified target model against several well-documented privacy
-attacks [@mlleaks][@fredrikson2015model], which aim to extract detailed of the training data from the model.
+attacks [@mlleaks][@fredrikson2015model], which aim to extract details of the training data from the model.
 Also included is the option to further assess the efficacy of several implemented defense methods.
 The API is built on the PyTorch [@pytorch] machine learning library and 
 provides access to well known image, audio, and text benchmark datasets used for machine learning applications.
