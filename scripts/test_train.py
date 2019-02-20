@@ -80,7 +80,9 @@ def main():
     ccatset = CCATDataset(path=data_struct.save_path, name=data_name, splits=splits, transforms=[train_transform])
     trainset = ccatset.get_split_n(0)
     testset = ccatset.get_split_n(1)
-    n_classes = 10
+    n_classes = data_struct.n_classes
+    img_size = data_struct.height
+    n_in = data_struct.channels
     
     ## Define pyTorch ingestors for training and testing
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
@@ -98,7 +100,7 @@ def main():
     #imshow(torchvision.utils.make_grid(imgs))  
     
     # Prepare the model for training
-    model = get_predef_model(model_name)(n_in=3, n_classes=n_classes, n_filters=64, size=250)
+    model = get_predef_model(model_name)(n_in=n_in, n_classes=n_classes, n_filters=64, size=img_size)
     model.to(device)
     model.apply(weights_init)
     model_optim = optim.Adam(model.parameters(), lr=learnrate/10)
