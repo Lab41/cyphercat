@@ -73,5 +73,5 @@ def get_preload_split_fn(name=''):
         fn = PRELOAD_SPLIT_FN_DICT[name]
         return fn
     else:
-        raise ValueError('Invalid test statistic, {}, entered. Must be '
+        raise ValueError('Invalid dataset, {}, entered. Must be '
                          'in {}'.format(name, PRELOAD_SPLIT_FN_DICT.keys()))
