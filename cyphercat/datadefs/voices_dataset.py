@@ -103,7 +103,7 @@ def load_or_index_subset(subset=None, path=None, fragment_seconds=3,
 
 
 def Voices_preload_and_split(subset='room-1', test_subset='room-2', seconds=3,
-                             path=None, pad=False, splits=None, trim=False):
+                             path=None, pad=False, splits=None, trim=True):
     """Index and split librispeech dataset.
 
     Args:
@@ -337,7 +337,7 @@ def index_subset(path=None, subset=None):
     return audio_files
 
 
-def default_speaker_splitter(dfs=None, df=None, trim=False):
+def default_speaker_splitter(dfs=None, df=None, trim=True):
     """ Performs cycpercat default split for librspeech dataset.
 
     Args:
@@ -477,7 +477,7 @@ def default_speaker_splitter2(dfs=None, df=None, trim=False, test_df=None):
     return dfs
 
 
-def default_sample_splitter(dfs=None, df=None, trim=False):
+def default_sample_splitter(dfs=None, df=None, trim=True):
     """ Performs cyphercat default split for librspeech dataset.
 
     Args:

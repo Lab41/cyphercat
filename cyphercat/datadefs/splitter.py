@@ -126,7 +126,7 @@ def splitter(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
 
 
 def splitter2(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
-              N=-1, split_by_class=False, trim=False):
+              N=-1, split_by_class=False, trim=True):
     """ Splits the data for given unqie categories according to specified
     fractions.
 
