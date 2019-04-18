@@ -3,6 +3,7 @@ from torch._utils import _accumulate
 from torch.utils.data.dataset import Subset
 
 import pandas as pd
+import numpy as np
 
 
 def dataset_split(dataset=None, lengths=None, indices=None):
@@ -125,7 +126,7 @@ def splitter(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
 
 
 def splitter2(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
-              N=-1, split_by_class=False):
+              N=-1, split_by_class=False, trim=True):
     """ Splits the data for given unqie categories according to specified
     fractions.
 
@@ -151,6 +152,10 @@ def splitter2(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
     Todo:
         - Add example.
     """
+    if trim:
+        mics = [1, 4, 5, 8, 9, 11]
+    else:
+        mics = np.arange(1, 13)
     # N is to keep track of the dataframe dict keys
     n_splits = len(splits)
 
@@ -177,8 +182,10 @@ def splitter2(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
                 if i_cat == 0:
                     dfs[idx + N] = df[df['speaker_id'] == category]
                 else:
-                    dfs[idx + N] = dfs[idx + N].append(df[df['speaker_id'] ==
-                                                          category])
+                    trunc1 = df[df['speaker_id'] == category]
+                    trunc2 = trunc1[trunc1['Mic'].isin(mics)]
+
+                    dfs[idx + N] = dfs[idx + N].append(trunc2)
             start_category += n_categories
         for idx in range(n_splits):
             dfs[idx + N] = dfs[idx + N].reset_index()
@@ -187,6 +194,9 @@ def splitter2(dfs={}, df=None, unique_categories=[], category_id='', splits=[],
     for category in unique_categories:  # for each category
 
         mini_df = df[df[category_id] == category]
+        # Trim to just half the mics (half recordings)
+        mini_df = mini_df[mini_df['Mic'].isin(mics)]
+
         mini_df = mini_df.reset_index()
 
         # Identify segments:

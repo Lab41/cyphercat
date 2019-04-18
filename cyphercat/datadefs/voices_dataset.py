@@ -102,8 +102,8 @@ def load_or_index_subset(subset=None, path=None, fragment_seconds=3,
     return df
 
 
-def Voices_preload_and_split(subset='room-1', seconds=3,
-                             path=None, pad=False, splits=None):
+def Voices_preload_and_split(subset='room-1', test_subset='room-2', seconds=3,
+                             path=None, pad=False, splits=None, trim=True):
     """Index and split librispeech dataset.
 
     Args:
@@ -117,6 +117,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3,
             samples with lenght below the minimum.
         splits (dict): dictionary with {name:[fractions]} for a user specified
             split. The split will be saved to 'DATASPLITS_DIR' under 'name'
+        trim (bool): trims data by >.5. removes half of mics, and no noise data
 
     Returns:
         dict(Dataframes): Dictionary containing the dataframes corresponding
@@ -139,6 +140,14 @@ def Voices_preload_and_split(subset='room-1', seconds=3,
           ' and subset = {}'.format(seconds, subset))
     df = load_or_index_subset(subset=subset, path=path,
                               fragment_seconds=fragment_seconds, pad=pad)
+
+    test_df = load_or_index_subset(subset=test_subset, path=path,
+                                   fragment_seconds=fragment_seconds, pad=pad)
+
+    # remove all None sound from df
+    if trim:
+        df = df[df['Noise'] != 'none']
+
     # Convert arbitrary integer labels of dataset to ordered 0-(num_speakers
     # - 1) labels
     unique_speakers = sorted(df['speaker_id'].unique())
@@ -172,7 +181,8 @@ def Voices_preload_and_split(subset='room-1', seconds=3,
             # VOiCES is parsed by developers (not users), so will include
             # a warning
             print('WARNING: Creating default speaker splits for VOiCES!')
-            dfs = default_speaker_splitter2(dfs, df)
+            dfs = default_speaker_splitter2(
+                dfs, df, trim=trim, test_df=test_df)
             # write the default dataframes
             for i_df, this_df in enumerate(dfs):
                 dfs[this_df] = dfs[this_df].drop(columns=['id'])
@@ -203,7 +213,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3,
             # LibriSpeech is parsed by developers (not users), so will include
             # a warning
             print('WARNING: Creating default sample splits for VOiCES!')
-            sample_dfs = default_sample_splitter(sample_dfs, df)
+            sample_dfs = default_sample_splitter(sample_dfs, df, trim)
             # write the default dataframes
             for i_df, this_df in enumerate(sample_dfs):
                 sample_dfs[this_df] = sample_dfs[this_df].drop(columns=['id'])
@@ -235,6 +245,7 @@ def Voices_preload_and_split(subset='room-1', seconds=3,
 
         dfs = splitter(dfs=dfs, df=df, unique_categories=unique_speakers1,
                        category_id='speaker_id', splits=splits, N=0)
+
         dfs = splitter(dfs=dfs, df=df, unique_categories=unique_speakers2,
                        category_id='speaker_id', splits=splits, N=2)
 
@@ -326,7 +337,7 @@ def index_subset(path=None, subset=None):
     return audio_files
 
 
-def default_speaker_splitter(dfs=None, df=None):
+def default_speaker_splitter(dfs=None, df=None, trim=True):
     """ Performs cycpercat default split for librspeech dataset.
 
     Args:
@@ -358,22 +369,22 @@ def default_speaker_splitter(dfs=None, df=None):
     # splits speakers in 0.8/0.2 split for target
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[:n_male],
-                      category_id=cat_id, splits=[0.8, 0.2], N=0)
+                      category_id=cat_id, splits=[0.8, 0.2], N=0, trim=trim)
     # splits by speaker for attack
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[n_male:],
                       category_id=cat_id, splits=[0.5, 0.5],
-                      N=2, split_by_class=True)
+                      N=2, split_by_class=True, trim=trim)
     m_dfs[4] = m_dfs[0][:len(m_dfs[1])]
     # female splits
     f_dfs = {}
     f_dfs = splitter2(dfs=f_dfs, df=female_df,
                       unique_categories=unique_female[:n_female],
-                      category_id=cat_id, splits=[0.8, 0.2], N=0)
+                      category_id=cat_id, splits=[0.8, 0.2], N=0, trim=trim)
     f_dfs = splitter2(dfs=f_dfs, df=female_df,
                       unique_categories=unique_female[n_female:],
                       category_id=cat_id, splits=[0.5, 0.5], N=2,
-                      split_by_class=True)
+                      split_by_class=True, trim=trim)
     f_dfs[4] = f_dfs[0][:len(f_dfs[1])]
     # merge male and female into final splits
     for i_split in range(5):
@@ -384,7 +395,7 @@ def default_speaker_splitter(dfs=None, df=None):
     return dfs
 
 
-def default_speaker_splitter2(dfs=None, df=None):
+def default_speaker_splitter2(dfs=None, df=None, trim=False, test_df=None):
     """ Performs cycpercat default split for librspeech dataset.
 
     Args:
@@ -419,32 +430,32 @@ def default_speaker_splitter2(dfs=None, df=None):
     # splits speakers in 0.8/0.2 split for target
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[:n_male*n1],
-                      category_id=cat_id, splits=[0.8, 0.2], N=0)
+                      category_id=cat_id, splits=[0.8, 0.2], N=0, trim=trim)
     # splits by speaker for attack
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[n_male*n1:n_male*n2],
                       category_id=cat_id, splits=[0.5, 0.5],
-                      N=2, split_by_class=True)
+                      N=2, split_by_class=True, trim=trim)
     # split off unheard speakers for outset
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[n_male*n2:],
                       category_id=cat_id, splits=[0, 1],
-                      N=4, split_by_class=True)
+                      N=4, split_by_class=True, trim=trim)
     # Replace in set with subset of df0
     m_dfs[4] = m_dfs[0][:len(m_dfs[1])]
     # female splits
     f_dfs = {}
     f_dfs = splitter2(dfs=f_dfs, df=female_df,
                       unique_categories=unique_female[:n_female*n1],
-                      category_id=cat_id, splits=[0.8, 0.2], N=0)
+                      category_id=cat_id, splits=[0.8, 0.2], N=0, trim=trim)
     f_dfs = splitter2(dfs=f_dfs, df=female_df,
                       unique_categories=unique_female[n_female*n1:n_female*n2],
                       category_id=cat_id, splits=[0.5, 0.5], N=2,
-                      split_by_class=True)
+                      split_by_class=True, trim=trim)
     f_dfs = splitter2(dfs=f_dfs, df=female_df,
                       unique_categories=unique_female[n_female*n2:],
                       category_id=cat_id, splits=[0, 1], N=4,
-                      split_by_class=True)
+                      split_by_class=True, trim=trim)
     f_dfs[4] = f_dfs[0][:len(f_dfs[1])]
     # merge male and female into final splits
     for i_split in range(6):
@@ -452,11 +463,22 @@ def default_speaker_splitter2(dfs=None, df=None):
               (i_split, len(m_dfs[i_split]), len(f_dfs[i_split])))
         dfs[i_split] = m_dfs[i_split].append(f_dfs[i_split])
 
+    # make dfs[1] identical data to train room, but from test room
+
+    # get identifiers for the room 2 files we need
+    fids = [f[-50:] for f in dfs[1].filepath]  # correct files
+    print(len(fids), ' original files')
+    fids2 = [f[-50:] for f in test_df.filepath]  # files to check
+
+    bools = [elem in fids for elem in fids2]
+    print(sum(bools), ' matched files from room 2')
+    dfs[1] = test_df[bools]
+
     return dfs
 
 
-def default_sample_splitter(dfs=None, df=None):
-    """ Performs cycpercat default split for librspeech dataset.
+def default_sample_splitter(dfs=None, df=None, trim=True):
+    """ Performs cyphercat default split for librspeech dataset.
 
     Args:
         dfs (dict(Dataframe)): Current dictionary of dataframes.
@@ -486,10 +508,10 @@ def default_sample_splitter(dfs=None, df=None):
     m_dfs = {}
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[:n_male],
-                      category_id=cat_id, splits=[0.8, 0.2], N=0)
+                      category_id=cat_id, splits=[0.8, 0.2], N=0, trim=trim)
     m_dfs = splitter2(dfs=m_dfs, df=male_df,
                       unique_categories=unique_male[n_male:],
-                      category_id=cat_id, splits=[0.5, 0.5], N=2)
+                      category_id=cat_id, splits=[0.5, 0.5], N=2, trim=trim)
     m_dfs[4] = m_dfs[0][:len(m_dfs[1])]
     # female splits
     f_dfs = {}
