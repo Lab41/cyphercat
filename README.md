@@ -16,6 +16,12 @@ For fooling neural networks, this is the following papers and relevant work:
 
 ## Environment and Software
 
+### Requirements
+```console
+$ pip install virtualenv
+$ pip install jupyterlab
+```
+
 ### Setup
 ```console
 $ git clone https://github.com/Lab41/cyphercat.git
